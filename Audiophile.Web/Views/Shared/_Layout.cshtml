@@ -1,0 +1,447 @@
+﻿@using Audiophile.Web.Helpers
+@using Microsoft.EntityFrameworkCore.Internal
+@inject Localization Localization
+@{
+    int lang = Constants.GetLang(Context.Session.GetString("lang"));
+    var defaultSeoDesc = "Audiophile Sahibinden Satılık Hi-Fi Müzik Seti ve High End Müzik Sistemleri. ücretsiz ilan, hızlı satış. Yeni ve 2.el ev elektroniği, Amfi, Hoparlör";
+    var defaultSeoKeywords = "müzik seti, müzik sistemi,  satılık elektronik müzik sistemleri,satılık ev elektronigi,ikinci el ses sistemi, sahibinden ev sineması, kullanılmış amfi, sahibinden hoparlör, sahibinden satılık elektronik, elektronik, müzik aletleri, alım satım";
+}
+
+
+<!DOCTYPE html>
+<html data-wf-page="59c8d99cbcfa480001e5133e" data-wf-site="59c8d99cbcfa480001e5133d"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xml:lang="tr"
+      lang="@Localization.Get("tr", "en", lang)">
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-37442530-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'UA-37442530-1');
+    </script>
+    <meta name="smartbanner:title" content="Audiophile" />
+    <meta name="smartbanner:author" content="Audiophile" />
+    <meta name="smartbanner:price" content="Ücretsiz" />
+    <meta name="smartbanner:price-suffix-google" content=" - Android Uygulaması" />
+
+    <meta name="smartbanner:icon-google"
+          content="https://lh3.googleusercontent.com/36FHwrIuLA6lpqpK2hXfS9ucnLBsqdrfPe8sBf4keWEQGYtIn_LGfke7r35LlH_eUnV2=s180-rw" />
+    <meta name="smartbanner:button" content="Yükle" />
+
+    <meta name="smartbanner:button-url-google"
+          content="https://play.google.com/store/apps/details?id=com.audiophile" />
+    <meta name="smartbanner:enabled-platforms" content="android" />
+    <meta name="smartbanner:close-label" content="Kapat" />
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audiophile | @Html.Raw(ViewBag.Title)</title>
+    <meta name="google-signin-client_id" content="1051885509932-vr2tgqgqqp8rcrtn3r2jophbb2i96fio.apps.googleusercontent.com">
+    <meta name="keywords" content="@Html.Raw(ViewBag.SeoKeywords != null ? ViewBag.SeoKeywords : defaultSeoKeywords)" />
+    <meta name="description" content="@Html.Raw(ViewBag.SeoDescription != null ? ViewBag.SeoDescription : defaultSeoDesc)" />
+    <meta name="Language" content="@(lang == 1 ? "Turkish" : "English")">
+    <meta name="Publisher" content="Audiophile.Org">
+    <meta name="Robots" content="index, follow">
+    <meta name="page-topic" content="Audiophile.Org">
+    <meta name="YahooSeeker" content="index, follow">
+    <meta name="msnbot" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    <meta name="Rating" content="General">
+    <meta name="allow-search" content="yes">
+    <meta name="expires" content="never">
+    <meta name="googlebot" content="noodp">
+    <meta name="slurp" content="noydir">
+    <meta name="google-site-verification" content="Lf0_jMk7lROmmNTP9JJhrPUplULeB-LMIINHP3ximKs" />
+    <meta name="msvalidate.01" content="F42BCFACDF49C3BDF1B172C50B38E402" />
+
+    <meta property="og:locale" content="tr_TR" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Audiophile | @Html.Raw(ViewBag.Title)" />
+    <meta property="og:description" content="@Html.Raw(ViewBag.SeoDescription != null ? ViewBag.SeoDescription : defaultSeoDesc)" />
+    <meta property="og:site_name" content="Audiophile" />
+    @await RenderSectionAsync("MetaTag", false)
+    <meta name="smartbanner:title" content="Audiophile.org" />
+    <meta name="smartbanner:author" content="Audiophile" />
+    <meta name="smartbanner:price" content="Ücretsiz" />
+    <meta name="smartbanner:price-suffix-google" content=" - Android Uygulaması" />
+    <meta name="smartbanner:button" content="Yükle" />
+    <meta name="smartbanner:button-url-google" content="https://play.google.com/store/apps/details?id=com.audiophile" />
+    <meta name="smartbanner:enabled-platforms" content="android" />
+    <meta name="smartbanner:close-label" content="Kapat" />
+    <noscript id="deferred-styles">
+        <link href="/Content/plugins/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    </noscript>
+
+    <!-- [if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script><![endif] -->
+    <script>!function (o, c) { var n = c.documentElement, t = " w-mod-"; n.className += t + "js", ("ontouchstart" in o || o.DocumentTouch && c instanceof DocumentTouch) && (n.className += t + "touch") }(window, document);</script>
+    <link href="/Content/img/images/favicon.jpg" rel="shortcut icon" type="image/x-icon">
+    <link href="/Content/img/images/favicon.jpg" rel="apple-touch-icon">
+    <link href="/Content/plugins/smartbanner/smartbanner.css" rel="stylesheet" asp-append-version="true" />
+    <link href="/Content/css/normalize.css" rel="stylesheet" />
+    <link href="/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/Content/css/components.css?v=2.0" rel="stylesheet" />
+    <link href="/Content/css/audiophile-2.css" asp-append-version="true" rel="stylesheet" />
+    <link href="/Content/css/style.css?v=3.0" rel="stylesheet" />
+    <link href="/Content/plugins/jBox-master/Source/jBox.css" rel="stylesheet" />
+    <link href="/Content/plugins/jBox-master/Source/plugins/Notice/jBox.Notice.css" rel="stylesheet" />
+    <link href="/Content/plugins/owl-carousel/css/owl.carousel.min.css" rel="stylesheet" />
+    <link href="/Content/plugins/owl-carousel/css/owl.theme.default.min.css" rel="stylesheet" />
+
+    <link href="/Content/css/animate.css" rel="stylesheet" />
+    <link href="/Content/plugins/select2-master/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="/Content/css/genaral.css?v=2.0" rel="stylesheet" />
+    <link href="/Content/plugins/noty/noty.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/Content/plugins/slicknav/slicknav.min.css" />
+
+    <link href="~/Content/css/custom.css" rel="stylesheet" />
+    <link href="~/Content/css/newcustom.css" rel="stylesheet" />
+    <style>
+
+        .p-banner {
+            font-size: 2px;
+        }
+
+        .p-banner-rgb {
+            color: rgba(255, 194, 0, .19);
+        }
+
+        .p-banner-wh {
+            color: white;
+        }
+
+        .social-media-link {
+            margin-right: 38px;
+        }
+
+        .div-footer-link {
+            align-items: center;
+        }
+
+        .google-play {
+            width: 120px;
+            padding-bottom: 12px;
+        }
+
+        .link-block-9.w-inline-block.p-l-0-i {
+            margin-right: 40px;
+            padding-left: 0px
+        }
+
+        @@media (max-width: 992px) {
+            .center-mobil {
+                text-align: center;
+            }
+
+            .app-logo-width-ios {
+                /*width: 90px !important;
+                        margin-right: 10px !important;
+                        padding-left:0px;*/
+                width: 90px !important;
+                margin-right: 47px !important;
+                margin-left: 25px;
+                padding-left: 0px;
+            }
+
+            .social-media-link {
+                margin-right: 0px;
+            }
+
+            .google-play {
+                width: 90px !important;
+                padding-bottom: 12px;
+                margin-right: 35px;
+                margin-left: 5px;
+            }
+
+            .link-block-9.w-inline-block.p-l-0-i {
+                margin-right: 5px;
+            }
+
+            .footer-links.div-center {
+                padding-bottom: 20px;
+            }
+        }
+    </style>
+    @RenderSection("style", false)
+
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <script src='~/Content/script/fb.js'></script>
+
+    @RenderSection("head", false)
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+</head>
+<body class="body">
+    @RenderSection("adsense", false)
+    <button onclick="topFunction()" id="scrollTop">
+        <i class="fa fa-arrow-circle-o-up"></i> @Localization.Get("Başa Dön", "Scroll Top", lang)
+    </button>
+
+    <div data-collapse="all" data-animation="over-left" data-duration="400" class="navbar w-nav">
+        @{
+            await Html.RenderPartialAsync("~/Views/Partials/TopMenu.cshtml");
+        }
+    </div>
+
+    @RenderBody()
+
+    @{
+        await Html.RenderPartialAsync("Footer");
+    }
+
+
+    <script src="~/Content/script/jquery-3.2.1.min.js"></script>
+
+    <script src="~/Content/script/webfont.js"></script>
+    <script>
+        WebFont.load({
+            google: { families: ["Nunito Sans:200,300,regular,600,700,800,900:latin,latin-ext"] }
+        });</script>
+    <script src="~/Content/script/audiophile-2.js"></script>
+
+
+    <script src="~/Content/plugins/owl-carousel/owl.carousel.min.js"></script>
+    <script src="~/Content/plugins/jBox-master/Source/jBox.min.js"></script>
+    <script src="~/Content/plugins/jBox-master/Source/plugins/Notice/jBox.Notice.min.js"></script>
+
+    <script src="~/Content/plugins/select2-master/dist/js/select2.full.min.js"></script>
+    <script src="~/Content/plugins/select2-master/dist/js/i18n/tr.js"></script>
+    <!-- [if lte IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/placeholders/3.0.2/placeholders.min.js"></script><![endif] -->
+    <script src="/Content/script/afterLoad.js"></script>
+    <script src="~/Content/script/moment.min.js"></script>
+    <script src="/Content/plugins/noty/noty.js"></script>
+    <script src="~/Content/script/tether.min.js"></script>
+    <script src="/Content/script/bootstrap.min.js"></script>
+    <script src="/Content/plugins/slicknav/jquery.slicknav.min.js"></script>
+    <script src="/Content/plugins/smartbanner/smartbanner.js" asp-append-version="true"></script>
+
+    <script>
+    var isWebView = @Html.Raw(string.IsNullOrEmpty(Context.Request.Headers["X-Requested-With"]) ? "0" : Context.Request.Headers["X-Requested-With"].ToString() == "XMLHttpRequest" ? "2" : "1");
+    var loadDeferredStyles = function () {
+        var addStylesNode = document.getElementById("deferred-styles");
+        var replacement = document.createElement("div");
+        replacement.innerHTML = addStylesNode.textContent;
+        document.body.appendChild(replacement)
+        addStylesNode.parentElement.removeChild(addStylesNode);
+    };
+    var raf = requestAnimationFrame ||
+        mozRequestAnimationFrame ||
+        webkitRequestAnimationFrame ||
+        msRequestAnimationFrame;
+    if (raf)
+        raf(function () {
+            window.setTimeout(loadDeferredStyles, 0);
+        });
+    else window.addEventListener('load', loadDeferredStyles);
+    </script>
+    @* <script src="/Content/plugins/smartbanner/smartbanner.js" asp-append-version="true"></script>*@
+    <script>
+    function search() {
+        var query1 = $('input[name="query_mobile"]').val();
+        var query2 = $('#query').val();
+        var query = query2;
+
+        if (query1 !== "")
+            query = query1;
+
+        if (query === "") {
+            notify("error", "Lütfen aramak istediğiniz metni yazınız.");
+            return;
+        }
+        window.location = '/@Localization.Get("Arama/", "Search/", lang)' + query.replace(/\+/g, "");
+    }
+
+    function showAlert(message, type) {
+        var html = ' <div class="alert alert-' + type + '" > ' + message + ' </div> ';
+        $('#alertArea').html('');
+        $('#alertArea').append(html);
+    }
+
+    @if (TempData["UiMessage"] != null)
+        {
+            var message = TempData.Get<UiMessage>("UiMessage");
+            <text>
+    showAlert('@message.Message', '@message.Class');
+            </text>
+        }
+    </script>
+
+    @RenderSection("Scripts", false)
+
+    <script>
+        $(".select2").select2({
+            language: "tr-TR",
+        });
+    </script>
+    <script>
+    function notify(type, message) {
+        new Noty({
+            closeWith: ['click', 'button'],
+            theme: 'sunset',
+            type: type,
+            text: message,
+            progressBar: true,
+            timeout: 4000
+        }).show();
+    }
+
+    $(function() {
+        $("input[type=checkbox]:not(.installment)").change(function() {
+            $(this).val($(this).is(":checked"));
+        });
+
+        @if (TempData.Get<UiMessage>("Notification") != null)
+            {
+                var noty = TempData.Get<UiMessage>("Notification");
+                <text>
+                    new Noty({
+                        closeWith: ['click', 'button'],
+                        theme: 'sunset',
+                        type: '@noty.Type.ToString()',
+                        text: '@noty.Message',
+                        progressBar: true,
+                        timeout: @(noty.Timeout > 0 ? noty.Timeout : 10000)
+                    }).show();
+                </text>
+            }
+
+        var input = document.getElementById("query");
+        input.addEventListener("keyup",
+            function(event) {
+                event.preventDefault();
+                if (event.keyCode === 13) {
+                    search();
+                }
+            });
+    });
+
+    </script>
+
+    <script>
+        function readNotif(id, url) {
+            $("body").css("cursor", "progress");
+            $.ajax({
+                url: '/ReadNotification/',
+                data: { id },
+                type: 'POST',
+                dataType: 'json',
+                success: function (data) {
+                    $("#notif_" + id).remove();
+                    $('#notif_count').html('' + $('.listeditem').length);
+                    if ($('.listeditem').length === 0) {
+                        $('#notif_icon').attr('src', '/Content/img/images/notification.png');
+                    }
+                    window.location = url;
+                },
+                complete: function () {
+                    $("#btnLoadMore").html('Load More...')
+                        .removeClass("disabled");
+                }
+            });
+
+
+        }
+    </script>
+
+    <script>
+    function likeAd(id) {
+        $.ajax({
+            type: "POST",
+            url: "/LikeAd",
+            data: { id },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                notify('error',
+                    '@Localization.Get("Beklenmedik bir hata oluştu, lütfen bağlantınızı kontrol edip tekrar deneyin.", "An unexpected error has occurred, please check your connection and try again.", lang)');
+            },
+            success: function(result) {
+                if (result.isSuccess) {
+                    $('#likeImage_' + id).attr("src", "/Content/img/images/dolu_kalp.png");
+                    $('#likeImage_' + id).attr("onclick", 'unlikeAd(' + id + ')');
+                    $('#likeImage_' + id).attr("title",
+                        '@Html.Raw(Localization.Get("Beğenmekten Vazgeç", "Unlike", lang))');
+                } else {
+                    notify('error', result.message);
+                }
+            }
+        });
+    }
+
+    function unlikeAd(id) {
+        $.ajax({
+            type: "POST",
+            url: "/UnlikeAd",
+            data: { id },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                notify('error',
+                    '@Localization.Get("Beklenmedik bir hata oluştu, lütfen bağlantınızı kontrol edip tekrar deneyin.", "An unexpected error has occurred, please check your connection and try again.", lang)');
+            },
+            success: function(result) {
+                if (result.isSuccess) {
+                    $('#likeImage_' + id).attr("src", "/Content/img/images/kalp.png");
+                    $('#likeImage_' + id).attr("onclick", 'likeAd(' + id + ')');
+                    $('#likeImage_' + id).attr("title", '@Html.Raw(Localization.Get("Beğen", "like", lang))');
+                } else {
+                    notify('error', result.message);
+                }
+            }
+        });
+    }
+    </script>
+    <script>
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                document.getElementById("scrollTop").style.display = "block";
+            } else {
+                document.getElementById("scrollTop").style.display = "none";
+            }
+        }
+
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+    <script>
+
+        $(document).ready(function () {
+            $('#mobile-menu').slicknav({
+                brand:
+                    '<a href="/"> <img alt="logo" src="/Content/img/images/logo.gif" width="150" alt="Audiophile.org Elektronik Müzik Sistemleri Alım Satım Sitesi"/> </a>'
+            });
+        });
+
+    </script>
+
+    <script src="~/Content/script/newcustom.js"></script>
+
+
+    <script type="application/ld+json">
+        {
+        "@@context" : "http://schema.org",
+        "@@type" : "Organization",
+        "name" : "Audiophile.org",
+        "url" : "https://www.audiophile.org",
+        "sameAs" : [
+        "https://twitter.com/AudiophileOrg",
+        "https://www.youtube.com/user/AudiophileCommunity/",
+        "https://www.facebook.com/audiophileorg",
+        "https://www.facebook.com/groups/audiophile.community",
+        "https://www.instagram.com/audiophile_org/",
+        "https://tr.pinterest.com/audiophileorg/",
+        "https://play.google.com/store/apps/details?id=com.audiophile"
+        ]
+        }
+    </script>
+    <script>
+
+        [].forEach.call(document.querySelectorAll('.adsbygoogle'), function () {
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        });
+
+    </script>
+</body>
+</html>

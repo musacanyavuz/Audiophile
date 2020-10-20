@@ -1,0 +1,23 @@
+[
+	{
+		"id": 0,
+		"icerik":{
+			"tr" : "Üye Ol",
+			"eng" : "Register"
+		}
+	},
+	{
+		"id": 1,
+		"icerik":{
+			"tr" : "Giriş Yap",
+			"eng" : "Login"
+		}
+	},
+	{
+		"id": 2,
+		"icerik":{
+			"tr" : "Ara",
+			"eng" : "Search"
+		}
+	},
+]

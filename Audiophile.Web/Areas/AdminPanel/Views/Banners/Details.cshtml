@@ -1,0 +1,271 @@
+@model Banner
+
+@{
+    ViewBag.Title = "Banner Detayları";
+    Layout = "AdminLayout";
+    ViewData["ActiveMenu"] = "menu-item-banners";
+}
+
+
+<div class="m-content">
+        
+    <div class="row">
+    <div class="col-xl-6">
+        <div class="row">
+            <div class="col-12">
+                <div class="m-portlet m-portlet--full-height ">
+                    <div class="m-portlet__head">
+                        <div class="m-portlet__head-caption">
+                            <div class="m-portlet__head-title">
+                                <h3 class="m-portlet__head-text">
+                                    Banner Detayları
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-portlet__body">
+                        <div class="m-widget12">
+                            <div class="m-widget12__item">
+                                <span class="m-widget12__text1" style="width: 100%">Başlık<br><span>@Model.Title</span></span>
+                            </div>
+                            <div class="m-widget12__item">
+                                <span class="m-widget12__text1">Kategori<br><span>@Model.TypeID</span></span>
+                                <span class="m-widget12__text1">Tıklanma Miktarı<br>
+                                    <span>
+                                        <i class="la la-mouse-pointer"></i> @Model.ClickCount</span>
+                                </span>
+                            </div>
+                            <div class="m-widget12__item">
+                                <span class="m-widget12__text1">Oluşturulma Tarihi<br><span>@Model.CreatedDate.ToString("g")</span></span>
+                                <span class="m-widget12__text1">Bitiş Tarihi<br><span>@(Model.EndDate?.ToString("g"))</span></span>
+                            </div>
+                            <div class="m-widget12__item">
+                                <span class="m-widget12__text1">Aktif<br><span>@(Model.IsActive ? "Evet" : "Hayır")</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-6">
+        <div class="row">
+            <div class="col-12">
+                <div class="m-portlet">
+                    <div class="m-portlet__head">
+                        <div class="m-portlet__head-caption">
+                            <div class="m-portlet__head-title">
+                                <span class="m-portlet__head-icon m--hide"><i class="la la-gear"></i></span>
+                                <h3 class="m-portlet__head-text">Güncellemeler</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-portlet__body">
+                        @using (Html.BeginForm("UpdateEndDate", "Banners", FormMethod.Post))
+                        {
+                            <input type="hidden" name="id" value="@Model.ID" />
+                            <div class="form-group m-form__group row">
+                                <label class="col-lg-2 col-form-label">Bitiş Tarihi:</label>
+                                <div class="col-lg-6">
+                                    <input type="date" class="form-control m-input" name="EndDate" required>
+                                </div>
+                                <div class="col-lg-2">
+                                    <button type="submit" class="btn btn-success">Güncelle</button>
+                                </div>
+                            </div>
+                        }
+                        @using (Html.BeginForm("UpdateTitle", "Banners", FormMethod.Post))
+                        {
+                            <input type="hidden" name="id" value="@Model.ID" />
+                            <div class="form-group m-form__group row">
+                                <label class="col-lg-2 col-form-label">Başlık:</label>
+                                <div class="col-lg-6">
+                                    <input type="text" class="form-control m-input" name="Title" required>
+                                </div>
+                                <div class="col-lg-2">
+                                    <button type="submit" class="btn btn-success">Güncelle</button>
+                                </div>
+                            </div>
+                        }
+                        @using (Html.BeginForm("UpdateType", "Banners", FormMethod.Post))
+                        {
+                            <input type="hidden" name="id" value="@Model.ID" />
+                            <div class="form-group m-form__group row">
+                                <label class="col-lg-2 col-form-label">Kategori:</label>
+                                <div class="col-lg-6">
+                                    <select class="form-control" name="Type" required>
+                                        <option value="@(Enums.BannerType.Logo)">Logo Banner</option>
+                                        <option value="@(Enums.BannerType.Banner)">İlan Ayırıcı Banner</option>
+                                        <option value="@(Enums.BannerType.Slider)">Slider</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-2">
+                                    <button type="submit" class="btn btn-success">Güncelle</button>
+                                </div>
+                            </div>
+                        }
+
+                        @using (Html.BeginForm("UpdateFile", "Banners", FormMethod.Post,
+                           new { enctype = "multipart/form-data" }))
+                        {
+                            <input type="hidden" name="id" value="@Model.ID" />
+                            <input type="hidden" name="UseWaterMark" value='@ViewBag.WaterMark' />
+                            <div class="form-group m-form__group row">
+                                <label class="col-lg-2 col-form-label">Banner Görseli:</label>
+                                <div class="col-lg-6">
+                                    <input type="file" class="form-control m-input" name="file" required>
+                                </div>
+                                <div class="col-lg-2">
+                                    <button type="submit" class="btn btn-success">Güncelle</button>
+                                </div>
+                            </div>
+                        }
+                        @using (Html.BeginForm("UpdateUrl", "Banners", FormMethod.Post))
+                        {
+                            <input type="hidden" name="id" value="@Model.ID" />
+                            <div class="form-group m-form__group row">
+                                <label class="col-lg-2 col-form-label">URL:</label>
+                                <div class="col-lg-6">
+                                    <input type="url" class="form-control m-input" name="url" value="@Model.Url" required>
+                                </div>
+                                <div class="col-lg-2">
+                                    <button type="submit" class="btn btn-success">Güncelle</button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="col-12">
+                <div class="m-portlet m-portlet--full-height ">
+                    <div class="m-portlet__head">
+                        <div class="m-portlet__head-caption">
+                            <div class="m-portlet__head-title">
+                                <h3 class="m-portlet__head-text">
+                                    Kullanıcı Bilgileri
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-portlet__body">
+                        <div class="m-widget13">
+                            <div class="m-widget13__item">
+                                <span class="m-widget13__desc m--align-right">
+                                    Kullanıcı
+                                </span>
+                                <span class="m-widget13__text m-widget13__text-bolder">
+                                    @Model.User.Name
+                                </span>
+                            </div>
+                            <div class="m-widget13__item">
+                                <span class="m-widget13__desc m--align-right">
+                                    Kullanıcı Adı:
+                                </span>
+                                <span class="m-widget13__text m-widget13__text-bolder">
+                                    @Model.User.UserName
+                                </span>
+                            </div>
+                            <div class="m-widget13__item">
+                                <span class="m-widget13__desc m--align-right">
+                                    E-mail:
+                                </span>
+                                <span class="m-widget13__text">
+                                    <a href="mailto:@Model.User.Email">@Model.User.Email</a>
+                                </span>
+                            </div>
+                            <div class="m-widget13__item">
+                                <span class="m-widget13__desc m--align-right">
+                                    Telefon:
+                                </span>
+                                <span class="m-widget13__text m-widget13__text-bolder">
+                                    <a href="tel:@Model.User.MobilePhone">@Model.User.MobilePhone</a>
+                                </span>
+                            </div>
+                            <div class="m-widget13__item">
+                                <span class="m-widget13__desc m--align-right">
+                                    Üyelik Tarihi:
+                                </span>
+                                <span class="m-widget13__text">
+                                    @Model.User.CreatedDate?.ToString("g")
+                                </span>
+                            </div>
+                            <div class="m-widget13__item">
+                                <span class="m-widget13__desc m--align-right">
+                                    Hakkında:
+                                </span>
+                                <span class="m-widget13__text m-widget13__number-bolder m--font-brand">
+                                    @Model.User.About
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="m-portlet m-portlet--bordered-semi m-portlet--full-height ">
+                    <div class="m-portlet__head">
+                        <div class="m-portlet__head-caption">
+                            <div class="m-portlet__head-title">
+                                <h3 class="m-portlet__head-text">
+                                    Banner Görseli
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-portlet__body">
+                        <div class="row">
+                            <a href="@Model.ImageSource" target="_blank">
+                            <img src="@Model.ImageSource" width="100%" style="max-height: 200px"/>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <script>
+        function deleteImage(id) {
+            Swal({
+                title: 'Yazı Görseli Silinecek',
+                text: "Yazı görselini silmek istediğinize emin misiniz?",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet, Sil!',
+                cancelButtonText: 'Vazgeç'
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: "/AdminPanel/BlogPosts/DeleteImage",
+                        data: {id},
+                        type: "POST",
+                        success: function(data) {
+                            if (data.isSuccess) {
+                                $('#image_' + id).remove();
+                                notify("success", data.message);
+                            } else {
+                                notify("danger", data.message);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

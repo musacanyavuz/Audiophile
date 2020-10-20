@@ -1,0 +1,1145 @@
+@using Microsoft.AspNetCore.Identity.UI.Pages.Internal
+@using Microsoft.AspNetCore.Http.Extensions
+@using System.Globalization
+@using System.Net
+
+@model AdvertDetailsViewModel
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Model.Advert.Title;
+    Layout = "_Layout";
+    ViewBag.SeoDescription = (Model.Advert.Content?.Length >= 500 ? Model.Advert.Content.Substring(0, 500) : Model.Advert.Content);
+    ViewBag.SeoKeywords = Model.Advert.Title;
+}
+@section MetaTag{
+    <meta name="twitter:image" content="@Html.Raw($"https://www.audiophile.org{Model.Advert.CoverPhoto}")">
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="@Model.Advert.Title" />
+    <meta property="og:type" content="product.item" />
+    <meta property="og:url" content="@Html.Raw($"https://{Context.Request.Host}{Context.Request.Path}")" />
+    <meta property="og:image" content="@Html.Raw($"https://www.audiophile.org{Model.Advert.CoverPhoto}")" />
+}
+
+@section style{
+    <link href="/Content/plugins/fancybox/jquery.fancybox.css" rel="stylesheet" />
+    <link href="~/Content/css/alertify.css" rel="stylesheet" />
+    <link href="~/Content/css/addetails.css" rel="stylesheet" />
+    <style>
+        .alertify-notifier {
+            color: white;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 22px;
+            font-weight: bold;
+            font-family: inherit;
+            margin: auto;
+            line-height: 1.2;
+            color: inherit;
+        }
+        h2 {
+            margin-top: 0px;
+            margin-bottom: 0px;
+            font-size: 1.0em;
+            line-height: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+        .categoryData h2 {
+            font-weight: 500;
+        }
+    </style>
+}
+
+@{
+    await Html.RenderPartialAsync("~/Views/Partials/Submenu.cshtml", Model.AdvertCategories);
+}
+
+
+
+<div class="div-block-20 height-auto p-t-2">
+    <div class="w-container">
+    </div>
+</div>
+
+<div class="sec-altsayfa sec-urun section-1" id="urundetay-altsayfa" style="background-color:white">
+
+    <div class="container-6 w-container" style="background-color:white !important">
+        @{
+            if (Model.Advert.UseSecurePayment)
+            {
+                var choices = Model.Advert.AvailableInstallments;
+                if (choices != null && choices.Contains(","))
+                {
+                    var items = choices.Split(',');
+                    int[] installments = Array.ConvertAll(items, s => int.Parse(s));
+                    var max = installments.Max().ToString();
+
+                    <div class="tags-div">
+                        <div class="gittibu text-center">
+                            <div>@Localization.Get("Gitti Bu ile ", "Secure Payment ", lang) @max @Localization.Get(" taksit", " Month", lang)</div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="tags-div">
+                        <div class="gittibu text-center">
+                            <div>@Localization.Get("Gitti Bu ile Online Ödeme ", "Secure Payment ", lang)</div>
+                        </div>
+                    </div>
+                }
+            }
+        }
+        <div class="div-urun-foto">
+            <div data-duration-in="300" data-duration-out="100" class="tabs w-tabs w-100">
+                <div class="tabs-content w-tab-content gallery fancybox">
+                    @{ var index = 1; }
+                    @foreach (var photo in Model.Advert?.Photos)
+                    {
+                        <meta property="og:image" content="https://audiophile.org@(photo.Source)">
+
+                        <div data-w-tab="Tab @index" class="w--tab-active w-tab-pane">
+                            <a data-fancybox="gallery" title="@Model.Advert.Title" href="@photo.Source">
+                                <img alt="@Model.Advert.Title" src="@{
+                                    if (!string.IsNullOrWhiteSpace(photo.Source))
+                                    {
+                                        @photo.Source;
+                                    }
+                                    else {
+                                            @Html.Raw("/Content/img/no-image-buyuk.jpg");
+                                        }
+                                    }" onerror="this.onerror=null;this.src = '/Content/img/no-image-buyuk.jpg';" data-s="@{
+                                    if (!string.IsNullOrWhiteSpace(photo.Source))
+                                    {
+                                        @photo.Source;
+                                    }
+                                    else {
+                                            @Html.Raw("/Content/img/no-image-buyuk.jpg");
+                                        }
+                                    }" class="object-fit-contain">
+                            </a>
+                        </div>
+                        index++;
+                    }
+                </div>
+                <div class="tabs-menu-2 w-tab-menu pt-3">
+                    @{ index = 1;}
+                    @foreach (var photo in Model.Advert?.Photos)
+                    {
+                        <a data-w-tab="Tab @index" class="w--current t1 w-inline-block w-tab-link" title="@Model.Advert.Title">
+                            <img src="@photo.Thumbnail" alt="@Model.Advert.Title" onerror="this.src = '/Content/img/no-image-buyuk.jpg';" class="object-fit-cover">
+                        </a>
+                        index++;
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="urun-content">
+            <div class="div-block-8 w-clearfix">
+                <div class="div-block-12" style="border:none">
+                    <div class="div-block-10 w-clearfix" style="background-color: white; border-bottom: 1px solid #e9e9e9;">
+
+                        <div class="form-block-4 w-clearfix w-form adetform">
+                            @if (!Model.Advert.IsActive)
+                            {
+                                <p class="passive-ad-warning">@Localization.Get("Bu İlan Pasiftir", "Not Available", lang)</p>
+                            }
+                            @*<span style="font-size: 22px; font-weight: bold">@Model.Advert.Title</span>*@
+                        <h1>@Model.Advert.Title</h1>
+                        </div>
+                    </div>
+                    <div class="div-block-12 w-clearfix">
+                        @*<div class="div-block-11">*@
+                        <div>
+                            <span class="eski-fiyat yenifiyat" style="    font-size: 15px;">@Model.Advert.NewProductPrice @(Constants.GetMoney(Model.Advert.MoneyTypeID))</span>
+                            <span class="yenifiyat" style="font-size: 25px;
+        font-weight: normal;
+    color: #1172d3;
+    padding-left: 5px;">@(String.Format("{0:N0}", Model.Advert.Price))@(Constants.GetMoney(Model.Advert.MoneyTypeID))</span>
+
+    @*<h5 class="alt-oz heading-4 oz-karsi"></h5>*@
+
+    @{
+        if (Model.Advert.UseSecurePayment)
+        {
+            var choices = Model.Advert.AvailableInstallments;
+            if (choices.Contains(","))
+            {
+                var items = choices.Split(',');
+                int[] installments = Array.ConvertAll(items, s => int.Parse(s));
+                var max = installments.Max().ToString();
+
+
+                <span style="float: right;
+        font-size: 14px;
+        font-weight: 500;">@Localization.Get("Kredi Kartına ", "Credit Card ", lang)@max@Localization.Get(" Taksit İmkanı", " Settlem", lang)</span>
+
+    }
+    else
+    {
+        <span style="float:right">@Localization.Get("Kredi Kartına ", "Credit Card ", lang) @choices @Localization.Get(" Taksit İmkanı", " Settlem", lang)</span>
+
+    }
+}
+    }
+
+</div>
+@*</div>*@
+
+<div>
+    @using (Html.BeginForm("SelectAddress", "Checkout", FormMethod.Post, new { style = "display:initial" }))
+    {
+        <div class="form-block-4 w-clearfix w-form w-100">
+
+            @if (Model.Advert.UseSecurePayment && Model.Advert.IsActive)
+            {
+
+
+                <input type="hidden" value="@Model.Advert.ID" name="id" />
+                <select id="stockAmount" name="amount" class="detay-btn">
+                    @for (int i = 1; i <= Model.Advert.StockAmount; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+                <button type="submit" class="detay-btn">
+                    @Localization.Get("Satın Al", "Buy Now", lang)
+                </button>
+
+            }
+
+            <a href='@(User.Identity.IsAuthenticated ? "mailto:" + Model.Advert?.User?.Email : ("javascript:UnauthenticatedMailAlert('"+Localization.Get("Mail Atmak için Lütfen Üye Girişi Yapınız", "Please Login to see Email", lang)+"')"))' title='@(User.Identity.IsAuthenticated ? Model.Advert?.User?.Email : "")' class="detay-btn">
+                <span>@Localization.Get("Mail Gönder", "Send Mail", lang)</span>
+            </a>
+            @if (Model.Advert.IsILiked)
+            {
+                <span class="detay-btn" onclick="unlikeAd(@Model.Advert.ID)" id="likeImage_@Model.Advert.ID">@Localization.Get("Beğenmekten Vazgeç", "Unlike", lang)</span>
+
+            }
+            else
+            {
+                <span class="detay-btn" id="likeImage_@Model.Advert.ID" onclick="likeAd(@Model.Advert.ID)">@Localization.Get("Beğen", "Like", lang)</span>
+
+            }
+
+        </div>
+
+        @if (Model.Advert.UseSecurePayment && Model.Advert.IsActive)
+        {
+            <div class="div-block-12 w-clearfix ">
+                <span>
+                    <input type="checkbox" required />
+                    <a href="@Constants.GetURL(Enums.Routing.KullanimKosullari, lang)" target="_blank">@Localization.Get("Mesafeli satış sözleşmesini onaylıyorum.", "I approve the distance sales contract.", lang)</a>
+                </span>
+                <span style="float: right"><img src="/content/img/images/VisaMaster.png" alt="Visa Master" width="120" /></span>
+            </div>
+        }
+    }
+
+</div>
+</div>
+
+
+<div class="row margin_bottom detay-col">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11">
+            <div>
+
+                <strong>@Localization.Get("Ürün ID:", "Product ID", lang)</strong>
+            </div>
+        </div>
+        <div style="float: right;">
+            <div class="font-weight-800 color-f00" style="font-weight: 500;">@Model.Advert.ID</div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("İlan Tarihi:", "List.Date", lang)</strong>
+            </div>
+        </div>
+        <div style="float: right;">
+            <div style="font-weight: 500;">@(Model.Advert.PublishDate != null ? Model.Advert.PublishDate?.ToShortDateString() : Model.Advert.CreatedDate.ToShortDateString())</div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11 kategori-width">
+            <div>
+                <div style="font-weight: 700 !important; color: #333; font-size: 1.1em;"><h2>@Localization.Get("Kategori:", "List.Date", lang)</h2></div>
+            </div>
+            </div>
+        <div style="float: right;" class="categoryData">
+            <div class="kategori-desktop" style="font-weight: 500;"><h2>@Model.Advert.CategoryNameTr</h2></div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Durum:", "Status", lang)</strong>
+            </div>
+        </div>
+        <div style="float: right;">
+            <div style="font-weight: 500;">@Model.Advert.ProductStatus</div>
+        </div>
+    </div>
+
+
+
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Marka:", "Brand", lang)</strong>
+            </div>
+        </div>
+        <div style="float: right;">
+            <div style="font-weight: 500;">@Model.Advert.Brand</div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Model:", "Model", lang)</strong>
+            </div>
+        </div>
+        <div style="float: right;">
+            <div style="font-weight: 500;">@Model.Advert.Model</div>
+        </div>
+    </div>
+
+
+
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Beğeni:", "Likes", lang)</strong>
+            </div>
+        </div>
+        <div style="float: right;">
+            <div style="font-weight: 500;">@Model.Advert.LikesCount</div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Görüntüleme:", "Visualization", lang)</strong>
+            </div>
+        </div>
+        <div style="float: right;">
+            <div style="font-weight: 500;">@Model.Advert.ViewCount</div>
+        </div>
+    </div>
+
+
+
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Takas:", "Barther Accepted", lang)</strong>
+            </div>
+        </div>
+        <div style="float: right;">
+            <div style="font-weight: 500;"> @(Model.Advert.IsAvailableForSwap ? Localization.Get("Evet", "Yes", lang) : Localization.Get("Hayır", "No", lang))</div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Pazarlık:", "Bargain Accepted", lang)</strong>
+            </div>
+        </div>
+        <div style="float: right;">
+            <div style="font-weight: 500;">@(Model.Advert.IsAvailableBargain ? Localization.Get("Evet", "Yes", lang) : Localization.Get("Hayır", "No", lang))</div>
+        </div>
+    </div>
+
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Kutusu:", "Original Box", lang)</strong>
+            </div>
+        </div>
+        <div style="float: right;">
+            <div style="font-weight: 500;">@(Model.Advert.OriginalBox ? Localization.Get("Evet", "Yes", lang) : Localization.Get("Hayır", "No", lang))</div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Teslimatı/Kumandası:", "User Manual", lang)</strong>
+            </div>
+        </div>
+        <div style="float: right;">
+            <div style="font-weight: 500;">@(Model.Advert.OriginalBox ? Localization.Get("Var", "Yes", lang) : Localization.Get("Yok", "No", lang))</div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Kargo:", "Cost of Cargo", lang) </strong>
+            </div>
+        </div>
+        <div class=" w-clearfix">
+            <div class="text-block-8" style="float: right;font-weight: 500;">
+                @{
+                    switch (Model.Advert.ShippingTypeID)
+                    {
+                        case (int)Enums.ShipmentType.KargoIleGonderim:
+                            <text> @(Localization.Get("Kargo İle Gönderim", "Cargo", lang)) </text>
+                            break;
+                        case (int)Enums.ShipmentType.AdresimdenAlinmali:
+                            <text> @Localization.Get("Adresimden Alınmalı", "Should be taken from my address", lang) </text>
+                            break;
+                        case (int)Enums.ShipmentType.Diger:
+                        default:
+                            <text> @Localization.Get("Diğer", "Other", lang) </text>
+                            break;
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11" style="width: 31%;">
+            <div>
+                <strong>@Localization.Get("Gönd. Yer.:", "Shipment Area", lang)</strong>
+            </div>
+        </div>
+        <div style="float: right;">
+            <div style="font-weight: 500;">@Model.CargoArea?.Name</div>
+        </div>
+    </div>
+
+
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11" style="width:43%">
+            <div>
+                <strong>@Localization.Get("Kargo Maliyeti:", "Cost of Shipment", lang)</strong>
+            </div>
+        </div>
+        <div style="float: right;">
+            <div style="font-weight: 500;">@(Model.Advert.FreeShipping ? Localization.Get("Satıcıya Ait", "Seller Pays", lang) : Localization.Get("Alıcıya Ait", "Buyer Pays", lang))</div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Tah. Karg. M.:", "Estimated Cost of Cargo", lang)</strong>
+            </div>
+        </div>
+        <div class="kargo-maliyet" style="float: right;">
+            <div style="font-weight: 500;">@Model.Advert.ShippingPrice </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Ödeme:", "Payment options", lang)</strong>
+            </div>
+        </div>
+        <div style="float: right;font-weight: 500;">
+            @{
+                if (Model.Advert.UseSecurePayment)
+                {
+                    var choices = Model.Advert.AvailableInstallments;
+                    if (choices.Contains(","))
+                    {
+                        var items = choices.Split(',');
+                        int[] installments = Array.ConvertAll(items, s => int.Parse(s));
+                        var max = installments.Max().ToString();
+                        <span style="font-weight: 500; float: right; font-size: 12px; margin-right: -3px;">@Localization.Get("Kredi Kartına ", "Credit Card ", lang)@max@Localization.Get(" Taksit", " Settlem", lang)</span>
+                    }
+                    else
+                    {
+                        <span style="float:right;font-weight: 500;">@Localization.Get("Kredi Kartına ", "Credit Card ", lang) @choices @Localization.Get(" Taksit", " Settlem", lang)</span>
+                    }
+                }
+            }
+        </div>
+    </div>
+
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+        <div class="div-block-11" style="width:45%">
+            <div>
+                <strong>@Localization.Get("Kullanıcı Profili:", "User profile", lang)</strong>
+            </div>
+        </div>
+        <div style="float: right;font-weight: 500;">
+            <div><a target="_blank" href="@Constants.GetURL((int)Enums.Routing.SaticiDigerIlanlari, lang)/@Model.Advert.User.ID/@Localization.Slug(Model.Advert?.User?.Name)">@Model.Advert.User.UserName    </a> </div>
+        </div>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(Model.Advert.WebSite))
+    {
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 web-site-border">
+            <div class="div-block-11 web-site">
+                <div>
+                    <strong>@Localization.Get("Web Site :", "Website:", lang)</strong>
+                </div>
+            </div>
+            <div style="float: none;">
+                <div class="web-site-w" style="font-weight: 500;">
+                    <a href="@Model.Advert.WebSite" rel="nofollow" target="_blank">@Model.Advert.WebSite</a>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 border-yeni">
+        <div class="div-block-11">
+        </div>
+        <div style="float: right;">
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div class="text-left p-t-rem-05 m-f-l">
+            <div class="m-b-0">
+                <h4 class="f-l">Tıkla Paylaş</h4>
+            </div>
+            <div>
+                <ul class="advert-sm-icons f-r flex-wrap-wrap">
+                    <li class="p-l-0">
+                        <a href="https://facebook.com/sharer/sharer.php?u=@(Context.Request.Host + Context.Request.Path)" target="_blank" title='@Html.Raw(Localization.Get("Facebookta Paylaş", "Share on Facebook", lang))'>
+                            <i class="fa fa-facebook fa-3x"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://twitter.com/share?url=@(Context.Request.Host + Context.Request.Path)&text=@(WebUtility.UrlEncode(Model.Advert.Title))%20https://@(Context.Request.Host + Context.Request.Path)" target="_blank" title="@Html.Raw(Localization.Get("Twitterda Paylaş", "Share on Twitter", lang))">
+                            <i class="fa fa-twitter fa-3x"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://pinterest.com/pin/create/bookmarklet/?&url=@(Context.Request.Host + Context.Request.Path)&description=@(WebUtility.UrlEncode(Model.Advert.Title))" target="_blank" title='@Html.Raw(Localization.Get("Pinterestte Paylaş", "Share on Pinterest", lang))'>
+                            <i class="fa fa-pinterest fa-3x"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="whatsapp://send?text=AudioPhile.com'ta%20bir%20ürün%20buldum!%20@(Context.Request.Host + Context.Request.Path)" title='@Html.Raw(Localization.Get("Whatsapp ile Paylaş", "Share with Whatsapp", lang))'>
+                            <i class="fa fa-whatsapp fa-3x"></i>
+                        </a>
+                    </li>
+                    <li>
+                        @{string mailBody = "AudioPhile.org'ta bir ürün buldum!" + Html.Raw(Model.Advert.Content?.Replace("\n", " ")?.Replace("\t", " ")?.Replace(" ", "%20")) + "\n" + "https://" + Context.Request.Host + Context.Request.Path; }
+                        <a href="mailto:?subject=@WebUtility.UrlEncode(Model.Advert.Title)&body=@WebUtility.UrlEncode(mailBody)" title="@Html.Raw(Localization.Get("E-posta ile Paylaş", "Share with Email", lang))">
+                            <i class="fa fa-envelope fa-3x"></i>
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</div>
+@*<div class="div-block-12 w-clearfix">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Marka", "Brand", lang)</strong>
+            </div>
+        </div>
+        <div class="div-block-11 div-oz">
+            <div>@Model.Advert.Brand</div>
+        </div>
+    </div>
+    <div class="div-block-12 w-clearfix">
+        <div class="div-block-11">
+            <div>
+                <strong>Model</strong>
+            </div>
+        </div>
+        <div class="div-block-11 div-oz">
+            <div>@Model.Advert.Model</div>
+        </div>
+    </div>
+    <div class="div-block-12 w-clearfix">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Durum", "Status", lang)</strong>
+            </div>
+        </div>
+        <div class="div-block-11 div-oz">
+            <div>@Model.Advert.ProductStatus</div>
+        </div>
+    </div>
+    <div class="div-block-12 w-clearfix">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Kargo", "Cost of Cargo", lang) </strong>
+            </div>
+        </div>
+        <div class="div-block-11 div-oz w-clearfix">
+            <div class="text-block-8">
+                @{
+                    switch (Model.Advert.ShippingTypeID)
+                    {
+                        case (int)Enums.ShipmentType.KargoIleGonderim:
+                            <text> @(Localization.Get("Kargo İle Gönderim", "Cargo", lang)) </text>
+                            break;
+                        case (int)Enums.ShipmentType.AdresimdenAlinmali:
+                            <text> @Localization.Get("Adresimden Alınmalı", "Should be taken from my address", lang) </text>
+                            break;
+                        case (int)Enums.ShipmentType.Diger:
+                        default:
+                            <text> @Localization.Get("Diğer", "Other", lang) </text>
+                            break;
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="div-block-12 w-clearfix">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Tahmini Kargo Maliyeti", "Estimated Cost of Cargo", lang)</strong>
+            </div>
+        </div>
+        <div class="div-block-11 div-oz">
+            <div>@Model.Advert.ShippingPrice </div>
+        </div>
+    </div>
+    <div class="div-block-12 w-clearfix">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Gönderim Maliyeti", "Cost of Shipment", lang)</strong>
+            </div>
+        </div>
+        <div class="div-block-11 div-oz">
+            <div>@(Model.Advert.FreeShipping ? Localization.Get("Satıcıya Ait", "Seller Pays", lang) : Localization.Get("Alıcıya Ait", "Buyer Pays", lang))</div>
+        </div>
+    </div>
+    <div class="div-block-12 w-clearfix">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Gönderim Yeri", "Shipment Area", lang)</strong>
+            </div>
+        </div>
+        <div class="div-block-11 div-oz">
+            <div>@Model.CargoArea?.Name</div>
+        </div>
+    </div>
+    <div class="div-block-12 w-clearfix">
+        <div class="div-block-11">
+            <div>
+                <strong>@Localization.Get("Fiyat", "Selling Price", lang)</strong>
+            </div>
+        </div>
+        <div class="div-block-11 div-oz">
+            <div>
+                <span class="eski-fiyat yenifiyat">@Model.Advert.NewProductPrice @(Constants.GetMoney(Model.Advert.MoneyTypeID))</span>
+                <span class="yenifiyat">@(String.Format("{0:N0}", Model.Advert.Price)) @(Constants.GetMoney(Model.Advert.MoneyTypeID))</span>
+            </div>
+        </div>
+    </div>
+    @if (Model.Advert.UseSecurePayment)
+    {
+        using (Html.BeginForm("SelectAddress", "Checkout", FormMethod.Post))
+        {
+            <input type="hidden" value="@Model.Advert.ID" name="id" />
+            <div class="div-block-10 w-clearfix">
+                <h5 class="adet heading-4">@Localization.Get("Adet", "Amount", lang):</h5>
+                <div class="form-block-4 w-clearfix w-form adetform">
+                    <select id="stockAmount" name="amount" class="select-field w-select">
+                        @for (int i = 1; i <= Model.Advert.StockAmount; i++)
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="div-block-10 w-clearfix">
+                <div class="form-block-4 w-clearfix w-form adetform">
+                    <input type="checkbox" required />
+                    @Localization.Get("Mesafeli satış sözleşmesini onaylıyorum.", "I approve the distance sales contract.", lang)
+                </div>
+            </div>
+            <div class="div-block-18">
+                <button class="button button-main button-satn w-button color-fff" type="submit">
+                    @Localization.Get("Satın Al", "Buy Now", lang)
+                </button>
+            </div>
+        }
+    }*@
+</div>
+@*<div class="div-block-9 div-sag">
+        <div class="div-block-10">
+            <h5 class="heading-4">@Localization.Get("Kullanıcı Bilgileri", "About User", lang)</h5>
+        </div>
+        <div class="div-block-12 w-clearfix">
+            <div class="div-block-11 width-unset">
+                <div class="f-l p-r-5">@Localization.Get("Kullanıcı", "User", lang) </div>
+                <a class="f-l" href="@Constants.GetURL((int) Enums.Routing.SaticiDigerIlanlari, lang)/@Model.Advert.User.ID/@Localization.Slug(Model.Advert?.User?.Name)">@Model.Advert.User.UserName</a>
+            </div>
+        </div>
+        <div class="div-block-12 w-clearfix">
+            <div class="div-block-11">
+                <div>@Localization.Get("Puan", "Rank", lang)</div>
+            </div>
+            <div class="div-block-11 div-oz">
+                <img alt="stars" src="/Content/img/images/stars.png">
+            </div>
+        </div>
+        <div class="div-block-12 w-clearfix">
+            <div class="div-block-11 width-unset">
+                <div class="f-l p-r-5">@Localization.Get("Ülke", "Country", lang) </div>
+                <a class="f-l p-l-5" href="#">@Model.Advert.User.Country?.Name</a>
+            </div>
+        </div>
+        <div class="div-block-12 w-clearfix">
+            <div class="div-block-11 width-unset">
+                <div class="f-l p-r-5">@Localization.Get("Şehir", "City", lang) </div>
+                <a class="f-l p-l-5" href="#">@Model.Advert.User.City?.Name</a>
+            </div>
+        </div>
+        <div class="div-block-12 w-clearfix">
+            <div class="div-block-11 width-unset">
+                <div class="f-l p-r-5">@Localization.Get("İlçe", "District", lang) </div>
+                <a class="f-l p-l-5" href="#">@Model.Advert.User.District?.Name</a>
+            </div>
+        </div>
+        <div class="div-block-12 w-clearfix">
+            <div class="div-block-11"></div>
+            <div class="div-block-11 div-oz"></div>
+            <div class="div-line line2"></div>
+        </div>
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="div-block-12">
+                <a href="javascript:;" onclick="mailto(@Model.Advert.UserID)" title="@Model.Advert?.User?.Email" class="link-block-4 w-inline-block">
+                    <div>@Localization.Get("Mail Gönder", "Send Mail", lang)</div>&nbsp;&nbsp; <i class="fa fa-question-circle fa-2x"></i>
+                </a>
+            </div>
+            <div class="div-block-12">
+                <a href="javascript:;" title="@Model.Advert?.User?.MobilePhone" class="link-block-4 w-inline-block">
+                    <div>@Model.Advert?.User?.MobilePhone</div>&nbsp; <i class="fa fa-mobile-phone fa-3x"></i>
+                </a>
+            </div>
+            if (!string.IsNullOrEmpty(Model.Advert?.User?.WorkPhone))
+            {
+                <div class="div-block-12">
+                    <a href='@("tel:"+Model.Advert?.User?.WorkPhone)' title="@Model.Advert?.User?.WorkPhone" class="link-block-4 w-inline-block">
+                        <div>@Model.Advert?.User?.WorkPhone</div>&nbsp; <i class="fa fa-mobile-phone fa-3x"></i>
+                    </a>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="div-block-12">
+                <a class="link-block-4 w-inline-block">
+                </a>
+                <div>
+                    <a class="link-block-4 w-inline-block"></a>
+                    <a href="@Constants.GetURL((int) Enums.Routing.UyeOl, lang)">@Localization.Get("Üye Ol", "Sign Up", lang)</a>
+                    <span>@Localization.Get("veya", "or", lang) </span>
+                    <a href="@Constants.GetURL((int) Enums.Routing.GirisYap, lang)">@Localization.Get("Giriş Yap", "Sign In", lang)</a>
+                </div>
+            </div>
+        }
+
+
+        <div class="div-block-12">
+            <a href="@Constants.GetURL((int) Enums.Routing.SaticiDigerIlanlari, lang)/@Model.Advert.User.ID/@Localization.Slug(Model.Advert?.User?.Name)" class="link-block-4 w-inline-block">
+                <div class="p-l-10"> @Localization.Get("Diğer Ürünleri", "Other Ads of User", lang)</div> <i class="fa fa-shopping-bag fa-2x"></i>
+            </a>
+        </div>
+
+        <div class="div-block-10">
+            <h5 class="heading-4">@Localization.Get("Paylaş", "Share", lang) </h5>
+        </div>
+
+        <div class="div-block-10 display-block">
+
+            <ul class="advert-sm-icons">
+                <li>
+                    <a href="https://facebook.com/sharer/sharer.php?u=@(Context.Request.Host+Context.Request.Path)" target="_blank" title='@Html.Raw(Localization.Get("Facebookta Paylaş", "Share on Facebook", lang))'>
+                        <i class="fa fa-facebook fa-3x"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://twitter.com/share?url=@(Context.Request.Host+Context.Request.Path)&text=@(Model.Advert.Title?.Replace(" ", "%20")+"%20https://"+Context.Request.Host+Context.Request.Path)" target="_blank" title='@Html.Raw(Localization.Get("Twitterda Paylaş", "Share on Twitter", lang))'>
+                        <i class="fa fa-twitter fa-3x"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://pinterest.com/pin/create/bookmarklet/?&url=@(Context.Request.Host+Context.Request.Path)&description=@(Model.Advert.Title?.Replace(" ","%20").Replace("@","[at]"))" target="_blank" title='@Html.Raw(Localization.Get("Pinterestte Paylaş", "Share on Pinterest", lang))'>
+                        <i class="fa fa-pinterest fa-3x"></i>
+                    </a>
+                </li>
+            </ul>
+            <br />
+            <ul class="advert-sm-icons">
+                <li>
+                    <a href="https://plus.google.com/share?url=@(Context.Request.Host+Context.Request.Path)" target="_blank" title='@Html.Raw(Localization.Get("Google Plusta Paylaş", "Share on Google Plus", lang))'>
+                        <i class="fa fa-google-plus fa-3x"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="whatsapp://send?text=Audiophile.org'ta%20bir%20ürün%20buldum!%20@(Context.Request.Host+Context.Request.Path)" title='@Html.Raw(Localization.Get("Whatsapp ile Paylaş", "Share with Whatsapp", lang))'>
+                        <i class="fa fa-whatsapp fa-3x"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="mailto:?subject=@Model.Advert.Title&body=Audiophile.org'ta bir ürün buldum!%20@(Html.Raw(Model.Advert.Content?.Replace("\"","")?.Replace("\n", " ")?.Replace("\t"," ")?.Replace(" ","%20")))%20https://@(Context.Request.Host+Context.Request.Path)" title='@Html.Raw(Localization.Get("E-posta ile Paylaş", "Share with Email", lang))'>
+                        <i class="fa fa-envelope fa-3x"></i>
+                    </a>
+                </li>
+            </ul>
+
+
+        </div>
+
+
+    </div>*@
+</div>
+</div>
+</div>
+
+</div>
+
+
+
+
+<div class="urun-alt" itemscope itemtype="http://schema.org/Product">
+    <meta itemprop="productID" content="@Model.Advert.ID" />
+    <meta itemprop="mpn" content="@Model.Advert.ID" />
+    <meta itemprop="name" content="@Model.Advert.Title" />
+    <meta itemprop="brand" content="@Html.Raw(Model.Advert?.Title?.Length > 20 ? Model.Advert.Title.Substring(0,20).ToString() : Model.Advert.Title) " />
+    <meta itemprop="sku" content="Kalem">
+    <meta itemprop="category" content="@Model.Advert.CategoryNameTr">
+    <meta itemprop="description" content="@Html.Raw(Model.Advert.Content?.Replace("@","[at]"))" />
+    <meta itemprop="image" content="@("https://www.audiophile.org/"+Model.Advert.Thumbnail)" />
+    <meta itemprop="itemCondition" content="@Model.Advert.ProductDefects" />
+    <div itemprop="offers" itemscope itemtype="http://schema.org/Offer" hidden>
+        @if (!string.IsNullOrEmpty(Model.Advert?.UserName))
+        {
+            <meta itemprop="offeredBy" content="@Model.Advert?.UserName">
+        }
+        <meta itemprop="availabilityStarts" content="@Model.Advert?.CreatedDate">
+
+        <meta itemprop="priceValidUntil" content="@Model.Advert?.CreatedDate.AddYears(1).ToString("o", CultureInfo.InvariantCulture))">
+        <meta itemprop="priceCurrency" content="TL">
+        <meta itemprop="price" content="@Model.Advert?.Price">
+        <meta itemprop="sku" content="Kalem">
+        <meta itemprop="eligibleRegion" content="@Model.CargoArea?.Name">
+        <meta itemprop="url" content="https://@Context.Request.Host@Context.Request.Path">
+        <link itemprop="availability" href="http://schema.org/InStock" />>In stock
+    </div>
+    <div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating" hidden>
+        <meta itemprop="reviewCount" content="@Model.Advert.ViewCount">
+        <meta itemprop="ratingValue" content="5">
+        <meta itemprop="ratingExplanation" content="@Model.Advert.ProductStatus">
+    </div>
+    <div itemprop="review" itemscope itemtype="http://schema.org/Review" hidden>
+        <meta itemprop="author" Content="@Model.Advert?.User?.UserName">
+        <meta itemprop="itemReviewed" content="@Model.Advert.ViewCount">
+        <meta itemprop="contentRating" content="@Model.Advert.ViewCount">
+
+    </div>
+
+    <div class="w-container">
+        <div class="">
+            <div data-duration-in="300" data-duration-out="100" class="w-tabs">
+                <div class="w-tab-menu">
+                    <a data-w-tab="Tab 1" class="tab-link-2 w-inline-block w-tab-link w--current">
+                        <div style="text-transform:uppercase; text-align:center">@Localization.Get("ÜRÜN HAKKINDA", "ABOUT PRODUCT", lang)</div>
+                    </a>
+                    <a data-w-tab="Tab 2" class="tab-link-2 w-inline-block w-tab-link w--current">
+                        <div style="text-transform:uppercase; text-align:center">@Localization.Get("Ayıplar", "Product Defects", lang)</div>
+                    </a>
+                    <a data-w-tab="Tab 3" class="tab-link-2 w-inline-block w-tab-link w--current">
+                        <div style="text-transform:uppercase; text-align:center">@Localization.Get("Kullanıcı Hakkında", "About User", lang)</div>
+                    </a>
+                </div>
+                <div class="w-tab-content">
+                    <div data-w-tab="Tab 1" class="w-tab-pane w--tab-active tab-style">
+
+                        <div class="div-block-13">
+                            <div class="div-block-10 oz-h">
+                                <h5 class="heading-4">@Localization.Get("Ürün Açıklaması:", "Description", lang) </h5>
+                            </div>
+                            <div class="div-block-10 urun2 w-clearfix background-color-fff">
+                                <p class="white-space-pre-line"><h3 style="font-size:14px; margin:0px;font-weight:400; line-height:20px"> @Html.Raw(Model.Advert.Content?.Trim()) </h3></p>
+                            </div>
+                            @*<div class="div-block-10 oz-h">
+                                    <h5 class="heading-4 width-100-100">@Localization.Get("İlan Özellikleri:", "Features", lang)</h5>
+                                </div>
+                                <div class="div-block-10 urun2 w-clearfix">
+                                    <h5 class="alt-oz heading-4 oz">
+                                        <b>@Localization.Get("Yenisinin Satış Fiyatı:", "Sales Price When New:", lang)</b>
+                                    </h5>
+                                    <h5 class="alt-oz heading-4 oz-karsi"> @Model.Advert.NewProductPrice @(Constants.GetMoney(Model.Advert.MoneyTypeID))  </h5>
+                                </div>
+                                <div class="div-block-10 urun2 w-clearfix">
+                                    <h5 class="alt-oz heading-4 oz">
+                                        <b>@Localization.Get("İlgili Web Sitesi:", "Website:", lang)</b>
+                                    </h5>
+                                    <h5 class="alt-oz heading-4 oz-karsi"> <a href="@Model.Advert.WebSite" rel="nofollow" target="_blank">@Model.Advert.WebSite</a> </h5>
+                                </div>
+                                <div class="div-block-10 urun2 w-clearfix">
+                                    <h5 class="alt-oz heading-4 oz">
+                                        <b>@Localization.Get("Durum:", "Status:", lang)</b>
+                                    </h5>
+                                    <h5 class="alt-oz heading-4 oz-karsi">@Model.Advert.ProductStatus</h5>
+                                </div>
+                                <div class="div-block-10 urun2 w-clearfix">
+                                    <h5 class="alt-oz heading-4 oz">
+                                        <b>@Localization.Get("Ayıplar:", "Product Defects:", lang) </b>
+                                    </h5>
+                                    <h5 class="alt-oz heading-4">@Html.Raw(Model.Advert.ProductDefects)</h5>
+                                </div>*@
+                        </div>
+                    </div>
+                    @*<div data-w-tab="Tab 2" class="w-tab-pane w--tab-active tab-style">
+
+                            <div class="div-block-13">
+                                <div class="div-block-10 oz-h">
+                                    <h5 class="heading-4">@Localization.Get("Ürün Açıklaması:", "Description", lang) </h5>
+                                </div>
+                                <div class="div-block-10 urun2 w-clearfix background-color-fff">
+                                    <p class="white-space-pre-line">@Html.Raw(Model.Advert.Content?.Trim())</p>
+                                </div>
+                                <div class="div-block-10 oz-h">
+                                    <h5 class="heading-4 width-100-100">@Localization.Get("İlan Özellikleri:", "Features", lang)</h5>
+                                </div>
+                                <div class="div-block-10 urun2 w-clearfix">
+                                    <h5 class="alt-oz heading-4 oz">
+                                        <b>@Localization.Get("Yenisinin Satış Fiyatı:", "Sales Price When New:", lang)</b>
+                                    </h5>
+                                    <h5 class="alt-oz heading-4 oz-karsi"> @Model.Advert.NewProductPrice @(Constants.GetMoney(Model.Advert.MoneyTypeID))  </h5>
+                                </div>
+                                <div class="div-block-10 urun2 w-clearfix">
+                                    <h5 class="alt-oz heading-4 oz">
+                                        <b>@Localization.Get("İlgili Web Sitesi:", "Website:", lang)</b>
+                                    </h5>
+                                    <h5 class="alt-oz heading-4 oz-karsi"> <a href="@Model.Advert.WebSite" rel="nofollow" target="_blank">@Model.Advert.WebSite</a> </h5>
+                                </div>
+                                <div class="div-block-10 urun2 w-clearfix">
+                                    <h5 class="alt-oz heading-4 oz">
+                                        <b>@Localization.Get("Durum:", "Status:", lang)</b>
+                                    </h5>
+                                    <h5 class="alt-oz heading-4 oz-karsi">@Model.Advert.ProductStatus</h5>
+                                </div>
+                                <div class="div-block-10 urun2 w-clearfix">
+                                    <h5 class="alt-oz heading-4 oz">
+                                        <b>@Localization.Get("Ayıplar:", "Product Defects:", lang) </b>
+                                    </h5>
+                                    <h5 class="alt-oz heading-4">@Html.Raw(Model.Advert.ProductDefects)</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div data-w-tab="Tab 3" class="w-tab-pane w--tab-active tab-style">
+
+                            <div class="div-block-13">
+                                <div class="div-block-10 oz-h">
+                                    <h5 class="heading-4">@Localization.Get("Ürün Açıklaması:", "Description", lang) </h5>
+                                </div>
+                                <div class="div-block-10 urun2 w-clearfix background-color-fff">
+                                    <p class="white-space-pre-line">@Html.Raw(Model.Advert.Content?.Trim())</p>
+                                </div>
+                                <div class="div-block-10 oz-h">
+                                    <h5 class="heading-4 width-100-100">@Localization.Get("İlan Özellikleri:", "Features", lang)</h5>
+                                </div>
+                                <div class="div-block-10 urun2 w-clearfix">
+                                    <h5 class="alt-oz heading-4 oz">
+                                        <b>@Localization.Get("Yenisinin Satış Fiyatı:", "Sales Price When New:", lang)</b>
+                                    </h5>
+                                    <h5 class="alt-oz heading-4 oz-karsi"> @Model.Advert.NewProductPrice @(Constants.GetMoney(Model.Advert.MoneyTypeID))  </h5>
+                                </div>
+                                <div class="div-block-10 urun2 w-clearfix">
+                                    <h5 class="alt-oz heading-4 oz">
+                                        <b>@Localization.Get("İlgili Web Sitesi:", "Website:", lang)</b>
+                                    </h5>
+                                    <h5 class="alt-oz heading-4 oz-karsi"> <a href="@Model.Advert.WebSite" rel="nofollow" target="_blank">@Model.Advert.WebSite</a> </h5>
+                                </div>
+                                <div class="div-block-10 urun2 w-clearfix">
+                                    <h5 class="alt-oz heading-4 oz">
+                                        <b>@Localization.Get("Durum:", "Status:", lang)</b>
+                                    </h5>
+                                    <h5 class="alt-oz heading-4 oz-karsi">@Model.Advert.ProductStatus</h5>
+                                </div>
+                                <div class="div-block-10 urun2 w-clearfix">
+                                    <h5 class="alt-oz heading-4 oz">
+                                        <b>@Localization.Get("Ayıplar:", "Product Defects:", lang) </b>
+                                    </h5>
+                                    <h5 class="alt-oz heading-4">@Html.Raw(Model.Advert.ProductDefects)</h5>
+                                </div>
+                            </div>
+                        </div>*@
+
+
+
+
+
+                    <div data-w-tab="Tab 2" class="w-tab-pane  tab-style">
+                        <div class="div-block-13">
+
+                            <h5 class="alt-oz heading-4 oz-karsi">@Html.Raw(Model.Advert.ProductDefects)</h5>
+                        </div>
+                    </div>
+                    <div data-w-tab="Tab 3" class="w-tab-pane tab-style">
+                        <div class="div-block-13">
+                            <div class="div-block-10">
+                                <h5 class="heading-4">@Localization.Get("Kullanıcı Bilgileri:", "About User", lang)</h5>
+                            </div>
+                            <div class="div-block-12 w-clearfix">
+                                <div class="div-block-11 width-unset">
+                                    <div class="f-l">@Localization.Get("Kullanıcı:", "User", lang) </div>
+                                    <a class="f-l p-l-5" href="@Constants.GetURL((int) Enums.Routing.SaticiDigerIlanlari, lang)/@Model.Advert.User.ID/@Localization.Slug(Model.Advert?.User?.Name)">@Model.Advert.User.UserName</a>
+                                </div>
+                            </div>
+                            <div class="div-block-12 w-clearfix">
+
+                                <span>@Localization.Get("Puan:", "Rank", lang)</span>
+                                <span>
+                                    <img alt="stars" src="/Content/img/images/stars.png" title="stars">
+                                </span>
+                            </div>
+                            <div class="div-block-12 w-clearfix">
+                                <div class="div-block-11 width-unset">
+                                    <div class="f-l">@Localization.Get("Ülke:", "Country", lang) </div>
+                                    <a class="f-l p-l-5" href="#">@Model.Advert.User?.Country?.Name</a>
+                                </div>
+                            </div>
+                            <div class="div-block-12 w-clearfix">
+                                <div class="div-block-11 width-unset">
+                                    <div class="f-l">@Localization.Get("Şehir:", "City", lang) </div>
+                                    <a class="f-l p-l-5" href="#">@Model.Advert.User?.City?.Name</a>
+                                </div>
+                            </div>
+                            <div class="div-block-12 w-clearfix">
+                                <div class="div-block-11 width-unset">
+                                    <div class="f-l">@Localization.Get("İlçe:", "District", lang) </div>
+                                    <a class="f-l p-l-5" href="#">@Model.Advert.User?.District?.Name</a>
+                                </div>
+                            </div>
+                            <div class="div-block-12 w-clearfix">
+                                <div class="div-block-11"></div>
+                                <div class="div-block-11 div-oz"></div>
+                                <div class="div-line line2"></div>
+                            </div>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+
+                                <div class="div-block-12">
+                                    <a href='@(User.Identity.IsAuthenticated ? "tel:"+Model.Advert?.User?.MobilePhone: "javascript:;")' title="@Model.Advert?.User?.MobilePhone" class="link-block-4 w-inline-block">
+                                        <div>@Model.Advert?.User?.MobilePhone</div>&nbsp; <i class="fa fa-mobile-phone fa-3x"></i>
+                                    </a>
+                                </div>
+                                if (!string.IsNullOrEmpty(Model.Advert?.User?.WorkPhone))
+                                {
+                                    <div class="div-block-12">
+                                        <a href='@("tel:"+Model.Advert?.User?.WorkPhone)' title="@Model.Advert?.User?.WorkPhone" class="link-block-4 w-inline-block">
+                                            <div>@Model.Advert?.User?.WorkPhone</div>&nbsp; <i class="fa fa-mobile-phone fa-3x"></i>
+                                        </a>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="div-block-12">
+                                    <a class="link-block-4 w-inline-block">
+                                    </a>
+                                    <div>
+                                        <a class="link-block-4 w-inline-block"></a>
+                                        <a href="@Constants.GetURL((int) Enums.Routing.UyeOl, lang)">@Localization.Get("Üye Ol", "Sign Up", lang)</a>
+                                        <span>@Localization.Get("veya", "or", lang) </span>
+                                        <a href="@Constants.GetURL((int) Enums.Routing.GirisYap, lang)">@Localization.Get("Giriş Yap", "Sign In", lang)</a>
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="div-block-12">
+                                <a href="@Constants.GetURL((int) Enums.Routing.SaticiDigerIlanlari, lang)/@Model.Advert.User.ID/@Localization.Slug(Model.Advert?.User?.Name)" class="link-block-4 w-inline-block">
+                                    <div class="p-l-10"> @Localization.Get("Diğer Ürünleri", "Other Ads of User", lang)</div> <i class="fa fa-shopping-bag fa-2x"></i>
+                                </a>
+                            </div>
+                            <div class="div-block-10">
+                            </div>
+                            <div class="div-block-10 display-block">
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+        <div class="">
+            <div class="row">
+                <h5 class="col-xs-12 col-sm-12 col-md-12 col-lg-12 benzer h2 h3" style="   text-align: center;    padding-top: 25px;font-size: 24px;
+    font-weight: 300;">
+                    @Localization.Get("Benzer Ürünler", "Similiar Products", lang)
+                </h5>
+                @foreach (var advert in Model.SimilarAdverts)
+                {
+                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3  benzer-urun">
+                        <div class="img-alt urun-imaj">
+                            <a href="@Constants.GetURL((int) Enums.Routing.Ilan, lang)/@advert.CategorySlug/@advert.SubCategorySlug/@Localization.Slug(advert.Title)/@advert.ID" title="@advert.Title">
+                                <img alt="@advert.Title" src="@advert.Thumbnail" onerror="this.src = '/Content/img/no-image.jpg';" class="width-100-100 height-100 object-fit-contain">
+                            </a>
+                        </div>
+                        <div class="pCategories kategoriler text-alt urun-text font-size-12 p-10 height-100">
+                            <a href="@Constants.GetURL((int) Enums.Routing.Ilan, lang)/@advert.CategorySlug/@advert.SubCategorySlug/@Localization.Slug(advert.Title)/@advert.ID" title="@advert.Title">
+                                @advert.Title
+                                <div class="ilan-aciklama-alani m-t-5">
+                                    <p class="color-000"><span>@Localization.Get("İlan No", "Number", lang)</span>: #@advert.ID</p>
+                                    <p class="color-000"><span>@Localization.Get("İlan Tarihi", "Date", lang)</span>: @(advert.CreatedDate.ToShortDateString())</p>
+                                    <p class="color-000"><span>@Localization.Get("Beğeni", "Likes", lang)</span>: <span class="begeni-span">@advert.LikesCount</span></p>
+                                    <p class="color-000"><span>@Localization.Get("Görüntülenme", "Seen", lang)</span>: <span class="begeni-span">@advert.ViewCount</span></p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="kategoriler text-alt p-b-10 p-t-0 p-l-0 p-r-0">
+                            @if (advert.IsILiked)
+                            {
+                                <img alt="Kalp" class="width-100-17 kalp" id="likeImage_@advert.ID" src="/Content/img/images/dolu_kalp.png" onclick="unlikeAd(@advert.ID)" title="@Localization.Get("Beğenmekten Vazgeç", "Unlike", lang)">
+                            }
+                            else
+                            {
+                                <img alt="Kalp" class="width-100-17 kalp" id="likeImage_@advert.ID" src="/Content/img/images/kalp.png" onclick="likeAd(@advert.ID)" title="@Localization.Get("Beğen", "Like", lang)">
+                            }
+                            <span class="new-price m-0">@advert.Price @Constants.GetMoney(advert.MoneyTypeID)</span>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/Scripts/alertify.js"></script>
+    <script src="/Content/plugins/fancybox/jquery.fancybox.min.js"></script>
+    <script>
+        $(".fancybox a").fancybox();
+
+        function mailto(id) {
+            $.ajax({
+                url: "/Account/MailTo",
+                data: { id },
+                type: "post",
+                success: function (result) {
+                    if (result.isSuccess) {
+                        document.location = "mailto:" + result.email;
+                    }
+                }
+            });
+        }
+
+        function UnauthenticatedMailAlert(text) {
+            alertify.success(text);
+        }
+    </script>
+}

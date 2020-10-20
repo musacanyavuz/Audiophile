@@ -1,0 +1,234 @@
+@using Microsoft.AspNetCore.Http.Extensions
+@model SellerViewModel
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("Satıcının Diğer İlanları", "Seller's Other Ads", lang);
+    Layout = "_Layout";
+}
+@section style{
+<style>
+    .product-wrapper {
+        float: left !important;
+    }
+
+    .product-wrapper {
+        float: left !important;
+    }
+
+    .section-1.sec-altsayfa {
+        background-color: white;
+    }
+
+    .div-block-20.div-ilan.hesap {
+        background-color: #ffffff !important;
+    }
+
+    .div-block-20.div-ilan.hesap {
+        height: auto;
+        margin-top: 0;
+        margin-bottom: 0px;
+        padding: 31px 100px 31px 100px;
+        background-color: #f6f6f6;
+    }
+
+    .product.product-list.urulerim.bannerlar {
+        width: 100%;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        padding-left: 100px;
+        padding-right: 100px;
+    }
+
+    @@media screen and (max-width: 992px) {
+        .div-block-20.div-ilan.hesap {
+            height: auto;
+            margin-top: 0;
+            margin-bottom: 0px;
+            padding: 31px 10px 31px 9px;
+            background-color: #f6f6f6;
+        }
+
+        .product.product-list.urulerim.bannerlar {
+            width: 100%;
+            padding-top: 12px;
+            padding-bottom: 12px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    }
+
+    pre {
+        font-family: 'Nunito Sans',sans-serif;
+    }
+
+</style>
+}
+
+@section MetaTag {
+    <meta property="og:title" content="@Model.Seller.Name" />
+    <meta property="og:image" content="@Html.Raw($"https://{Context.Request.Host}{Model.Seller.ProfilePicture}")" />
+    <meta property="og:url" content="@Html.Raw($"https://{Context.Request.Host}{Context.Request.Path}")" />
+}
+
+    <div itemscope itemtype="http://schema.org/Person" hidden="hidden">
+        <span itemprop="name">@Model.Seller.Name</span>
+        <img src="@Html.Raw($"https://{Context.Request.Host}{Model.Seller.ProfilePicture}")" itemprop="image" alt="@Model.Seller.Name" />
+        <span itemprop="jobTitle">@Model.Seller?.Name</span>
+        <div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+            <span itemprop="addressLocality">@Model.Seller?.District?.Name</span>,
+            <span itemprop="addressRegion">@Model.Seller?.City?.Name</span>
+        </div>
+        <a href="https://@Context.Request.Host@Context.Request.Path" itemprop="url">https://@Context.Request.Host@Context.Request.Path</a>
+
+    </div>
+
+
+<div class="section-1 sec-altsayfa sec-hesaplar">
+    <div class="w-container">
+
+        <div class="content w-clearfix f-n width-100-100">
+            <div class="div-block-20 div-ilan hesap w-clearfix m-b-0">
+
+                <div class="row profile-box m-b-0">
+                    <div class="col-md-4 col-12 text-center">
+                        <img alt="@(Model.Seller.Name)" src="@Model.Seller.ProfilePicture" onerror="this.onerror=null;this.src ='/Content/img/avatar-no-image.png';" class="image-12 f-n m-0 display-inline" style="width: 30vh;padding-top: 20px">
+
+                        @*<h5 class="text-center text-transform-capitalize">@Model.Seller.Name</h5>*@
+                    </div>
+                    <div class="col-md-6 col-12">
+                        <div style="    width: 100%;
+    border-top: none;
+    font-size: 40px;
+    text-align: center;
+    padding: 30px;font-weight: bold;line-height: 40px;">@Model.Seller.Name</div>
+    <table class="table table-hover" id="statsTable">
+        <tr>
+            <td>@Localization.Get("Yayınlanan İlanlar", "Published Ads", lang)</td>
+            <td>@Model.Ads?.Count</td>
+        </tr>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <tr>
+                <td>@Localization.Get("Cep Telefon", "Mobile Telephone", lang)</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(Model.Seller.MobilePhone))
+                    {
+                        <a href="tel:@Model.Seller.MobilePhone.Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-","")"> @Model.Seller.MobilePhone </a>
+                    }
+                    else
+                    {
+                        @Localization.Get("Bulunamadı.", "Not found.", lang)
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>@Localization.Get("İş Telefon", "Work Telephone", lang)</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(Model.Seller.WorkPhone))
+                    {
+                        <a href="tel:@Model.Seller.WorkPhone.Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-","")"> @Model.Seller.WorkPhone </a>
+                    }
+                    else
+                    {
+                        @Localization.Get("Bulunamadı.", "Not found.", lang)
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>@Localization.Get("Lokasyon", "Location", lang)</td>
+                <td>
+                    @Model?.Seller?.Country?.Name - @Model?.Seller?.City?.Name - @Model?.Seller?.District?.Name
+                </td>
+            </tr>
+            <tr>
+                <td>@Localization.Get("Mail Adresi", "E-Mail", lang)</td>
+                <td>
+                    <a href="mailto:@Model.Seller.Email">@Model.Seller.Email</a>
+                </td>
+            </tr>
+            @*<tr>
+                    <td>@Localization.Get("Hakkında", "About", lang)</td>
+                    <td>
+                        @Model.Seller.About
+                    </td>
+                </tr>*@
+        }
+        else
+        {
+            <tr>
+                <td>@Localization.Get("Telefon", "Telephone", lang)</td>
+                <td>@Localization.Get("Giriş Yapmalısınız.", "You must sign in.", lang)</td>
+            </tr>
+            <tr>
+                <td>@Localization.Get("Alışlarım", "My Buys", lang)</td>
+                <td>@Localization.Get("Giriş Yapmalısınız.", "You must sign in.", lang)</td>
+            </tr>
+            <tr>
+                <td>@Localization.Get("İş Telefon", "Work Telephone", lang)</td>
+                <td>@Localization.Get("Giriş Yapmalısınız.", "You must sign in.", lang)</td>
+            </tr>
+            <tr>
+                <td>@Localization.Get("Lokasyon", "Location", lang)</td>
+                <td>@Localization.Get("Giriş Yapmalısınız.", "You must sign in.", lang)</td>
+            </tr>
+            <tr>
+                <td>@Localization.Get("Mail Adresi", "E-Mail", lang)</td>
+                <td>@Localization.Get("Giriş Yapmalısınız.", "You must sign in.", lang)</td>
+            </tr>
+            @*<tr>
+                    <td>@Localization.Get("Hakkında", "About", lang)</td>
+                    <td>
+                        @Model.Seller.About
+                    </td>
+                </tr>*@
+        }
+
+    </table>
+</div>
+<div class="col-md-12 col-12">
+
+    <table style=" border: 1px solid #bcbaba; overflow:scroll;display:block;width:100%">
+        <tr style="text-align: left;
+    height: 50px;
+    font-size: 25px;
+    font-weight: bold;
+    background-color: #e7e7e7;">
+            <td style="padding: 15px;">@Localization.Get("Hakkında", "About", lang)</td>
+        </tr>
+
+        <tr>
+
+            <td style="padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 40px;
+    padding-bottom: 15px;">
+                
+                @Html.Raw(Model.Seller.About)
+
+
+
+            </td>
+        </tr>
+    </table>
+
+</div>
+</div>
+
+</div>
+<div class="product product-list urulerim bannerlar">
+
+    <h3>@Localization.Get("Satıcının Diğer İlanları", "Seller's Other Ads", lang)</h3>
+    @if (Model.Ads != null)
+    {
+        foreach (var ad in Model.Ads)
+        {
+            ad.UserName = Model?.Seller?.UserName;
+            await Html.RenderPartialAsync("~/Views/Partials/HomePageItem_5Column.cshtml", ad);
+        }
+    }
+</div>
+</div>
+</div>
+</div>
+

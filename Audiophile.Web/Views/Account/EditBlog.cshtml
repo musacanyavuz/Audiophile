@@ -1,0 +1,405 @@
+@model BlogPost
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang")); 
+    ViewBag.Title = Localization.Get("Haber, Firma, Sistem, Makale Giriş Formu", "New, Firm, System, Article Form", lang);
+    Layout = "_Layout";
+}
+@section style{
+    <link rel="stylesheet" href="~/Content/css/dropzone.min.css">
+    <style>
+        .dz-image-preview {
+            display: table-cell;
+            text-align: center;
+        }
+    </style>
+}
+
+
+<div class="sec-altsayfa sec-hesaplar section-1">
+    <div class="w-container">
+
+        <div class="w-clearfix">
+
+            <div class="div-block-20 div-ilan hesap urun-ekle w-clearfix">
+                <h4 class="h2 h4 h-kat h-kategori">@ViewBag.Title</h4>
+            </div> 
+             
+            <div class="div-block-17 form-wrapper form-hesaplar urun-ekle w-clearfix">
+                
+                <div class="form-block-5 w-form">
+                    
+                    @using (Html.BeginForm("SaveBlog", "Account", FormMethod.Post, new {@class = "w-clearfix", enctype = "multipart/form-data"}))
+                    {
+                        <label class="field-label">@Localization.Get("Başlık", "Title", lang):</label>
+                        <input class="textfield w-input" id="title" maxlength="250" name="Title" type="text" value="@Model.Title"/>
+
+                        <label class="field-label">@Localization.Get("Kısa İçerik", "Subtitle", lang):</label>
+                        <input class="textfield w-input" id="shortContent" maxlength="250" name="ShortContent" type="text" value="@Model.ShortContent" width="100%"/>
+
+                        <label for="name-4" class="field-label">@Localization.Get("Etiketler (Virgülle ayırınız)", "Keywords (Split by comma)", lang):</label>
+                        <input class="textfield w-input" id="keywords" maxlength="250" name="Keywords" type="text" value="@Model.Tags" width="100%"/>
+
+                        <div class="div--marka w-clearfix">
+                            <div class="p-b-5">
+                                @if (Model.Images != null && Model.Images.Any())
+                                {
+                                    <button onclick="updateMainImage()" class="btn btn-info" type="button">@Localization.Get("Ana Fotoğraf Seçimini Kaydet", "Save Main Photo", lang)</button>
+                                }
+                            </div>
+                            @if (Model?.Images != null && Model.Images.Any())
+                            {
+                                <h5>@Localization.Get("Mevcut Fotoğraflar", "Added Photos", lang)</h5>
+                                <div class="row">
+                                    @foreach (var photo in Model.Images)
+                                    {
+                                        <div class="col" id="q_@photo.ID">
+                                            <div class="card width-rem-10">
+                                                <img class="card-img-top" src="@photo.Source" >
+                                                <div class="card-body">
+                                                    <h5 class="card-title">@photo.CreatedDate.ToString("g")</h5>
+                                                    <input type="radio" name="mainImage" value="@photo.ID"/> <span> @Localization.Get("Ana fotoğraf", "Main photo", lang)</span>
+                                                    <a href="javascript:;" onclick="ask(@photo.ID,'')" class="btn btn-block btn-danger">@Localization.Get("Sil","Delete",lang)</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }  
+                            <hr><br>
+                            <h5>@Localization.Get("İşaretlediğin görsel kapak görseli olarak kullanılacak.", "Marked picture will be used as main picture.", lang)</h5>
+                            <small>*@Localization.Get("Max. Dosya Boyutu: 10mb", "Max. File Size: 10mb", lang) </small>
+                            <div>
+                                @*<form action="/Adverts/AddListing" enctype="multipart/form-data" method="POST">*@
+                                <div class="dropzone" id="myDropzone">
+                                    <div class="dz-message" data-dz-message>
+                                        <span>
+                                            @Localization.Get("Fotoğraf eklemek için buraya tıklayınız veya fotoğrafları sürükleyiniz", "Click here to add photos or drag photos", lang)
+                                        </span></div>
+                                </div> <br/>
+                                @*</form>*@
+                            </div>
+                        </div>                                                                                                                           
+                                                                                                                                                   
+                        <label for="name-4">@Localization.Get("İçerik", "Content", lang):</label>
+                        <textarea class="textfield w-input" cols="1" id="content" name="Content" rows="10">
+                            @Html.Raw(Model.Content)
+                        </textarea>
+                        <br/>
+                         
+
+                        <button type="button" id="save" class="button button-main button-satn button-submit submit-center w-button">@Localization.Get("Kaydet","Save", lang)</button>
+                    } 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="preview" class="preview display-none">
+    <li>
+        <div>
+            <div class="dz-preview dz-file-preview">
+                <input type="radio" name="main-image" class="f-l m-100-1 cursor-pointer" />
+                <img data-dz-thumbnail/>
+                <div class="dz-progress">
+                    <span class="dz-upload" data-dz-uploadprogress></span>
+                </div>
+                <div class="dz-success-mark">
+                    <span>✔</span>
+                </div>
+                <div class="dz-error-mark">
+                    <span>✘</span>
+                </div>
+                <div class="dz-error-message">
+                    <span data-dz-errormessage></span>
+                </div>
+            </div>
+        </div>
+    </li>
+</div>
+
+
+
+@section Scripts{
+    <script>
+        function updateMainImage() {
+            var mainImageId = $('input[name="mainImage"]:checked').val();
+            if (mainImageId == null) {
+                notify("error", '@Localization.Get("Mevcut fotoğraflar kısmından bir fotoğraf seçmeniz gerekiyor.",
+                                     "You need to select a photo from the existing photos.",lang)');
+                return;
+            }
+            notify("info", '@Localization.Get("Lütfen bekleyiniz","Please wait", lang)');
+            $.ajax({
+                url:"/UpdateBlogMainPhoto",
+                type: "POST",
+                data: { id:@Model.ID, photoId: parseInt(mainImageId) },
+                success: function(data) {
+                    if (data.isSuccess) {
+                        notify("success", data.message);
+                    } else {
+                        notify("danger", data.message);
+                    }
+                }
+            });
+        }
+    </script>
+    
+    <script>
+        function ask(id, name) {
+            var q = ' @Localization.Get("Silmek istediğinize emin misiniz?", "Are you sure you want to delete?", lang) ';
+            var n = new Noty({
+                container: '#q_'+id,
+                text: name + ' </br>' + q,
+                buttons: [
+                    Noty.button('@Localization.Get("EVET", "YES", lang)',
+                        'btn btn-success',
+                        function() {
+                            deleteImage(id);
+                            n.close();
+                        },
+                        { id: 'button1', 'data-status': 'ok', type: 'button' }),
+                    Noty.button('@Localization.Get("HAYIR", "NO", lang)',
+                        'btn btn-secondary',
+                        function() {
+                            n.close();
+                        }, { type: "button" })
+                ]
+            });
+            n.show();
+        }
+        function deleteImage(id) {
+            $.ajax({
+                url: '/DeleteBlogImage',
+                data: { id },
+                type: 'POST',
+                dataType: 'json',
+                success: function(data) {
+                    var type = '';
+                    if (data.isSuccess) {
+                        type = 'success';
+                        $('#q_' + id).remove();
+                    } else {
+                        type = 'error';
+                    }
+                    new Noty({
+                        theme: 'sunset',
+                        type: type,
+                        text: data.message,
+                        progressBar: true,
+                        timeout: 4000
+                    }).show();
+                }
+            });
+        }
+    </script>
+    
+    <script src="/Content/plugins/tinymce/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector: '#content',
+            plugins: 'image code',
+            toolbar: 'undo redo | image code',
+            menubar: false,
+            plugins: [
+                "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+                "searchreplace wordcount visualblocks visualchars code fullscreen",
+                "insertdatetime media nonbreaking save table contextmenu directionality",
+                "emoticons template paste textcolor colorpicker textpattern"
+            ],
+            image_advtab: true,
+            toolbar: 'insert | undo redo |  formatselect | bold italic underline backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | image | help',
+            // without images_upload_url set, Upload tab won't show up
+            images_upload_url: '/Account/Blog/UploadImage',
+  
+            // we override default upload handler to simulate successful upload
+            images_upload_handler: function (blobInfo, success, failure) {
+                
+                var xhr, formData;
+                xhr = new XMLHttpRequest();
+                xhr.withCredentials = false;
+                xhr.open('POST', '/Account/Blog/UploadImage');
+                xhr.onload = function() {
+                    var json;
+
+                    if (xhr.status !== 200) {
+                        failure('HTTP Error: ' + xhr.status);
+                        return;
+                    }
+                    json = JSON.parse(xhr.responseText);
+
+                    if (!json || typeof json.location != 'string') {
+                        failure('Invalid JSON: ' + xhr.responseText);
+                        return;
+                    } 
+                    success(json.location);
+                };
+                formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.fileName);
+                xhr.send(formData);
+                
+            },
+            
+            init_instance_callback: function (ed) {
+                //ed.execCommand('mceImage');
+            }
+        }); 
+    </script>
+    
+    
+    <script src="/Content/plugins/dropzone/dropzone.js"></script>
+    <script>
+        function notyError(message) {
+            new Noty({
+                theme: 'sunset',
+                type: 'error',
+                text: message,
+                progressBar: true,
+                timeout: 4000
+            }).show();
+        }
+        
+        var cat = @Model.CategoryID;
+        var route= '';
+        if(cat == @((int)Enums.BlogCategory.HaberlerKampanyalar) || cat == @((int)Enums.BlogCategory.SaticilarIthalatcilar)){
+            route = '@Constants.GetURL(Enums.Routing.HaberVeFirmalarim, lang)';
+        }
+        else {
+            route = '@Constants.GetURL(Enums.Routing.SistemVeMakalelerim, lang)';
+        }
+
+        Dropzone.prototype.defaultOptions.dictRemoveFile = '@Localization.Get("Resmi Kaldır","Remove File",lang)';
+        var filesAdded = 0;
+        
+        Dropzone.options.myDropzone = {
+            url: '/MyAccount/EditBlog/@Model.ID',
+            autoProcessQueue: false,
+            uploadMultiple: true,
+            timeout: 540000,
+            parallelUploads: 10,
+            maxFiles: 10,
+            maxFilesize: 100,
+            paramName: "Files",
+            acceptedFiles: 'image/*',
+            addRemoveLinks: true,
+            previewTemplate: $('#preview').html(), 
+            init: function() {
+                var myDropzone = this; 
+                document.getElementById("save").addEventListener("click", function(e) {
+                    @*console.log('save button clicked');*@
+                    if ($('#title').val()==="") {
+                        notyError('@Localization.Get("Lütfen başlık giriniz.","Please enter title.",lang)');
+                        return;
+                    }
+                    if ($('#shortContent').val()==="") {
+                        notyError('@Localization.Get("Lütfen kısa bir açıklama giriniz.","Please enter subtitle.",lang)');
+                        return;
+                    }
+                    
+                    $('#save').css('display', 'none');
+                    e.preventDefault();
+                    e.stopPropagation(); 
+                    if(myDropzone.files.length > 0){
+                        myDropzone.processQueue();
+                    }
+                    else{
+                        var formData = new FormData();
+                        formData.append("MainImage", $('input[name="main-image"]:checked').val()); 
+                        formData.append("Content", tinyMCE.activeEditor.getContent());
+                        formData.append("Title", $('#title').val()); 
+                        formData.append("ShortContent", $('#shortContent').val()); 
+                        formData.append("Tags", $('#keywords').val());                        
+                        new Noty({
+                            theme: 'sunset',
+                            type: 'info',
+                            text: '@Localization.Get("Lütfen bekleyin...","Please wait...",lang)'
+                        }).show();
+
+                        $.ajax({
+                            data: formData,
+                            url: '/MyAccount/EditBlog/@Model.ID',
+                            type: 'post',
+                            processData: false,
+                            contentType: false,
+                            success: function(response){
+                                if (!response.isSuccess) {
+                                    new Noty({
+                                        theme: 'sunset',
+                                        type: 'error',
+                                        text: response.message,
+                                        progressBar: true,
+                                        timeout: 10000
+                                    }).show(); 
+                                    $('#save').css('display', 'block');
+                                } else {
+                                    if (response.message != null) {
+                                        new Noty({
+                                            theme: 'sunset',
+                                            type: 'success',
+                                            text: response.message,
+                                            progressBar: true,
+                                            timeout: 10000
+                                        }).show();
+                                    }  
+                                    document.location = route;
+                                }
+                            }
+                        });
+                    }                    
+                });
+                this.on("sendingmultiple", function(data, xhr, formData) {
+                    @*console.log('sendingmultiple');*@
+                    formData.append("MainImage", $('input[name="main-image"]:checked').val()); 
+                    formData.append("Content", tinyMCE.activeEditor.getContent());
+                    formData.append("Title", $('#title').val()); 
+                    formData.append("ShortContent", $('#shortContent').val()); 
+                    formData.append("Tags", $('#keywords').val());
+                    
+                    new Noty({
+                        theme: 'sunset',
+                        type: 'info',
+                        text: '@Localization.Get("Lütfen bekleyin...","Please wait...",lang)'
+                    }).show();                    
+                });
+                this.on("addedfile", function(file) {
+                    $(file.previewElement).find('input').val(file.name);
+                    filesAdded++;
+                });
+                this.on("queuecomplete", function (file) { 
+                    //var route = '(Localization.Get("/IlanEkle/IlanDetaylari/", "/AddListing/AdDetails/", lang)+Model)';
+                    //window.location = route;
+                });
+                this.on("success", function(file, response) { 
+                    filesAdded--;
+                    if (filesAdded == 0) {
+                        if (!response.isSuccess) {
+                            new Noty({
+                                theme: 'sunset',
+                                type: 'error',
+                                text: response.message,
+                                progressBar: true,
+                                timeout: 10000
+                            }).show(); 
+                            $('#save').css('display', 'block');
+                        } else {
+                            if (response.message != null) {
+                                new Noty({
+                                    theme: 'sunset',
+                                    type: 'success',
+                                    text: response.message,
+                                    progressBar: true,
+                                    timeout: 10000
+                                }).show();
+                            }                             
+                            document.location = route;
+                        }
+                    } 
+                });
+                
+            }
+        } 
+    </script>
+}
+

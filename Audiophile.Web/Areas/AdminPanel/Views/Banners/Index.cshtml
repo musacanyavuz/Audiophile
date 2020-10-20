@@ -1,0 +1,185 @@
+@model List<Banner>
+
+@{
+    ViewBag.Title = "Bannerlar";
+    Layout = "AdminLayout";
+    ViewData["ActiveMenu"] = "menu-item-banners";
+}
+
+@section Styles{
+    <link href="/AdminContent/assets/vendors/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css">
+}
+
+<div class="m-portlet m-portlet--mobile">
+    <div class="m-portlet__head">
+        <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+                <h3 class="m-portlet__head-text">
+                    Bannerlar
+                </h3>
+            </div>
+        </div>
+        <div class="m-portlet__head-tools">
+            <ul class="m-portlet__nav">
+                <li class="m-portlet__nav-item">
+                    <a href="/AdminPanel/Banners/Create" class="btn btn-primary m-btn m-btn--pill m-btn--custom m-btn--icon m-btn--air">
+                        <span>
+                            <i class="la la-plus"></i>
+                            <span>Yeni Banner</span>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="m-portlet__body">
+        <div class="table-responsive">
+            <table class="table table-striped- table-bordered table-hover table-checkable" id="m_table_1">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Başlık</th>
+                    <th>Kullanıcı</th>
+                    <th>Kategori</th>
+                    <th>Tıklama</th>
+                    <th>Durum</th>
+                    <th>Oluşturma Tarihi</th>
+                    <th>Bitiş Tarihi</th>
+                    <th>İşlemler</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                @foreach (var banner in Model)
+                {
+                    <tr id="row_@banner.ID">
+                        <td> @banner.ID</td>
+                        <td>
+                             @(banner.Title?.Length > 30 ? banner.Title.Substring(0,30)+"...":banner.Title)
+                        </td>
+                        <td> @(banner.User?.Name) </td>
+                        <td> @banner.TypeID </td>
+                        <td> @banner.ClickCount </td>
+                        <td id="status_@banner.ID"> @(banner.IsActive ? "Aktif" : "Pasif") </td>
+                        <td> @banner.CreatedDate.ToString("g") </td>
+                        <td> @(banner.EndDate?.ToString("g")) </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button onclick="showImage('@banner.ImageSource')" class="m-btn btn btn-brand" title="Bannerı Göster">
+                                    <i class="la la-image"></i>
+                                </button>
+                                <a href="/AdminPanel/Banners/Details/@banner.ID" class="m-btn btn btn-info" title="Detaylar">
+                                    <i class="la la-bars"></i>
+                                </a>
+
+                                @if (banner.IsActive)
+                                {
+                                    <button onclick="updateStatusMessage(@banner.ID, false, '@banner.Title')" class="m-btn btn btn-warning" title="Pasifleştir">
+                                        <i class="la la-close"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button onclick="updateStatusMessage(@banner.ID, true, '@banner.Title')" class="m-btn btn btn-success" title="Aktifleştir">
+                                        <i class="la la-check"></i>
+                                    </button>
+                                }
+
+                                <button onclick="deleteMessage(@banner.ID, '@banner.Title')" class="m-btn btn btn-danger" title="Tamamen Sil">
+                                    <i class="la la-trash-o"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+</div>
+
+@section Scripts{
+    <script src="/AdminContent/assets/vendors/custom/datatables/datatables.bundle.js" type="text/javascript"></script>
+    <script>
+        $("#m_table_1").DataTable({
+            order: [0, 'desc'],
+            dom: "<'row'<'col-sm-6 text-left'f><'col-sm-6 text-right'B>>\n\t\t\t<'row'<'col-sm-12'tr>>\n\t\t\t<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>",
+            buttons: ["print", "copyHtml5", "excelHtml5", "csvHtml5", "pdfHtml5"]
+        });
+    </script>
+    <script>
+        function updateStatusMessage(id, isActive, title) {
+            var status = isActive ? "aktifleştirmek" : "pasifleştirmek";
+            
+            Swal({
+                title: '#'+id+' '+title+' başlıklı bannerı '+status+' istediğinize emin misiniz?',
+                text: "Banner güncellenmek üzere",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet',
+                cancelButtonText: 'Vazgeç'
+            }).then((result) => {
+                if (result.value) {
+                    updateStatus(id, isActive);
+                }
+            });
+        }
+        function updateStatus(id, status) {
+            var newStatus = status ? "Aktif" : "Pasif";
+            $.ajax({
+                url: "/AdminPanel/Banners/UpdateStatus",
+                type: "POST",
+                data: { id, status },
+                success: function(data) {
+                    if (data.isSuccess) {
+                        $('#status_' + id).html(newStatus);
+                        notify("success", data.message);
+                    } else {
+                        notify("danger", data.message);
+                    }
+                }
+            });
+        }
+    </script>
+    <script>
+        function deleteMessage(id, title) {
+            Swal({
+                title: '#'+id+' '+title+' başlıklı bannerı silmek istediğinize emin misiniz?',
+                text: "Banner herkesin görüntülebileceği şekilde yayınlanmak üzere.",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet',
+                cancelButtonText: 'Vazgeç'
+            }).then((result) => {
+                if (result.value) {
+                    deletePost(id);
+                }
+            });
+        }
+        function deletePost(id, status) {
+            $.ajax({
+                url: "/AdminPanel/Banners/Delete",
+                type: "POST",
+                data: { id, status },
+                success: function(data) {
+                    if (data.isSuccess) {
+                        $('#row_' + id).remove();
+                        notify("success", data.message);
+                    } else {
+                        notify("danger", data.message);
+                    }
+                }
+            });
+        }
+    </script>
+    <script>
+        function showImage(url) {
+            Swal({ imageUrl: url });
+        }
+    </script>
+}

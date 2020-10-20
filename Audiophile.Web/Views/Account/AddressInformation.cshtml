@@ -1,0 +1,156 @@
+@model List<UserAddress>
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("Adres Bilgilerim", "Postage Address", lang);
+    Layout = "_Layout";
+}
+@section style{
+<style>
+    tr > td {
+        padding: 1%;
+        color: #444;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .add-button {
+        border: 1px solid #f8f8f8;
+        padding: 10px;
+        float: right;
+        margin-top: 10px;
+        background: #e70c1e;
+        color: #fff;
+    }
+
+        .add-button:hover {
+            color: #fff !important
+        }
+</style>
+}
+
+<div class="section-1 sec-altsayfa sec-hesaplar">
+    <div class="w-container">
+
+        @{Html.RenderPartial("~/Views/Partials/AccountSideMenu.cshtml", 1);}
+
+        <div class="content w-clearfix">
+            <div class="div-block-20 div-ilan hesap w-clearfix">
+                <h4 class="h2 h4 h-kat h-kategori">@ViewBag.Title </h4>
+
+                <a href="@Constants.GetURL((int)Enums.Routing.AdresEkle, lang)" class="link-8 add-button">
+                    <i class="fa fa-plus fa-fw"></i>@Localization.Get("Adres Ekle", "Add Address", lang)
+                </a>
+            </div>
+            <div id="question">
+
+            </div>
+            <div class="product product-list urulerim bannerlar">
+                <div class="table-responsive">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <td>
+                                    <div class="new-price pro-text">@Localization.Get("Adres Başlık", "Address Title", lang)</div>
+                                </td>
+                                <td>
+                                    <div class="new-price pro-text">@Localization.Get("Adres", "Address", lang)</div>
+                                </td>
+                                <td>
+                                    <div class="new-price pro-text">@Localization.Get("Şehir", "City", lang) </div>
+                                </td>
+                                <td>
+                                    <div class="new-price pro-text">@Localization.Get("İlçe", "District", lang)</div>
+                                </td>
+                                <td>
+                                    <div class="new-price pro-text">@Localization.Get("Varsayılan", "Default", lang)</div>
+                                </td>
+                                <td>
+                                    <div class="new-price pro-text">#</div>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                foreach (var address in Model)
+                                {
+                                    <tr id="row_@address.ID">
+                                        <td>@address.Title</td>
+                                        <td>@address.Address</td>
+                                        <td>@(address.City?.Name ?? address.CityText)</td>
+                                        <td>@(address.District?.Name)</td>
+                                        <td>
+                                            @( address.IsDefault ? Localization.Get("Evet", "Yes", lang) : Localization.Get("Hayır", "No", lang) )
+                                        </td>
+                                        <td>
+                                            <a class="link-12" href="@Constants.GetURL((int)Enums.Routing.AdresDuzenle,lang)/@address.ID">
+                                                <span class="cursor-pointer">@Localization.Get("Düzenle", "Edit", lang)</span>
+                                            </a>
+                                            <a class="link-12" href="javascript:;" onclick="ask(@address.ID,'@address.Title')">
+                                                <span class="cursor-pointer">@Localization.Get("Kaldır", "Remove", lang)</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function ask(id, name) {
+            var q = ' @Localization.Get("Silmek istediğinize emin misiniz?", "Are you sure you want to delete?", lang) ';
+            var n = new Noty({
+                container: '#question',
+                text: name + ' </br>' + q,
+                buttons: [
+                    Noty.button('@Localization.Get("EVET", "YES", lang)',
+                        'btn btn-success',
+                        function() {
+                            deleteAddress(id);
+                            n.close();
+                        },
+                        { id: 'button1', 'data-status': 'ok' }),
+                    Noty.button('@Localization.Get("HAYIR", "NO", lang)',
+                        'btn btn-error',
+                        function() {
+                            n.close();
+                        })
+                ]
+            });
+            n.show();
+        }
+
+        function deleteAddress(id) {
+            $.ajax({
+                url: '/UserAddress/Delete/',
+                data: { id },
+                type: 'POST',
+                dataType: 'json',
+                success: function(data) {
+                    var type = '';
+                    if (data.isSuccess) {
+                        type = 'success';
+                        $('#row_' + id).remove();
+                    } else {
+                        type = 'error';
+                    }
+                    new Noty({
+                        theme: 'sunset',
+                        type: type,
+                        text: data.message,
+                        progressBar: true,
+                        timeout: 4000
+                    }).show();
+                }
+            });
+        }
+    </script>
+
+}

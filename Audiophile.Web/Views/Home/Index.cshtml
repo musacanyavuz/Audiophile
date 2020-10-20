@@ -1,0 +1,400 @@
+﻿@model HomePageViewModel
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewData["Title"] = Localization.Get("Satılık Hoparlör, Amfi, Sıfır, İkinci El Ses Sistemleri ", "Electronic Musical Instruments Trading Site", lang);
+    ViewBag.SeoDescription = "Audiophile Sahibinden Satılık Hi-Fi Müzik Seti, Müzik Sistemi, Amfi, Hoparlör, Müzik Tesisatı Yeni, İkinci El Müzik Tesisatı, Ev Sineması, Kolon, CD Player";
+    Layout = "_Layout";
+}
+
+@section MetaTag{
+    <meta property="og:image" content="https://www.audiophile.org/Content/img/images/AudiophileLogo.png" />
+    <meta property="og:url" content="https://www.audiophile.org/" />
+}
+
+@section style {
+    <link href="~/Content/css/main.css" rel="stylesheet" type="text/css" />
+    <style>
+        .modal-header:after {
+            content: none;
+        }
+
+        .modal-header:before {
+            content: none;
+        }
+
+        .slider-banner-logo-item a {
+            transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) !important;
+        }
+
+        .splitbanner {
+            width: 100%;
+        }
+
+        .link-block {
+            padding: 5px 14px 5px 0;
+        }
+
+        h3.ilan {
+            color: #fff;
+        }
+
+        .slide-back-img {
+            background-image: url('/Content/img/add-slider-img.jpg')
+        }
+
+        .ilan-aciklama-p-wh {
+            color: white;
+            font-size: 2px;
+        }
+
+        .ilan-aciklama-p-rgb {
+            color: rgba(255, 194, 0, .19);
+            font-size: 2px;
+        }
+    </style>
+}
+
+<div class="full-slider v2 height-auto">
+    <div class="container-7 w-container p-t-100-5">
+        <div class="row p-b-100-15 mb-1">
+            <div class="col-md-6 col-12">
+                <h1 class="heading-2 kirala font-size-2-3-em"> @Html.Raw(TextService.GetText((int)Enums.Texts.AnasayfaKapakBaslik, lang)) </h1>
+                <p class="paragraph-2 pbilgi font-size-1-25-em"> @Html.Raw(TextService.GetText((int)Enums.Texts.AnasayfaKapayDetay, lang)) </p>
+            </div>
+            <div class="col-md-6 col-12">
+                <img src="/content/img/kirmizi_bg.png" alt="Ev elektroniği, Ses Sistemi, Ev Sineması, Amfi, Hoparlör, Odyofil, Stereo, Satılık Elektronik, Hi-Fi, Audio, Müzik Seti" />
+            </div>
+        </div>
+    </div>
+    <div class="div-block-4 solyan">
+
+        <div class="owl-carousel " id="banner_logo">
+            <div class="slider-banner-logo-item">
+                <a href="@Constants.GetURL((int) Enums.Routing.BannerEkle, lang)" data-ix="logo-int" class="link-block link-logos w-inline-block">
+                    <img src="~/content/img/buraya-logo-ekle.png" title="@Localization.Get("Buraya banner ekle", "Add banner here", lang)" alt="@Localization.Get("İlan Ver", "Add Listing", lang)" />
+                </a>
+            </div>
+            @foreach (var banner in Model.Banners?.Where(x => x.TypeID == Enums.BannerType.Logo).ToList())
+            {
+                <div class="slider-banner-logo-item">
+                    <a href='@(banner.Url.Contains("http") ? banner.Url : "http://" + banner.Url)' data-ix="logo-int" class="link-block link-logos w-inline-block" onclick="clickBanner(@banner.ID)" target="_blank">
+                        <img src="@banner.ImageSource" alt="@banner.Title" />
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+<div id="alisveris" class="sec-altsayfa section-1">
+    <div class="w-container">
+
+        <div class="side-bar">
+            <div class="kategoriler-div">
+                <div class="kategoriler">@Html.Raw(Localization.Get("KATEGORİLER", "CATEGORIES", lang))</div>
+
+                @foreach (var category in Model.AdvertCategories)
+                {
+                    <a href="/@(Localization.Get("Kategori", "Category", lang))/@category.Slug" class="link-block w-clearfix w-inline-block">
+                        <img alt="@Html.Raw(category.Description)" src="@category.IconSource" onerror="this.src = '/Content/img/images/favicon.jpg';" width="19" height="19" title="@Html.Raw(category.Name)" />
+                        <h2 class="home-left-item">@Html.Raw(category.Name)</h2>
+                    </a>
+                }
+            </div>
+            <div class="w-clearfix">
+                <div class="kategoriler">ADVERTORIAL</div>
+                <a href="@Constants.GetURL((int) Enums.Routing.Blog_HaberlerKampanyalar, lang)" class="link-block w-clearfix w-inline-block">
+                    <img alt="@Localization.Get("Haber, Kampanyalar", "News, Campaings", lang)" src="/Upload/Categories/news.png" onerror="this.src = '/Content/img/images/favicon.jpg';" width="19" height="19" title="@Localization.Get("Haber, Kampanyalar", "News, Campaings", lang)" />
+
+                    <h2 class="home-left-item">@Localization.Get("Haber, Kampanyalar", "News, Campaings", lang)</h2>
+                </a>
+                <a href="@Constants.GetURL((int) Enums.Routing.Blog_SaticilarIthalatcilar, lang)" class="link-block w-clearfix w-inline-block">
+                    <img alt="@Localization.Get("Satıcılar, İthalatçılar", "Sellers, Importers", lang)" src="/Upload/Categories/sellers.png" onerror="this.src = '/Content/img/images/favicon.jpg';" width="19" height="19" title="@Localization.Get("Satıcılar, İthalatçılar", "Sellers, Importers", lang)" />
+
+                    <h2 class="home-left-item">@Localization.Get("Satıcılar, İthalatçılar", "Sellers, Importers", lang)</h2>
+                </a>
+            </div>
+
+            <div class="w-clearfix">
+                <div class="kategoriler">BLOG</div>
+                <a href="@Constants.GetURL((int) Enums.Routing.Blog_OdyofilSistemler, lang)" class="link-block w-clearfix w-inline-block">
+                    <img alt="@Localization.Get("Odyofil Sistemler", "Audiophile's Systems", lang)" src="/Upload/Categories/audiophile_systems.png" onerror="this.src = '/Content/img/images/favicon.jpg';" class="icon ic2" width="19" height="19" title="@Localization.Get("Odyofil Sistemler", "Audiophile's Systems", lang)" />
+
+                    <h2 class="home-left-item">@Localization.Get("Odyofil Sistemler", "Audiophile's Systems", lang)</h2>
+                </a>
+                <a href="@Constants.GetURL((int) Enums.Routing.Blog_YazilarMakaleler, lang)" class="link-block w-clearfix w-inline-block">
+                    <img alt="@Localization.Get("Yazı, Makaleler", "Articles", lang)" src="/Upload/Categories/articles.png" onerror="this.src = '/Content/img/images/favicon.jpg';" width="19" height="19" class="icon ic2" title="@Localization.Get("Yazı, Makaleler", "Articles", lang)" />
+
+                    <h2 class="home-left-item">@Localization.Get("Yazı, Makaleler", "Articles", lang)</h2>
+                </a>
+            </div>
+            <div class="w-clearfix">
+
+                <div class="kategoriler">@Localization.Get("DESTEK", "SUPPORT", lang) </div>
+
+                <a href="@Constants.GetURL((int) Enums.Routing.Hakkimizda, lang)" class="link-block w-inline-block w-clearfix">
+                    <h4 class="home-left-item m-l-0">- @Localization.Get("Hakkımızda", "About Us", lang)</h4>
+                </a>
+
+                <a href="@Constants.GetURL((int) Enums.Routing.Videolar, lang)" class="link-block w-inline-block w-clearfix">
+                    <h4 class="home-left-item m-l-0">- @Localization.Get("Videolar", "Videos", lang)</h4>
+                </a>
+                <a href="@Constants.GetURL((int) Enums.Routing.Yardim, lang)" class="link-block w-inline-block  ">
+                    <h4 class="home-left-item m-l-0">- @Localization.Get("Yardım", "Help", lang)</h4>
+                </a>
+                <a href="@Constants.GetURL((int) Enums.Routing.KullanimKosullari, lang)" class="link-block w-inline-block  ">
+                    <h4 class="home-left-item m-l-0">- @Localization.Get("Kullanım Koşulları", "Terms of Use", lang)</h4>
+                </a>
+                <a href="@Constants.GetURL((int) Enums.Routing.GuvenliOdemeGittiBu, lang)" class="link-block w-inline-block  ">
+                    <h4 class="home-left-item m-l-0">- @Localization.Get("Güvenli Ödeme Gitti Bu", "Secure Payment", lang)</h4>
+                </a>
+                <a href="@Constants.GetURL((int) Enums.Routing.Ucretler, lang)" class="link-block w-inline-block  ">
+                    <h4 class="home-left-item m-l-0">- @Localization.Get("Ücretler", "Fees", lang)</h4>
+                </a>
+                <a href="@Constants.GetURL((int) Enums.Routing.Iletisim, lang)" class="link-block w-inline-block   ">
+                    <h4 class="home-left-item m-l-0">- @Localization.Get("İletişim", "Contact Us", lang)</h4>
+                </a>
+            </div>
+
+        </div>
+
+        <div class="div-block-36">
+            <div class="div-head w-clearfix">
+                <div class="div-block-36">
+                    <div class="products">
+                        @{
+                            var index = 0;
+                            while (index < Model.Items.Count && index < 12)
+                            {
+                                await Html.RenderPartialAsync("~/Views/Partials/HomePageItem_4Column.cshtml", Model.Items[index]);
+                                index++;
+
+                                @if (index % 4 == 0)
+                                {
+                                    <div style="width: 100%">
+                                        <ins class="adsbygoogle"
+                                             style="display:block"
+                                             data-ad-client="ca-pub-9703328830778745"
+                                             data-ad-slot="9567262438"
+                                             data-ad-format="auto"
+                                             data-full-width-responsive="true">
+                                        </ins>
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+<div class="ayirackalip">
+    <div class="section-2">
+        <div class="div-ad-text p-t-3 p-b-3">
+            <h3 class="ilan">
+                @Localization.Get("Satılık En İyi Müzik Sistemleri, Türkiye'deki en iyi müzik sistemleri, Ev Elektroniği, Amfi, Amplifikatör, Hoparlör, Hi-Fi, Audio İlanları audiophile.org da",
+                    "High End Audio Classifieds, High-End audio components HiFi audio equipment for sale", lang)
+            </h3>
+        </div>
+    </div>
+</div>
+
+
+<div class="sec-logolar beyaz-alan">
+    <div>
+        <div class="container-logolar w-container">
+            <div class="content cont2">
+                <div class="div-block-36">
+                    <div class="products" id="basilacakyer">
+                        @{
+                            var bannerIndex = 0;
+                            for (; index < Model.Items.Count; index++)
+                            {
+                                await Html.RenderPartialAsync("~/Views/Partials/HomePageItem_5Column.cshtml", Model.Items[index]);
+
+                                if (Model.HomepageSplitBanners != null && (index - 1) % 5 == 0 && bannerIndex < Model.HomepageSplitBanners.Count)
+                                {
+                                    await Html.RenderPartialAsync("~/Views/Partials/SplitBanner.cshtml", Model.HomepageSplitBanners.Skip(bannerIndex).Take(1).Single());
+                                    bannerIndex++;
+                                }
+                            }
+
+                            if (Model.HomepageSplitBanners != null && bannerIndex < Model.HomepageSplitBanners.Count)
+                            {
+                                for (int i = bannerIndex; i < Model.HomepageSplitBanners.Count; i++)
+                                {
+                                    await Html.RenderPartialAsync("~/Views/Partials/SplitBanner.cshtml", Model.HomepageSplitBanners[i]);
+                                }
+                            }
+
+                        }
+                    </div>
+                </div>
+                @*<a id="btnLoadMore" onclick="getAdverts()" class="button button-main button-sub w-button load-more-button">
+                        @Localization.Get("Daha Fazla...", "Load More...", lang)
+                    </a>*@
+            </div>
+        </div>
+
+        <div class="w-container">
+            <div class="slider sliderana w-clearfix w-slider" data-animation="slide" data-easing="ease-out" data-loop="1" data-autoplay="1" data-delay="5000" data-disable-swipe="0" data-duration="1000" data-infinite="0">
+                <div class="w-slider-mask">
+                    @if (Model.Banners != null && Model.Banners.Any())
+                    {
+                        foreach (var banner in Model.Banners.Where(x => x.TypeID == Enums.BannerType.Slider))
+                        {
+                            <a class="slide w-slide index-a-href-style" target="_blank" href='@(banner.Url.Contains("http") ? banner.Url : "http://" + banner.Url)' onclick="clickBanner(@banner.ID);">
+                                <div class="slide w-slide big-@banner.ID" style="background-image: url('@banner.ImageSource');">
+                                    @*                             <div hidden="hidden" data-ix="new-interaction" class="div-texts width-100-60 transition-width-400-ease-in-out"> *@
+                                    @*                                 <div data-ix="new-interaction" class="width-100-60 transition-width-400-ease-in-out"> *@
+                                    @*                                     @if (!string.IsNullOrEmpty(banner.Title)) *@
+                                    @*                                     { *@
+                                    @*                                         <h3 hidden="hidden" class="heading index-heading-style" > *@
+                                    @*                                             @banner.Title *@
+                                    @*                                         </h3> *@
+                                    @*                                     } *@
+                                    @*                                 </div> *@
+                                    @*                             </div> *@
+                                    <div class="div-texts text-mob">
+                                        <div data-ix="new-interaction" class="width-100-60 transition-width-400-ease-in-out">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <a class="slide w-slide index-a-href-style" target="_blank" href="@Constants.GetURL(Enums.Routing.BannerEkle, lang)">
+                                <div class="slide w-slide slide-back-img">
+                                    <div data-ix="new-interaction" class="div-texts width-100-60 transition-width-400-ease-in-out">
+                                        <div data-ix="new-interaction" class="width-100-60  transition-width-400-ease-in-out">
+
+                                        </div>
+                                    </div>
+                                    <div class="div-texts text-mob">
+                                        <div data-ix="new-interaction" class="width-100-60 transition-width-400-ease-in-out">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        }
+                    }
+                </div>
+                <div class="right-arrow w-slider-arrow-left">
+                    <div class="arrow-left w-icon-slider-left"></div>
+                </div>
+                <div class="right-arrow w-slider-arrow-right">
+                    <div class="arrow w-icon-slider-right"></div>
+                </div>
+                <div class="slide-nav w-slider-nav w-round">
+                    <div class="w-slider-dot w-active" data-wf-ignore=""></div>
+                    <div class="w-slider-dot" data-wf-ignore=""></div>
+                    <div class="w-slider-dot" data-wf-ignore=""></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="section-2">
+    <div class="div-ad-text p-t-3 p-b-25">
+        <h3 class="ilan">
+            @* @Localization.Get("İlan yayınlamak ücretsiz", "Advertise Free", lang) *@
+            @Html.Raw(@TextService.GetText((int)Enums.Texts.AnaSayfaAltYaziBaslik, lang))
+
+        </h3>
+        <div class="div-line"></div>
+        <p class="paragraph width-100-40">
+            @Html.Raw(@TextService.GetText((int)Enums.Texts.AnaSayfaAltYazi, lang))
+
+        </p><a href="@Constants.GetURL(Enums.Routing.IlanEkle, lang)" class="button button-main w-button index-heading-style">@Localization.Get("İlan Ekle", "Add Listing", lang)</a>
+    </div>
+</div>
+
+
+@section Scripts
+    {
+    <script>
+        @{
+            if (Model.Items.Any())
+            {
+                var minId = Model.Items.Where(y => y.Type == Enums.HomePageItemType.Ilan).ToList().Min(x => x.ID);
+                <text>
+        var minId = @minId;
+                </text>
+            }
+        }
+
+        function getAdverts() {
+            $("#btnLoadMore")
+                .html(
+                    '<i class="fa fa-spin fa-spinner m-r-10" ></i> @(Localization.Get("Yükleniyor", "Loading", lang))...')
+                .addClass("disabled");
+
+            var request = $.ajax({
+                url: "/Home/GetAdverts",
+                data: { id: minId },
+                method: "POST"
+            });
+            request.done(function(data) {
+                $("#basilacakyer").append(data);
+                minId = parseInt($('.AcilSatilikUrun:last').attr('id').replace('advert_', ''));
+                $("#btnLoadMore").html('@Localization.Get("Daha Fazla...", "Load More...", lang)')
+                    .removeClass("disabled");
+            });
+        }
+    </script>
+
+
+    @*<script type="text/javascript" src="~/Content/script/home.js"></script>*@
+    <script>
+        $('.owl-carousel').owlCarousel({
+            loop: true,
+            margin: 10,
+            nav: false,
+            autoplay: true,
+            autoplayHoverPause: true,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                600: {
+                    items: 3
+                },
+                1000: {
+                    items: 5
+                }
+            }
+        })
+    </script>
+
+    <script>
+        function clickBanner(id) {
+            $.ajax({
+                url: "/BannerClick",
+                data: { id },
+                method: "POST"
+            });
+        }
+    </script>
+    <script>
+       @if (ViewBag.ScrollToBottom != null && ViewBag.ScrollToBottom == true)
+       {
+           <text>
+               setTimeout(scrollToBottom, 200);
+
+                function scrollToBottom(){
+                    var divLoc = $('#advert_'+minId).offset();
+                    $('html, body').animate({scrollTop: divLoc.top - 100}, "slow");
+                };
+            </text>
+       }
+    </script>
+}

@@ -1,0 +1,122 @@
+@model Advert
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("Sonuç", "Summary", lang);
+    Layout = "_Layout";
+}
+
+@section style{
+    <style>
+        .crop-area #canvas, #canvas2 {
+            height: 300px;
+            width: 300px;
+            background-color: #ffffff;
+            cursor: default;
+            border: 1px solid black;
+        }
+
+        .div-block-17.form-wrapper.form-hesaplar.urun-ekle {
+            background-color: white;
+        }
+
+        .div--marka {
+            width: 100%;
+            margin-bottom: 71px;
+            padding: 0px;
+            border: 1px #e4e4e4;
+            background-color: white;
+        }
+
+        @@media screen and (min-width: 1200px) {
+
+            .w-container {
+                max-width: 906px !important;
+            }
+
+            .register-form {
+                width: 80%;
+                margin: auto;
+            }
+
+                .register-form .w-checkbox-input, .register-form .w-radio-input,
+                .checkbox-field-2 {
+                    float: none !important;
+                }
+        }
+
+        .sec-altsayfa.sec-hesaplar.section-1 {
+            background-color: #fff !important;
+        }
+
+        .div-block-20.div-ilan.hesap {
+            background-color: white !important;
+        }
+
+        @@media screen and (max-width: 992px) {
+            .h2.h4.h-kat {
+                margin-bottom: 0px;
+            }
+
+            .div-block-20.div-ilan.hesap {
+                padding-top: 25px;
+                padding-bottom: 0px;
+            }
+
+            .radio-button {
+                margin-right: 5px;
+            }
+        }
+
+        .heading-2 {
+            text-align: center;
+        }
+    </style>
+}
+
+<div class="sec-altsayfa sec-hesaplar section-1">
+    <div class="w-container">
+
+        <div class="w-clearfix">
+
+            <div class="div-block-20 div-ilan hesap urun-ekle w-clearfix">
+                <h4 class="h2 h4 h-kat h-kategori">@Localization.Get("İlan Girişi", "Add Listing", lang)</h4>
+            </div>
+
+            @{
+                await Html.RenderPartialAsync("~/Views/Partials/AddListingSteps.cshtml", 4);
+            }
+
+            <div class="div-block-17 form-wrapper form-hesaplar urun-ekle w-clearfix">
+                <h3 class="heading-2 form-text">@Localization.Get("İlanınız Tamamlandı", "Ad creation completed", lang)</h3>
+
+                <h5 class="heading-2 form-text istemiyorum">
+                    <button type="button" class="link-7 onecikarma">
+                        <a href="@Constants.GetURL((int) Enums.Routing.Ilanlarim, lang)" class="color-white">@Localization.Get("İlanlarım", "My Ads", lang)</a>
+                    </button>
+                </h5>
+
+                <div class="form-block-5 w-form">
+
+                    <div class="div-block-48 w-clearfix">
+                        <img alt="Untitled-1Group-1" src="/Content/img/success.png" class="image-16 width-max-200">
+                        <label for="name-5" class="field-label ilanim">
+                            @Localization.Get("İlanınız tamamlandı. Yönetici onayından sonra yayınlanacak.", "Ad was created. Will be published after administrator approval", lang)
+                        </label>
+                        <p class="p-info">
+
+                        </p>
+                    </div>
+
+
+                    <a href="/" class="button button-main button-satn button-submit submit-center w-button">
+                        @Localization.Get("Anasayfaya dön", "Go Home", lang)
+                    </a>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

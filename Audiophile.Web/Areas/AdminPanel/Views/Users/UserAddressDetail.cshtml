@@ -1,0 +1,154 @@
+@model UserAddressDetailViewModel
+
+@{
+    ViewBag.Title = "Kullanıcı Detayları";
+    Layout = "AdminLayout";
+    ViewData["ActiveMenu"] = "menu-item-users";
+}
+
+<div class="m-content">
+
+    <div class="row">
+        <div class="col-xl-6">
+                     <div class="m-portlet">
+                            <div class="m-portlet__head">
+                                <div class="m-portlet__head-caption">
+                                    <div class="m-portlet__head-title">
+                                        <span class="m-portlet__head-icon m--hide">
+                                            <i class="la la-gear"></i>
+                                        </span>
+                                        <h3 class="m-portlet__head-text">
+                                            Kullanıcının Adresleri
+                                        </h3>
+                                    </div>
+            
+                                </div>
+                            </div>
+                            @using (Html.BeginForm("UserAddressDetail", "Users", FormMethod.Post,
+                                new {@class = "m-form"}))
+                            {
+                                
+                                <input type="hidden" name="ID" value="@Model.UserAddress.ID"/>
+                                <div class="m-portlet__body"> 
+                                     <div class="form-group m-form__group row">
+                                            <label class="col-lg-4 col-form-label">Adres Başlığı:</label>
+                                            <div class="col-lg-6">
+                                                <input type="text" name="Title" value="@Model.UserAddress.Title" class="form-control m-input">
+                                            </div>
+                                        </div> 
+                                        <div class="form-group m-form__group row">
+                                            <label class="col-lg-4 col-form-label">Adres:</label>
+                                            <div class="col-lg-6">
+                                                <input type="text" name="Address" value="@Model.UserAddress.Address" class="form-control m-input">
+                                            </div>
+                                        </div>
+                                        <div class="form-group m-form__group row">
+                                            <label class="col-lg-4 col-form-label">Ülke:</label>
+                                            <div class="col-lg-6"> 
+                                                <select class="form-control w-dropdown textfield" name="CountryID" id="country" required>
+                                                    @foreach (var country in Model.Countries)
+                                                    {
+                                                        <option value="@country.ID">@country.Name</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div><div class="form-group m-form__group row">
+                                            <label class="col-lg-4 col-form-label">İl:</label>
+                                            <div class="col-lg-6"> 
+                                                <select class="form-control w-dropdown textfield" name="CityID" id="city">
+                                                    @foreach (var city in Model.Cities)
+                                                    {
+                                                        <option value="@city.ID">@city.Name</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div><div class="form-group m-form__group row">
+                                            <label class="col-lg-4 col-form-label">İlçe:</label>
+                                            <div class="col-lg-6">
+                                                <select class="form-control w-dropdown textfield" name="DistrictID" id="district">
+
+                                                    @foreach (var district in Model.Districts.Where(x => x.CityID == Model.Cities.First().ID))
+                                                    {
+                                                        <option value="@district.ID">@district.Name</option>
+                                                    }                                                                                            
+                                                </select>
+
+                                            </div>
+                                        </div>
+            
+                                    </div>
+                                    
+                                    
+                                <div class="m-portlet__foot m-portlet__foot--fit">
+                                    <div class="m-form__actions m-form__actions">
+                                        <div class="row">
+                                            <div class="col-lg-4"></div>
+                                            <div class="col-lg-6">
+                                                <button type="submit" class="btn btn-success">Kaydet</button>
+                                                <a href="/AdminPanel/Users/@Model.UserAddress.UserID" class="btn btn-secondary">Vazgeç</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                              
+                            }
+                        </div>
+        </div>
+         
+    </div>
+</div>  
+@section Scripts{
+    <script>
+    
+    $('#city').val(@Model.UserAddress.CityID);
+    
+      
+
+        $('#country').change(function() {
+            var country = parseInt($(this).val());
+            if (country > 1) {
+                $('#selects').css("display", "none");
+                $('#inputs').css("display", "block");
+                $('input[name="CityText"]').attr("required", "");
+            } else {
+                $('input[name="CityText"]').removeAttr("required");
+                $('#selects').css("display", "block");
+                $('#inputs').css("display", "none");
+            }
+        });
+    </script>
+    <script>
+        var cities = @Html.Raw(Json.Serialize(Model.Cities));
+        var districts = @Html.Raw(Json.Serialize(Model.Districts));
+        
+        $('#city').change(function() {
+            var city = parseInt($(this).val()); 
+            loadDistricts(city);
+        });
+        
+        function loadCities(country) {
+            $('#city').html('');
+            $('#district').html('');
+            cities.forEach(function(item) {
+                if (item.countryID === country) {
+                    $('#city').append('<option value="'+item.id+'">'+item.name+'</option>'); 
+                }
+            });
+            loadDistricts(parseInt($('#city').val()));
+        }
+        
+        function loadDistricts(city) {
+            $('#district').html('');
+            districts.forEach(function(item) {
+                if (item.cityID === city) {
+                    $('#district').append('<option value="'+item.id+'">'+item.name+'</option>'); 
+                }
+            });
+        } 
+    </script>
+    <script>
+      loadDistricts(@Model.UserAddress.CityID);
+         $('#district').val(@Model.UserAddress.DistrictID); 
+    </script>
+}
+

@@ -1,0 +1,109 @@
+@model PaymentRequest
+
+@{
+    ViewBag.Title = "Ödeme Detayları";
+    Layout = "AdminLayout";
+    ViewData["ActiveMenu"] = "menu-item-prs";
+}
+
+<div class="m-content">
+
+    <div class="row">
+        <div class="col-xl-6">
+            <div class="m-portlet">
+                <div class="m-portlet__head">
+                    <div class="m-portlet__head-caption">
+                        <div class="m-portlet__head-title">
+                            <span class="m-portlet__head-icon m--hide">
+                                <i class="la la-gear"></i>
+                            </span>
+                            <h3 class="m-portlet__head-text">
+                                Ödeme Detayları
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="m-portlet__body">	
+                    <div class="m-form__section m-form__section--first">
+                        <div class="form-group m-form__group row">
+                            <label class="col-lg-4 col-form-label">ID:</label>
+                            <div class="col-lg-6 col-form-label">
+                                #@Model.ID
+                            </div>
+                        </div>
+                        <div class="form-group m-form__group row">
+                            <label class="col-lg-4 col-form-label">Alıcı:</label>
+                            <div class="col-lg-6 col-form-label">
+                                <a href="/AdminPanel/Users/Details/@Model.UserID" target="_blank">@(Model.Buyer?.Name)</a> 
+                            </div>
+                        </div>
+                        <div class="form-group m-form__group row">
+                            <label class="col-lg-4 col-form-label">Satıcı:</label>
+                            <div class="col-lg-6 col-form-label">
+                                @(Model.Seller?.Name ?? "Audiophile.org")
+                            </div>
+                        </div>
+                        <div class="form-group m-form__group row">
+                            <label class="col-lg-4 col-form-label">Durum:</label>
+                            <div class="col-lg-6 col-form-label">
+                                @Model.Status
+                            </div>
+                        </div>
+                        <div class="form-group m-form__group row">
+                            <label class="col-lg-4 col-form-label">Fiyat:</label>
+                            <div class="col-lg-6 col-form-label">
+                                @Model.Price TL
+                            </div>
+                        </div>
+                        <div class="form-group m-form__group row">
+                            <label class="col-lg-4 col-form-label">Kayıt Tarihi:</label>
+                            <div class="col-lg-6 col-form-label">
+                                @Model.CreatedDate
+                            </div>
+                        </div>
+                        <div class="form-group m-form__group row">
+                            <label class="col-lg-4 col-form-label">Ip Adresi:</label>
+                            <div class="col-lg-6 col-form-label">
+                                @Model.IpAddress
+                            </div>
+                        </div>
+                        <div class="form-group m-form__group row">
+                            <label class="col-lg-4 col-form-label">Açıklama:</label>
+                            <div class="col-lg-6 col-form-label">
+                                @Model.Description
+                            </div>
+                        </div>
+                        <div class="form-group m-form__group row">
+                            <label class="col-lg-4 col-form-label">Online Ödeme Gitti Bu:</label>
+                            <div class="col-lg-6 col-form-label">
+                                @(Model.SecurePayment ? "Evet" : "Hayır") 
+                            </div>
+                        </div>
+                        <div class="form-group m-form__group row">
+                            <label class="col-lg-4 col-form-label">Iyzico Payment ID:</label>
+                            <div class="col-lg-6 col-form-label">
+                                @Model.PaymentId
+                            </div>
+                        </div>
+                        <div class="form-group m-form__group row">
+                            <label class="col-lg-4 col-form-label">Iyzico Payment Transaction ID:</label>
+                            <div class="col-lg-6 col-form-label">
+                                @Model.PaymentTransactionID
+                            </div>
+                        </div>
+                        <div class="form-group m-form__group row">
+                            <label class="col-lg-4 col-form-label">Kargo Bilgileri:</label>
+                            <div class="col-lg-6 col-form-label">
+                                @Model.CargoFirm | Takip No: @Model.CargoNo
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-6">
+            
+        </div>
+    </div>
+</div>

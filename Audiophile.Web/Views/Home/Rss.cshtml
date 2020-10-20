@@ -1,0 +1,33 @@
+@{
+    Layout = null;
+   
+}
+
+@model List<HomePageItem>
+
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>Audiophile.org Feed</title>
+        <description>Audiophile.org xml feed içeriği.</description>
+        <link>https://www.audiophile.org/feed</link>
+        
+        @foreach (var item in Model)
+        {
+            <text>
+                <item>
+                    <title>@item.Title</title>
+                    <description>@item.Description</description>
+                    <url>@item.Url</url>
+                    <imge>@item.ImageSource</imge>
+                    <price> @item.Price @item.PriceCurrency</price>
+                    <views>@item.ViewCount</views> 
+                    <likes>@item.LikesCount</likes>
+                    <brand>@item.Brand</brand>
+                    <pubDate>@item.CreatedDate</pubDate>
+                </item>
+            </text>
+        }
+        
+        
+    </channel>
+</rss>

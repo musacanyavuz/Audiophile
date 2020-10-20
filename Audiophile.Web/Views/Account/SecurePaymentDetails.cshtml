@@ -1,0 +1,227 @@
+@using Iyzipay.Model
+@model UserSecurePaymentDetail
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("Güvenli Ödeme Bilgileri", "Secure Payment Informations", lang);
+    Layout = "_Layout";
+}
+
+@section style{
+    <style>
+
+        .tabs-menu-4 {
+            width: 100%;
+        }
+
+        .tab-link-2 {
+            width: auto !important;
+            float: left !important;
+        }
+    </style>
+}
+<div class="section-1 sec-altsayfa sec-hesaplar">
+    <div class="w-container">
+        @{Html.RenderPartial("~/Views/Partials/AccountSideMenu.cshtml", 3);}
+        <div class="content w-clearfix">
+            <div class="div-block-20 div-ilan hesap w-clearfix display-grid">
+                <h4 class="h2 h4 h-kat h-kategori">@ViewBag.Title </h4>
+                <p>
+                    @TextService.GetText(Enums.Texts.GuvenliOdemeBilgilerimAciklama, lang)
+                </p>
+            </div>
+            <div class="product product-list urulerim bannerlar">
+
+                <div data-duration-in="300" data-duration-out="100" class="w-tabs">
+                    <div class="tabs-menu-4 tabs-sol w-tab-menu">
+                        <a data-w-tab="Tab 1" class="tab-link-2 tb2 w-inline-block w-tab-link w--current">
+                            <div>@Localization.Get("Gerçek Şahıs", "Individual Person", lang) </div>
+                        </a>
+                        <a data-w-tab="Tab 2" class="tab-link-2 tb2 w-inline-block w-tab-link">
+                            <div>@Localization.Get("Tüzel Şirket", "Company", lang)</div>
+                        </a>
+                    </div>
+                    <div class="tabs-content-2 w-tab-content">
+
+                        <div data-w-tab="Tab 1" class="w-clearfix w-tab-pane w--current w--tab-active tab-style">
+                            <div class="form-block-5 w-form">
+                                @using (Html.BeginForm("SecurePayment1", "Account", FormMethod.Post))
+                                {
+                                    <input name="Type" value="@Iyzipay.Model.SubMerchantType.PERSONAL" hidden />
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("Ad", "Name", lang):*</label>
+                                        <input class="textfield w-input" maxlength="100" name="Name" type="text" value="@(Model?.Name)" required>
+                                    </div>
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("Soyad", "Surname", lang):*</label>
+                                        <input class="textfield w-input" maxlength="100" name="Surname" type="text" value="@(Model?.Surname)" required>
+                                    </div>
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("TC Kimlik Numaranız", "TC Identity Number", lang):*</label>
+                                        <input class="textfield w-input" maxlength="11" name="TC" type="text" value="@(Model?.TC)" required>
+                                    </div>
+
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">IBAN:*</label>
+                                        <input class="textfield w-input" maxlength="35" name="IBAN" id="iban" type="text" value="@(Model?.IBAN)" required>
+                                    </div>
+
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("Cep Telefonu", "Mobile Phone", lang):*</label>
+                                        <input class="textfield w-input" maxlength="20" name="MobilePhone" id="phone" type="text" value="@(Model?.MobilePhone)" required>
+                                    </div>
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("E-Posta Adresiniz", "E-Mail Address", lang):*</label>
+                                        <input class="textfield w-input" maxlength="100" name="Email" type="email" value="@(Model?.Email)" required>
+                                    </div>
+
+                                    <h3>
+                                        @Localization.Get("Bireysel Bilgileriniz", "Your Legal Address", lang)
+                                    </h3>
+
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("Gönderici Adresi", "Sender Address", lang):*</label>
+                                        <textarea class="textfield w-input form-error-sahis" rows="2" name="SenderAddress" maxlength="200" required>@(Model?.SenderAddress)</textarea>
+                                    </div>
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("Fatura Adresi", "Invoice Address", lang):*</label>
+                                        <textarea class="textfield w-input form-error-sahis" rows="2" name="InvoiceAddress" maxlength="200" required>@(Model?.InvoiceAddress)</textarea>
+                                    </div>
+
+                                    <div class="form-left w-clearfix">
+                                        <div class="checkbox-field-2 w-checkbox">
+                                            <input type="checkbox" id="checkbox" class="w-checkbox-input" required>
+                                            <label for="checkbox" class="w-form-label">
+                                                <a href="#" data-toggle="modal" data-target=".modal" class="satici-sozlesmesi">
+                                                    @Localization.Get("Pazaryeri Satıcı Sözleşmesi", "Marketplace Agreement", lang)
+                                                </a> @Localization.Get("'ni okudum, kabul ediyorum", "I read, I accept", lang).*
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <br />
+
+                                    <input type="submit" value="@Localization.Get("Bilgilerimi Güncelle", "Update My Info", lang)" class="button button-main button-satn button-submit w-button">
+
+                                }
+
+
+                            </div>
+                        </div>
+                        <div data-w-tab="Tab 2" class="w-clearfix w-tab-pane">
+                            <div class="form-block-5 w-form">
+                                @using (Html.BeginForm("SecurePayment2", "Account", FormMethod.Post))
+                                {
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("Ad", "Name", lang):*</label>
+                                        <input class="textfield w-input" maxlength="100" name="Name" type="text" value="@(Model?.Name)" required>
+                                    </div>
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("Soyad", "Surname", lang):*</label>
+                                        <input class="textfield w-input" maxlength="100" name="Surname" type="text" value="@(Model?.Surname)" required>
+                                    </div>
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("TC Kimlik Numaranız", "TC Identity Number", lang):*</label>
+                                        <input class="textfield w-input" maxlength="11" name="TC" type="text" value="@(Model?.TC)" required>
+                                    </div>
+
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">IBAN:*</label>
+                                        <input class="textfield w-input" maxlength="35" name="IBAN" id="comp_iban" type="text" value="@(Model?.IBAN)" required>
+                                    </div>
+
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("Cep Telefonu", "Mobile Phone", lang):*</label>
+                                        <input class="textfield w-input" maxlength="20" name="MobilePhone" id="phone2" type="text" value="@(Model?.MobilePhone)" required>
+                                    </div>
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("E-Posta Adresiniz", "E-Mail Address", lang):*</label>
+                                        <input class="textfield w-input" maxlength="100" name="Email" type="email" value="@(Model?.Email)" required>
+                                    </div>
+
+                                    <h3>@Localization.Get("Firma Bilgileriniz", "Company Information", lang)</h3>
+
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("Firma Türü", "Company Type", lang):*</label>
+                                        <select name="Type" class="dropdown-4 select-urun urun-ozellik-select w-dropdown textfield" required>
+
+                                            <option value="@Iyzipay.Model.SubMerchantType.PRIVATE_COMPANY" @(Model?.Type= =SubMerchantType.PRIVATE_COMPANY ? "selected=\" selected\"":"")>
+                                                @Localization.Get("Şahıs Şirketi", "Private Company", lang)
+                                            </option>
+                                            <option value="@Iyzipay.Model.SubMerchantType.LIMITED_OR_JOINT_STOCK_COMPANY" @(Model?.Type= =SubMerchantType.LIMITED_OR_JOINT_STOCK_COMPANY ? "selected=\" selected\"":"")>
+                                                @Localization.Get("Ltd. veya Anonim", "Limited or Joint Stock Comp.", lang)
+                                            </option>
+
+                                        </select>
+                                    </div>
+
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("Firma Adı", "Company Name", lang):*</label>
+                                        <input class="textfield w-input" maxlength="100" name="CompanyName" type="text" value="@(Model?.CompanyName)" required>
+                                    </div>
+
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("Gönderici Adresi", "Sender Address", lang):*</label>
+                                        <textarea class="textfield w-input form-error-sahis" rows="2" name="SenderAddress" maxlength="200" required>@(Model?.SenderAddress)</textarea>
+                                    </div>
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("Fatura Adresi", "Invoice Address", lang):*</label>
+                                        <textarea class="textfield w-input form-error-sahis" rows="2" name="InvoiceAddress" maxlength="200" required>@(Model?.InvoiceAddress)</textarea>
+                                    </div>
+
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("Vergi Dairesi", "Tax Office", lang):*</label>
+                                        <input class="textfield w-input" maxlength="50" name="TaxOffice" type="text" value="@(Model?.TaxOffice)" required>
+                                    </div>
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("Vergi No", "Tax Number", lang):*</label>
+                                        <input class="textfield w-input" maxlength="40" name="TaxNumber" type="text" value="@(Model?.TaxNumber)" required>
+                                    </div>
+
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("Firma Telefonu", "Company Phone", lang):*</label>
+                                        <input class="textfield w-input" id="compPhone" maxlength="50" name="CompanyPhone" type="text" value="@(Model?.CompanyPhone)" required>
+                                    </div>
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("Firma Fax", "Company Fax", lang):*</label>
+                                        <input class="textfield w-input" maxlength="40" name="TaxNumber" type="text" value="@(Model?.CompanyFax)">
+                                    </div>
+
+                                    <div class="form-left w-clearfix">
+                                        <label class="field-label">@Localization.Get("Firma Email", "Company Email", lang):*</label>
+                                        <input class="textfield w-input" maxlength="100" name="CompanyEmail" type="email" value="@(Model?.CompanyEmail)" required>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade " id="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <iframe height="500" src="https://www.iyzico.com/pazaryeri-satici-anlasma/"></iframe>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">@Localization.Get("Kapat", "Close", lang)</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="/Content/plugins/JQueryMask/jquery.mask.js"></script>
+    <script>
+        $(function () {
+            $("#iban").mask("TR99 9999 9999 9999 9999 9999 99");
+            $("#comp_iban").mask("TR99 9999 9999 9999 9999 9999 99");
+            $("#phone").mask("+99 (999) 999-9999");
+            $("#phone2").mask("+99 (999) 999-9999");
+            $("#compPhone").mask("+99 (999) 999-9999");
+        });
+    </script>
+}

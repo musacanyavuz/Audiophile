@@ -1,0 +1,114 @@
+@model List<User>
+
+@{
+    ViewBag.Title = "Banner Girişi";
+    Layout = "AdminLayout";
+    ViewData["ActiveMenu"] = "menu-item-banners";
+}
+
+
+<div class="row">
+    <div class="col-lg-6">
+        <!--begin::Portlet-->
+        <div class="m-portlet">
+            <div class="m-portlet__head">
+                <div class="m-portlet__head-caption">
+                    <div class="m-portlet__head-title">
+                        <span class="m-portlet__head-icon m--hide">
+                            <i class="la la-gear"></i>
+                        </span>
+                        <h3 class="m-portlet__head-text">
+                            Banner Girişi
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <!--begin::Form-->
+            @using (Html.BeginForm("Create", "Banners", FormMethod.Post,
+               new { @class = "m-form", enctype = "multipart/form-data" }))
+            {
+                <input type="hidden" name="UseWaterMark" value='@ViewBag.WaterMark' />
+                <div class="m-portlet__body">
+                    <div class="m-form__section m-form__section--first">
+                        <div class="form-group m-form__group">
+                            <label>Kullanıcı</label>
+                            <select class="form-control select2" name="UserID" required>
+                                @foreach (var user in Model.OrderBy(d => d.Name))
+                                {
+                                    <option value="@user.ID">#@user.ID @user.Name (@user.UserName)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group m-form__group">
+                            <label>Başlık</label>
+                            <input type="text" class="form-control m-input" name="Title">
+                        </div>
+
+                        <div class="form-group m-form__group row">
+                            <div class="col-lg-6">
+                                <label>URL</label>
+                                <input type="text" name="Url" class="form-control" required />
+                            </div>
+                            <div class="col-lg-6">
+                                <label>Başlangıç Tarihi</label>
+                                <input type="date" name="StartDate" class="form-control" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group m-form__group row">
+                            <div class="col-lg-6">
+                                <label>Bitiş Tarihi</label>
+                                <input type="date" name="EndDate" class="form-control" required />
+                            </div>
+                            <div class="col-lg-6">
+                                <label>Banner Tipi</label>
+                                <select class="form-control" name="TypeID" required>
+                                    <option value="@(Enums.BannerType.Logo)">Logo Banner</option>
+                                    <option value="@(Enums.BannerType.Banner)">İlan Ayırıcı Banner</option>
+                                    <option value="@(Enums.BannerType.Slider)">Slider</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group m-form__group row">
+                            <div class="col-lg-6">
+                                <label>Ücret</label>
+                                <input type="number" name="Price" class="form-control" />
+                            </div>
+                            <div class="col-lg-6">
+                                <label>Görsel</label>
+                                <input type="file" name="ImageSourceFile" class="form-control" required />
+                            </div>
+                        </div>
+
+                        <div class="m-form__group form-group">
+                            <label class="m-checkbox m-checkbox--state-success">
+                                <input type="checkbox" name="IsActive" value="false"> Aktif
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="m-portlet__foot m-portlet__foot--fit">
+                    <div class="m-form__actions m-form__actions">
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                    </div>
+                </div>
+            }
+            <!--end::Form-->
+        </div>
+        <!--end::Portlet-->
+
+        <!--begin::Portlet-->
+
+        <!--end::Portlet-->
+    </div>
+
+</div>
+
+
+@section Scripts{
+    <script>
+        $(".select2").select2({placeholder:"Seçiniz"})
+    </script>
+}

@@ -1,0 +1,162 @@
+@model CheckoutPaymentViewModel
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang")); 
+    ViewBag.Title = Localization.Get("Satın Al | Güvenle Ödeme GittiBu", "Checkout | Online Payment", lang);
+    Layout = "_Layout";
+} 
+
+<div class="section-1 sec-altsayfa sec-urun" id="adres-altsayfa">
+    <div class="container-6 w-container">
+        <div class="steps">
+            <div class="w-row">
+                <div class="c1 w-col w-col-4">
+                    <div class="step1 "></div>
+                    <div class="text-block-10 ">@Localization.Get("Adres Bilgileri","Address Information",lang)</div>
+                </div>
+                <div class="c1 w-col w-col-4">
+                    <div class="step1 active"></div>
+                    <div class="text-block-10 text-active">@Localization.Get("Kredi / ATM kartı ile güvenli ödeyin","Secure Payment with Credit/Bank Card",lang)</div>
+                </div>
+                <div class="c1 w-col w-col-4">
+                    <div class="step1"></div>
+                    <div class="text-block-10">@Localization.Get("Alışveriş Özeti","Shopping Summary",lang)</div>
+                </div>
+            </div>
+        </div>
+        @using(Html.BeginForm("SecurePayment", "Checkout", FormMethod.Post))
+        {
+            <input type="hidden" value="@Model.Advert.ID" name="id"/>
+            <input type="hidden" value="@Model.Amount" name="Amount"/>
+            <input type="hidden" value="@Model.ShippingAddressID" name="ShippingAddressId"/>
+            <input type="hidden" value="@Model.InvoiceAddressID" name="InvoiceAddressId"/>
+                                                                                        
+            <div class="urun-content alisveris-ozet">
+                <div class="div-block-8 div-alisveris w-clearfix">
+                    <div class="div-block-9 div-ozet">
+                        <div class="div-block-12 urun-sayisi urun-ozet w-clearfix">
+                            <div class="div-block-11"></div>
+                            <h2 class="h2 h2-alisveris h2-beyaz sepet-ozet">@Localization.Get("Alışveriş Özeti","Shopping Summary",lang)</h2>
+                            <div class="div-block-11 div-oz"></div>
+                        </div>
+
+                        <div class="div-block-12 ozellik-urunler w-clearfix">
+                            <div class="div-block-11 urunadi">
+                                <div class="text-urun">@Localization.Get("Adet","Amount",lang)</div>
+                            </div>
+                            <div class="div-block-11 div-oz ozet-fiyat">
+                                <div class="text-block-11"><strong>@Model.Amount @Localization.Get("Ürün","Product",lang)</strong></div>
+                            </div>
+                        </div>
+
+                        <div class="div-block-12 ozellik-urunler toplamfiyat w-clearfix">
+                            <div class="div-block-11 urunadi width-100-35">
+                                <div class="toplam">@Localization.Get("Toplam","Total",lang)</div>
+                            </div>
+                            <div class="div-block-11 div-oz ozet-fiyat width-100-60">
+                                <div class="text-block-11 toplam-fiyat">
+                                    @{
+                                        var total = Model.Advert.Price * Model.Amount;
+                                    }
+                                    @total TL
+                                </div>
+                            </div>
+                        </div>
+                        <div class="div-block-18">
+                            <button type="submit" class="button button-main button-satn devam devam-beyaz w-button">@Localization.Get("Devam","Continue", lang)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="urun-content alisveris-ozet adres">
+                <div class="div-block-8 w-clearfix">
+                    <div class="div-block-9 div-ozet div-adres">
+                        <div class="div-block-12 urun-sayisi urun-ozet adres-div w-clearfix">
+                            <div class="div-block-11"></div>
+                            <h2 class="h2 h2-alisveris">@Localization.Get("Ödeme Bilgileri","Payment Information",lang)</h2>
+                            <div class="div-block-11 div-oz"></div>
+                        </div>
+                        <div class="div-block-12 ozellik-urunler adres-sec">
+                            <div data-duration-in="300" data-duration-out="100" class="w-tabs">
+            
+                                <div class="w-tab-content">
+                                    <div data-w-tab="Tab 1" class="w-tab-pane w--tab-active tab-style" >
+                                        <div class="adresalan kredi-kart w-clearfix">
+                                            <div class="div-block-11 div-adres-bas"></div>
+                                            <div class="div-block-11 div-oz"></div>
+                                            <div class="w-form">
+                                                <input class="textfield field-col kart w-input valid" required=""  id="cardName" name="CardName" placeholder="@Localization.Get("Kart Üzerindeki Ad Soyad","Full Name on Card", lang)" type="text" onchange="loadInstallmentChoices()">
+                                                <input class="textfield field-col kart w-input" required="" id="cardNumber" name="CardNumber" placeholder="@Localization.Get("Kart No", "Card No", lang)" type="text" onchange="loadInstallmentChoices()">
+                                                <select class="textfield field-col w-select" required="" id="cardMonth" name="CardExpireMonth" onchange="loadInstallmentChoices()">
+                                                    <option value="">Ay</option>
+                                                    <option value="1">01</option>
+                                                    <option value="2">02</option>
+                                                    <option value="3">03</option>
+                                                    <option value="4">04</option>
+                                                    <option value="5">05</option>
+                                                    <option value="6">06</option>
+                                                    <option value="7">07</option>
+                                                    <option value="8">08</option>
+                                                    <option value="9">09</option>
+                                                    <option value="10">10</option>
+                                                    <option value="11">11</option>
+                                                    <option value="12">12</option> 
+                                                </select>
+                                                <select class="textfield field-col w-select" required="" id="cardYear" name="CardExpireYear" onchange="loadInstallmentChoices()">
+                                                    <option value="">Yıl</option>
+                                                    @for (int i = DateTime.Now.Year; i < DateTime.Now.Year+8; i++)
+                                                    {
+                                                        <option value="@i">@i</option>
+                                                    }
+                                                </select>
+                                                <input class="textfield field-col w-input" required="" id="cardCvc" name="CardCVC" placeholder="CVC" type="text" value="">
+                                                <div class="w-row">
+                                                    <div id="installment-options" class="p-l-100-2">
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        } 
+  
+    </div>
+   
+</div>
+
+@section Scripts
+{
+    <script>
+        function loadInstallmentChoices() {
+            @*console.log('loadInstallmentChoices');*@
+            var cardName = $('#cardName').val();
+            var cardNumber = $('#cardNumber').val();
+            var cardMonth = $('#cardMonth').val();
+            var cardYear = $('#cardYear').val(); 
+            
+            
+            if (cardName!=="" && cardNumber!=="" && cardMonth !== "" && cardYear!=="") {
+                $('#installment-options').html('@Localization.Get("Yükleniyor...","Loading...",lang)');
+                
+                var request = $.ajax({
+                    url: "/Checkout/GetInstallmentOptions",
+                    method: "POST",
+                    data: { totalPrice : @(Model.Advert.Price*Model.Amount), cardNumber: cardNumber, id: @Model.Advert.ID }
+                });
+ 
+                request.done(function( msg ) {
+                    $('#installment-options').html(msg);
+                });
+            }
+        }
+    </script>
+}
+
+

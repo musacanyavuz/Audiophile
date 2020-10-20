@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiophile.Web", "Audiophile.Web\Audiophile.Web.csproj", "{E313A25C-796F-47A4-9354-F43D5FAB211A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiophile.Models", "Audiophile.Models\Audiophile.Models.csproj", "{1977CF70-813F-4A97-B0C9-196CF3004A67}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiophile.Services", "Audiophile.Services\Audiophile.Services.csproj", "{2DBB1AB6-3407-44C3-9CBB-8A58277BA8F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiophile.Common", "Audiophile.Common\Audiophile.Common.csproj", "{770AC830-9AB9-4811-8EE5-78B366522FA0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiophile.Importer", "Audiophile.Importer\Audiophile.Importer.csproj", "{6C599A3F-2CAD-42D9-9EEC-E8C7D07EF888}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Audiophile.AutoTransfer", "Audiophile.AutoTransfer\Audiophile.AutoTransfer.csproj", "{EBAD9C8B-5751-4DD6-A7DA-154EFF65837E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E313A25C-796F-47A4-9354-F43D5FAB211A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E313A25C-796F-47A4-9354-F43D5FAB211A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E313A25C-796F-47A4-9354-F43D5FAB211A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E313A25C-796F-47A4-9354-F43D5FAB211A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1977CF70-813F-4A97-B0C9-196CF3004A67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1977CF70-813F-4A97-B0C9-196CF3004A67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1977CF70-813F-4A97-B0C9-196CF3004A67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1977CF70-813F-4A97-B0C9-196CF3004A67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DBB1AB6-3407-44C3-9CBB-8A58277BA8F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DBB1AB6-3407-44C3-9CBB-8A58277BA8F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DBB1AB6-3407-44C3-9CBB-8A58277BA8F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DBB1AB6-3407-44C3-9CBB-8A58277BA8F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{770AC830-9AB9-4811-8EE5-78B366522FA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{770AC830-9AB9-4811-8EE5-78B366522FA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{770AC830-9AB9-4811-8EE5-78B366522FA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{770AC830-9AB9-4811-8EE5-78B366522FA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C599A3F-2CAD-42D9-9EEC-E8C7D07EF888}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C599A3F-2CAD-42D9-9EEC-E8C7D07EF888}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C599A3F-2CAD-42D9-9EEC-E8C7D07EF888}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C599A3F-2CAD-42D9-9EEC-E8C7D07EF888}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBAD9C8B-5751-4DD6-A7DA-154EFF65837E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBAD9C8B-5751-4DD6-A7DA-154EFF65837E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBAD9C8B-5751-4DD6-A7DA-154EFF65837E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBAD9C8B-5751-4DD6-A7DA-154EFF65837E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

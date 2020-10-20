@@ -1,0 +1,1011 @@
+@model PaymentRequest
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Audiophile.org Mesafeli Satış Sözleşmesi</title>
+    <style>
+        body {
+            background: rgb(204,204,204);
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none;
+        }
+        page {
+            background: white;
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 0.5cm;
+            box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+        }
+        page[size="A4"] {  
+            width: 21cm;
+            padding: 1rem;
+        }
+        page[size="A4"][layout="portrait"] {
+            width: 29.7cm;
+        }
+        @@media print {
+            body, page {
+                margin: 0;
+                box-shadow: none;
+            }
+        }
+    </style>
+    <link href="~/Content/new/custom.css?v12" rel="stylesheet" />
+</head>
+<body>
+
+<page size="A4">
+    
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-size-16-pt">
+                        <span class="font-family-calibrilight">
+                            <span class="color-black">MESAFELİ SATIŞ S&Ouml;ZLEŞMESİ </span>
+                        </span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-size-14-pt">
+                        <span class="font-family-calibrilight">
+                            <span class="color-black">MADDE 1- TARAFLAR</span>
+                        </span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>ALICI</span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Adı-soyadı: @(Model.Buyer.Name)</span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>TC Kimik No: @(Model.Buyer.TC)</span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Adresi: @(Model.ShippingAddress)</span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Teslimat Adresi: @(Model.ShippingAddress)</span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Email: @(Model.Buyer.Email)</span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Telefon: @(Model.Buyer.MobilePhone)</span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>SATICI</span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Adı-soyadı: @(Model.Seller.Name)</span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Adresi: </span>@ViewBag.SellerAddress
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Email: @(Model.Seller.Email)</span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Telefon: @(Model.Seller.MobilePhone)</span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-size-14-pt">
+                        <span class="font-family-calibrilight">
+                            <span class="color-black">MADDE 2- S&Ouml;ZLEŞMENİN KONUSU:</span>
+                        </span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <span class="font-family-calibrilight">
+                    <span class="color-black">İşbu s&ouml;zleşmenin konusu, s&ouml;zleşmenin 3.maddesinde &ouml;zellikleri ve satış fiyatı belirtilen &uuml;r&uuml;n ile ilgili olarak tarafların hak ve y&uuml;k&uuml;ml&uuml;l&uuml;klerinin tespitidir. İşbu s&ouml;zleşme, T&uuml;keticinin Korunması Hakkında Kanun ve Mesafeli S&ouml;zleşmeler Y&ouml;netmeliği&rsquo;ne uygun olarak d&uuml;zenlenmiştir. İşbu s&ouml;zleşmenin tarafları, s&ouml;zleşme ile birlikte, T&uuml;keticinin Korunması Hakkında Kanun ve Mesafeli S&ouml;zleşmeler Y&ouml;netmeliği&rsquo;nden kaynaklanan y&uuml;k&uuml;ml&uuml;l&uuml;k ve sorumluluklarını bildiklerini ve anladıklarını kabul ve beyan ederler. İşbu s&ouml;zleşmenin akdedilmesi tarafların ayrı ayrı Audiophile.Org ile akdetmiş oldukları Audiophile.Org Portalı &Uuml;yelik S&ouml;zleşmesi&#39;nin h&uuml;k&uuml;mlerinin uygulanmasını engellemeyecektir.</span>
+                </span>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-size-14-pt">
+                        <span class="font-family-calibrilight">
+                            <span class="color-black">MADDE 3- &Uuml;R&Uuml;N BİLGİLERİ:</span>
+                        </span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <span class="font-family-calibrilight">
+                    <span class="color-black">&Uuml;r&uuml;n&uuml;n &ouml;zellikleri ve &ouml;deme şekli aşağıda belirtildiği gibidir.</span>
+                </span>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="m-l-47 text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>İlan No:</span> @(Model.ID)
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="m-l-47 text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Eklenme Tarihi:</span> @(Model.Advert.CreatedDate.ToShortDateString())
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="m-l-47 text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Marka:</span> @(Model.Advert.Brand)
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="m-l-47 text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Model:</span> @(Model.Advert.Model)
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="m-l-47 text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Durum:</span> @(Model.Advert.ProductStatus)
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="m-l-47 text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Kargo Masrafı:</span> @(Model.Advert.FreeShipping ? "Satıcıya Ait":"Alıcıya Ait")
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="m-l-47 text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Muhtemel Kargo Maliyeti:</span> @(Model.Advert.ShippingPrice) TL
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="m-l-47 text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Fiyat:</span> @(Model.Advert.Price) @Constants.GetMoney(Model.Advert.MoneyTypeID)
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="m-l-47 text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Adet:</span> @Model.Amount
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="m-l-47 text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Ürün Açıklaması:</span> @Model.Advert.Content
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="m-l-47 text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Yenisinin Satış Fiyatı:</span> @Model.Advert.NewProductPrice @Constants.GetMoney(Model.Advert.MoneyTypeID)
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="m-l-47 text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>İlgili Web Sitesi:</span> @Model.Advert.WebSite
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="m-l-47 text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Kutusu Var:</span> @(Model.Advert.OriginalBox?"Evet":"Hayır")
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="m-l-47 text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Kullanma Kılavuzu:</span> @(Model.Advert.OriginalBox?"Var":"Yok")
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="m-l-47 text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Ayıplar:</span> @Model.Advert.ProductDefects
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="m-l-47 text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Ödeme Seçenekleri:</span> @Model.InstallmentNumber Taksit
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="m-l-47 text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span>Satınalma Tarihi:</span> @Model.CreatedDate.ToShortDateString()
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-size-14-pt">
+                        <span class="font-family-calibrilight">
+                            <span class="color-black">MADDE 4 - GENEL H&Uuml;K&Uuml;MLER</span>
+                        </span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">4.1.</span>
+                    </span>
+                </strong>
+                <span class="font-family-calibrilight">
+                    <span class="color-black"> İşbu s&ouml;zleşme tarafları ALICI ile SATICI olup işbu s&ouml;zleşmenin yerine getirilmesi ile ilgili t&uuml;m y&uuml;k&uuml;ml&uuml;l&uuml;k ve sorumluluklar taraflara aittir; Taraflar, işbu s&ouml;zleşmenin tarafı olmayan Audiophile.Org&#39;un hi&ccedil;bir y&uuml;k&uuml;ml&uuml;l&uuml;ğ&uuml; ve sorumluluğu olmadığını kabul, beyan ve taahh&uuml;t ederler. İşbu s&ouml;zleşme ALICI tarafından elektronik olarak onaylandığı tarihte y&uuml;r&uuml;rl&uuml;ğe girer.</span>
+                </span>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">4.2</span>
+                    </span>
+                </strong>
+                <span class="font-family-calibrilight">
+                    <span class="color-black"> ALICI, Madde 3&#39;de belirtilen s&ouml;zleşme konusu &uuml;r&uuml;n&uuml;n &ouml;zellikleri ve satışa ilişkin koşulları ile ilgili t&uuml;m bilgileri okuduğunu ve anladığını, bu &uuml;r&uuml;n&uuml;n satın alınması i&ccedil;in gerekli onayı verdiğini kabul, beyan ve taahh&uuml;t eder.</span>
+                </span>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">4.3</span>
+                    </span>
+                </strong>
+                <span class="font-family-calibrilight">
+                    <span class="color-black"> SATICI, s&ouml;zleşme konusu &uuml;r&uuml;n&uuml;n sağlam, eksiksiz, siparişte belirtilen niteliklere uygun ve varsa garanti belgeleri ve kullanım kılavuzları ile birlikte teslim edilmesinden sorumludur.</span>
+                </span>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">4.4</span>
+                    </span>
+                </strong>
+                <span class="font-family-calibrilight">
+                    <span class="color-black"> SATICI, ALICI&rsquo;nın işbu s&ouml;zleşmeden doğan şik&acirc;yetlerini makul bir s&uuml;re ve şekilde &ccedil;&ouml;z&uuml;me kavuşturmak i&ccedil;in elinden gelen &ccedil;abayı g&ouml;sterecektir. ALICI, her t&uuml;rl&uuml; şik&acirc;yetlerini ayrıca Audiophile.Org portalı &uuml;zerinden mesaj iletmek y&ouml;ntemi ile SATICI&rsquo;ya y&ouml;neltebilecektir.</span>
+                </span>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-size-14-pt">
+                        <span class="font-family-calibrilight">
+                            <span class="color-black">MADDE - 5 CAYMA HAKKI:</span>
+                        </span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">5.1</span>
+                    </span>
+                </strong>
+                <span class="font-family-calibrilight">
+                    <span class="color-black"> ALICI; malı teslim aldığı tarihten itibaren 14 (ond&ouml;rt) g&uuml;n i&ccedil;erisinde hi&ccedil;bir hukuki ve cezai sorumluluk &uuml;stlenmeksizin ve hi&ccedil;bir gerek&ccedil;e g&ouml;stermeksizin malı reddederek, s&ouml;zleşmeden cayma hakkına sahiptir. </span>
+                </span>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">Ancak satın alınan &uuml;r&uuml;n ikinci el veya elektronik bir &uuml;r&uuml;n ise nedensiz olarak 6502 sayılı T&uuml;keticinin Korunması Hakkında Kanun ve Mesafeli S&ouml;zleşmelere Dair Y&ouml;netmelik uyarınca cayma hakkı kullanılamaz.</span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">İkinci el &uuml;r&uuml;nler dışında, ambalajı a&ccedil;ılmış elektronik &uuml;r&uuml;nler, &ouml;zel istek ve talepleriniz uyarınca &uuml;retilen veya &uuml;zerinde değişiklik ya da ilaveler yapılarak kişiye &ouml;zel hale getirilen &uuml;r&uuml;nler, ambalajı a&ccedil;ılmış ses veya g&ouml;r&uuml;nt&uuml; kayıtları, yazılım programları, sarf malzemeleri veya hijyen gerektiren &uuml;r&uuml;nlerde cayma hakkı kullanılamaz</span>
+                    </span>
+                </strong>
+                <span class="font-family-calibrilight">
+                    <span class="color-black">.</span>
+                </span>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <span class="font-family-calibrilight">
+                    <span class="color-black">ALICI, ge&ccedil;erli s&uuml;re i&ccedil;erisinde cayma hakkını kullanmak istediğini SATICI&rsquo;ya beyan etmesi &uuml;zerine, Mesafeli S&ouml;zleşme ekinde (Ek-2) olarak yer alan &ouml;rnek Cayma Hakkı Formu&rsquo;nu doldurup, mesafeli s&ouml;zleşmede belirtilen iletişim y&ouml;ntemlerinden herhangi biri ile SATICI&rsquo;ya g&ouml;nderecektir.</span>
+                </span>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">5.2</span>
+                    </span>
+                </strong>
+                <span class="font-family-calibrilight">
+                    <span class="color-black"> Onay s&uuml;resi; &uuml;r&uuml;ne ait kargo bilgisi girildikten sonra başlar ve ilanda belirtilen kargo s&uuml;resi kadardır. ALICI, işbu onay s&uuml;resi i&ccedil;inde, sistem &uuml;zerinden cayma hakkı bildirimini g&ouml;ndererek cayma hakkını kullanmak istemesi halinde; satış bedelinin SATICI&rsquo;ya aktarılmasını engellemek i&ccedil;in Audiophile.Org u da bilgilendirmesi gerekeceğinden, Audiophile.Org sistemi &uuml;zerinden &ldquo;Bana &Ouml;zel&rdquo; sayfasında &ldquo;işlemi duraklatarak&rdquo; bildirimde bulunacaktır. İşbu onay s&uuml;resi sona erdikten sonra ALICI cayma hakkını kullanmak istediğini sadece SATICI&rsquo;ya beyan edecek, Audiophile.org&rsquo;a herhangi bir bildirimde bulunmayacaktır. Cayma hakkı talebinin sistem &uuml;zerinden iletilmesi halinde Audiophile.Org&rsquo;nin cayma hakkının i&ccedil;eriği ve uygulanabilir olmadığı ile herhangi bir değerlendirme yapması m&uuml;mk&uuml;n olmayıp bu şekilde bir bildirim geldiğinde bedeli ALICI&rsquo;ya iade edecek; cayma hakkının kullanılması ile ilgili olası uyuşmazlıklarda taraf olarak kabul edilmeyecektir.</span>
+                </span>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <span class="font-family-calibrilight">
+                    <span class="color-black">5.3 Cayma hakkının kullanımından kaynaklanan masraflar SATICI&#39;ya aittir. SATICI&rsquo;nın iade i&ccedil;in belirttiği taşıyıcı (kargo firması) aracılığıyla malın geri g&ouml;nderilmesi halinde, ALICI iadeye ilişkin masraflardan sorumlu tutulamaz. SATICI&rsquo;nın &ouml;n bilgilendirmede iade i&ccedil;in herhangi bir taşıyıcıyı (kargo firmasını) belirtmediği durumda ise, ALICI&rsquo;dan iade masrafına ilişkin herhangi bir bedel talep edilemez. İade i&ccedil;in &ouml;n bilgilendirmede belirtilen taşıyıcının (kargo firmasının), ALICI&rsquo;nın bulunduğu yerde şubesinin olmaması durumunda; SATICI, ilave hi&ccedil;bir masraf talep etmeksizin iade edilmek istenen malın ALICI&rsquo;dan alınmasını sağlamakla y&uuml;k&uuml;ml&uuml;d&uuml;r.</span>
+                </span>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">5.4 ALICI aşağıdaki hallerde cayma hakkını kullanamaz:</span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<ul>
+    <li class="text-align-justify">
+        <span class="font-size-11">
+            <span class="background-color-white">
+                <span class="font-family-calibri">
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">Satın alınan &uuml;r&uuml;n ikinci el ve faturasız bir &uuml;r&uuml;n ise nedensiz olarak &uuml;r&uuml;n 6502 sayılı T&uuml;keticinin Korunması Hakkında Kanun ve Mesafeli S&ouml;zleşmelere Dair Y&ouml;netmelik uyarınca cayma hakkı kullanılamaz.</span>
+                    </span>
+                </span>
+            </span>
+        </span>
+    </li>
+    <li class="text-align-justify">
+        <span class="font-size-11">
+            <span class="background-color-white">
+                <span class="font-family-calibri">
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">İkinci el &uuml;r&uuml;nler dışında, ambalajı a&ccedil;ılmış elektronik &uuml;r&uuml;nler, &ouml;zel istek ve talepleriniz uyarınca &uuml;retilen veya &uuml;zerinde değişiklik ya da ilaveler yapılarak kişiye &ouml;zel hale getirilen &uuml;r&uuml;nler, ambalajı a&ccedil;ılmış ses veya g&ouml;r&uuml;nt&uuml; kayıtları, yazılım programları veya sarf malzemelerinde cayma hakkı kullanılamaz. Cayma hakkı s&uuml;resi sona ermeden &ouml;nce t&uuml;keticinin onayı ile hizmetin ifasına başlanan hizmet s&ouml;zleşmelerinde;</span>
+                    </span>
+                </span>
+            </span>
+        </span>
+    </li>
+    <li class="text-align-justify">
+        <span class="font-size-11">
+            <span class="background-color-white">
+                <span class="font-family-calibri">
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">Fiyatı finansal piyasalardaki dalgalanmalara bağlı olarak değişen ve SATICI&rsquo;nın kontrol&uuml;nde olmayan mal veya hizmetlere ilişkin s&ouml;zleşmelerde;</span>
+                    </span>
+                </span>
+            </span>
+        </span>
+    </li>
+    <li class="text-align-justify">
+        <span class="font-size-11">
+            <span class="background-color-white">
+                <span class="font-family-calibri">
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">T&uuml;keticinin istekleri veya kişisel ihtiya&ccedil;ları doğrultusunda hazırlanan, &ccedil;abuk bozulabilen veya son kullanma tarihi ge&ccedil;ebilecek malların teslimine ilişkin s&ouml;zleşmelerde;</span>
+                    </span>
+                </span>
+            </span>
+        </span>
+    </li>
+    <li class="text-align-justify">
+        <span class="font-size-11">
+            <span class="background-color-white">
+                <span class="font-family-calibri">
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">Tesliminden sonra ambalaj, bant, m&uuml;h&uuml;r, paket gibi koruyucu unsurları a&ccedil;ılmış olan mallardan iadesi sağlık ve hijyen a&ccedil;ısından uygun olmayanların teslimine ilişkin s&ouml;zleşmelerde;</span>
+                    </span>
+                </span>
+            </span>
+        </span>
+    </li>
+    <li class="text-align-justify">
+        <span class="font-size-11">
+            <span class="background-color-white">
+                <span class="font-family-calibri">
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">Tesliminden sonra başka &uuml;r&uuml;nlerle karışan ve doğası gereği ayrıştırılması m&uuml;mk&uuml;n olmayan mallara ilişkin s&ouml;zleşmelerde;</span>
+                    </span>
+                </span>
+            </span>
+        </span>
+    </li>
+    <li class="text-align-justify">
+        <span class="font-size-11">
+            <span class="background-color-white">
+                <span class="font-family-calibri">
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">Malın tesliminden sonra ambalajının, bant, m&uuml;h&uuml;r, paket gibi koruyucu unsurları a&ccedil;ılmış olması halinde;</span>
+                    </span>
+                </span>
+            </span>
+        </span>
+    </li>
+    <li class="text-align-justify">
+        <span class="font-size-11">
+            <span class="background-color-white">
+                <span class="font-family-calibri">
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">Kitap, dijital i&ccedil;erik (bilgisayar programı, uygulama, oyun, m&uuml;zik, video ve metin gibi dijital şekilde sunulan her t&uuml;rl&uuml; veri) ve bilgisayar sarf malzemelerine ilişkin s&ouml;zleşmelerde;</span>
+                    </span>
+                </span>
+            </span>
+        </span>
+    </li>
+    <li class="text-align-justify">
+        <span class="font-size-11">
+            <span class="background-color-white">
+                <span class="font-family-calibri">
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">Abonelik s&ouml;zleşmesi kapsamında sağlananlar dışında gazete, dergi gibi s&uuml;reli yayınların teslimine ilişkin s&ouml;zleşmelerde;</span>
+                    </span>
+                </span>
+            </span>
+        </span>
+    </li>
+    <li class="text-align-justify">
+        <span class="font-size-11">
+            <span class="background-color-white">
+                <span class="font-family-calibri">
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">Belirli bir tarihte veya d&ouml;nemde yapılması gereken, konaklama, eşya taşıma, araba kiralama, yiyecek-i&ccedil;ecek tedariki ve eğlence veya dinlenme amacıyla yapılan boş zamanın değerlendirilmesine ilişkin s&ouml;zleşmelerde</span>
+                    </span>
+                </span>
+            </span>
+        </span>
+    </li>
+    <li class="text-align-justify">
+        <span class="font-size-11">
+            <span class="background-color-white">
+                <span class="font-family-calibri">
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">Elektronik ortamda anında ifa edilen hizmetler veya ALICI&rsquo;ya anında teslim edilen gayri maddi mallara ilişkin s&ouml;zleşmelerde</span>
+                    </span>
+                </span>
+            </span>
+        </span>
+    </li>
+</ul>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">5.5</span>
+                    </span>
+                </strong>
+                <span class="font-family-calibrilight">
+                    <span class="color-black"> ALICI, Mesafeli S&ouml;zleşmeler Y&ouml;netmeliği gereği cayma hakkına ilişkin bilgilendirmenin gereği gibi yapıldığını kabul eder.</span>
+                </span>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">5.6</span>
+                    </span>
+                </strong>
+                <span class="font-family-calibrilight">
+                    <span class="color-black"> Satıcı ayrıca, T&uuml;keticinin Korunması Hakkında Kanun ve Mesafeli S&ouml;zleşmeler Uygulama Usul ve Esasları hakkında Y&ouml;netmelik uyarınca &quot;satıcı&quot; konumunda olduğunu, ilgili mevzuat uyarınca t&uuml;m y&uuml;k&uuml;ml&uuml;l&uuml;k ve sorumlulukların kendime ait olduğunu bildiğini, satış işlemi i&ccedil;in listeleme yaptığı &uuml;r&uuml;n&uuml;n, alıcı tarafından onaylanarak alınma talebinin yapılması durumunda, alıcı ile arasında yukarıdaki koşullarda bir s&ouml;zleşmenin kurulmasını kabul etiğini, bu s&ouml;zleşmenin Audiophile.Org tarafından satıcı adına, alıcının Audiophile.Org&#39;a bildirdiği e-posta adresine g&ouml;nderileceğini kabul ve beyan eder.</span>
+                </span>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <strong>
+                    <span class="font-family-calibrilight">
+                        <span class="color-black">MADDE - 6 YETKİLİ MAHKEME:</span>
+                    </span>
+                </strong>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">&nbsp;</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <span class="font-family-calibrilight">
+                    <span class="color-black">ALICI&rsquo;nın her t&uuml;rl&uuml; şik&acirc;yet ve itirazına ilişkin başvurularda ve iş bu s&ouml;zleşme ile ilgili &ccedil;ıkabilecek diğer ihtilaflarda; her yıl G&uuml;mr&uuml;k ve Ticaret Bakanlığı tarafından ilan edilen değere kadar ALICI veya SATICI&#39;nın yerleşim yerindeki T&uuml;ketici Sorunları Hakem Heyetleri, s&ouml;z konusu değerin &uuml;zerindeki ihtilaflarda ise T&uuml;ketici Mahkemeleri yetkilidir.</span>
+                </span>
+            </span>
+        </span>
+    </span>
+</p>
+
+<p class="text-align-justify">
+    <span class="font-size-11">
+        <span class="background-color-white">
+            <span class="font-family-calibri">
+                <span class="font-family-calibrilight">İşbu s&ouml;zleşme </span>
+                <span class="font-size-14-pt">
+                    <span>
+                        <span class="font-family-calibrilight">
+                            <span>@Model.CreatedDate.ToString("g") </span>
+                        </span>
+                    </span>
+                </span>
+                <span class="font-family-calibrilight">
+                    <span class="color-black">tarihinde dijital olarak d&uuml;zenlenmiştir.</span>
+                </span>
+            </span>
+        </span>
+    </span>
+</p>
+
+</page>
+
+</body>
+</html>

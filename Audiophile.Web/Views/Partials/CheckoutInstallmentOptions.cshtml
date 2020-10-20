@@ -1,0 +1,30 @@
+@model InstallmentPrice
+@{
+    var lang= Constants.GetLang(Context.Session.GetString("lang"));
+}
+<table class="table table-hover m-b-0">
+    <thead>
+    <tr id="TRBankAdi" class="bank garanti-bankasi text-center">
+        <th class="text-center" colspan="4">@Model.CardName <br> (@Model.BankName)</th>
+    </tr>
+    <tr class="title">
+        <th class="text-center">@Localization.Get("Taksit","Installment", lang)</th>
+        <th class="text-center">@Localization.Get("Ücret","Price", lang)</th>
+        <th class="text-center">@Localization.Get("Toplam","Total", lang)</th>
+        <th class="text-center">@Localization.Get("Seçim","Select", lang)</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Details)
+    {
+        <tr>
+            <td class="text-center">@item.InstallmentNumber</td>
+            <td class="text-center">₺ @item.Price</td>
+            <td class="text-center">₺ @item.TotalPrice</td>
+            <td class="text-center">
+                <input type="radio" class="radio-button" name="InstallmentNumber" value="@item.InstallmentNumber" required>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

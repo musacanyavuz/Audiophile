@@ -1,0 +1,72 @@
+@model List<Log>
+
+@{
+    ViewBag.Title = "Log";
+    ViewData["ActiveMenu"] = "menu-item-log";
+}
+
+@section Styles{
+    <link href="/AdminContent/assets/vendors/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css">
+}
+
+<div class="m-portlet m-portlet--mobile">
+    <div class="m-portlet__head">
+        <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+                <h3 class="m-portlet__head-text">
+                    Log
+                </h3>
+            </div>
+        </div> 
+    </div>
+    <div class="m-portlet__body">
+        <div class="table-responsive">
+            <table class="table table-striped- table-bordered table-hover table-checkable" id="m_table_1">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Mesaj</th>
+                    <th>Tür</th>
+                    <th>Key 1</th>
+                    <th>Key 2</th>
+                    <th>Key 3</th>
+                    <th>Key 4</th>
+                    <th>Key 5</th>
+                    <th>Tarih</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                @foreach (var log in Model)
+                {
+                    <tr id="row_@log.ID">
+                        <td> @log.ID</td>
+                        <td> @log.Message </td>
+                        <td> @log.Type </td>
+                        <td> @log?.Key1 </td>
+                        <td> @log?.Key2 </td>
+                        <td> @log?.Key3 </td>
+                        <td> @log?.Key4 </td>
+                        <td> @log?.Key5 </td> 
+                        <td> @log.CreatedDate </td> 
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="/AdminContent/assets/vendors/custom/datatables/datatables.bundle.js" type="text/javascript"></script>
+    <script>
+        $("#m_table_1").DataTable({
+            order: [0, 'desc'],
+            dom: "<'row'<'col-sm-6 text-left'f><'col-sm-6 text-right'B>>\n\t\t\t<'row'<'col-sm-12'tr>>\n\t\t\t<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>",
+            buttons: ["print", "copyHtml5", "excelHtml5", "csvHtml5", "pdfHtml5"]
+        });
+    </script>
+    
+}

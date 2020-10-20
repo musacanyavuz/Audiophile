@@ -1,0 +1,40 @@
+@model int
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+}
+<div class="side-bar width-100-15" >
+    <div class="kategoriler-div w-clearfix">
+        <div class="kategoriler">@Localization.Get("Destek","Support", lang)</div>
+        
+        <a href="@Constants.GetURL((int)Enums.Routing.Hakkimizda, lang)" class="link-block w-inline-block w-clearfix sidemenu-link">
+            <div>@Localization.Get("Hakkımızda","About Us", lang)</div>
+        </a>
+        
+        <a href="@Constants.GetURL((int)Enums.Routing.Videolar, lang)" class="link-block w-inline-block w-clearfix sidemenu-link">
+            <div>@Localization.Get("Videolar","Videos", lang)</div>
+        </a>
+        <a href="@Constants.GetURL((int)Enums.Routing.Yardim, lang)" class="link-block w-inline-block sidemenu-link">
+            <div>@Localization.Get("Yardım","Help", lang)</div>
+        </a>
+        <a href="@Constants.GetURL((int)Enums.Routing.KullanimKosullari, lang)" class="link-block w-inline-block sidemenu-link">
+            <div>@Localization.Get("Kullanım Koşulları","Terms of Use", lang)</div>
+        </a>
+        <a href="@Constants.GetURL((int)Enums.Routing.GuvenliOdemeGittiBu, lang)" class="link-block w-inline-block sidemenu-link">
+            <div>@Localization.Get("Güvenli Ödeme Gitti Bu","Secure Payment", lang)</div>
+        </a>
+        <a href="@Constants.GetURL((int)Enums.Routing.Ucretler, lang)" class="link-block w-inline-block sidemenu-link">
+            <div>@Localization.Get("Ücretler","Fees", lang)</div>
+        </a>
+        <a href="@Constants.GetURL((int)Enums.Routing.Iletisim, lang)" class="link-block w-inline-block sidemenu-link">
+            <div>@Localization.Get("İletişim","Contact Us", lang)</div>
+        </a>
+    </div>
+</div>
+
+
+ 
+<script>
+    window.onload = function() {
+        $($('.sidemenu-link')[@Model]).addClass('w--current');
+    } 
+</script> 

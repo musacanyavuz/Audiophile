@@ -1,0 +1,260 @@
+@model AdDetailsStep2ViewModel
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("İlan Detayları", "Other Details", lang);
+    Layout = "_Layout";
+}
+
+@section style{
+    <style>
+        .crop-area #canvas, #canvas2 {
+            height: 300px;
+            width: 300px;
+            background-color: #ffffff;
+            cursor: default;
+            border: 1px solid black;
+        }
+
+        .div-block-17.form-wrapper.form-hesaplar.urun-ekle {
+            background-color: white;
+        }
+
+        .div--marka {
+            width: 100%;
+            margin-bottom: 71px;
+            padding: 0px;
+            border: 1px #e4e4e4;
+            background-color: white;
+        }
+
+        @@media screen and (min-width: 1200px) {
+
+            .w-container {
+                max-width: 906px !important;
+            }
+
+            .register-form {
+                width: 80%;
+                margin: auto;
+            }
+
+                .register-form .w-checkbox-input, .register-form .w-radio-input,
+                .checkbox-field-2 {
+                    float: none !important;
+                }
+        }
+
+        .sec-altsayfa.sec-hesaplar.section-1 {
+            background-color: #fff !important;
+        }
+
+        .div-block-20.div-ilan.hesap {
+            background-color: white !important;
+        }
+
+        @@media screen and (max-width: 992px) {
+            .h2.h4.h-kat {
+                margin-bottom: 0px;
+            }
+
+            .div-block-20.div-ilan.hesap {
+                padding-top: 25px;
+                padding-bottom: 0px;
+            }
+
+            .radio-button {
+                margin-right: 5px;
+            }
+        }
+    </style>
+}
+<div class="sec-altsayfa sec-hesaplar section-1">
+    <div class="w-container">
+
+        <div class="w-clearfix">
+
+            <div class="div-block-20 div-ilan hesap urun-ekle w-clearfix">
+                <h4 class="h2 h4 h-kat h-kategori">@ViewBag.Title</h4>
+            </div>
+
+            @{
+                await Html.RenderPartialAsync("~/Views/Partials/AddListingSteps.cshtml", 2);
+            }
+
+            <div class="div-block-17 form-wrapper form-hesaplar urun-ekle w-clearfix">
+                <h3 class="heading-2 form-text">@Localization.Get("İlan Detayları", "Ad Details", lang)</h3>
+                <div class="form-block-5 w-form">
+                    @using (Html.BeginForm("AdDetails", "Adverts", FormMethod.Post, new { @class = "w-clearfix" }))
+                    {
+                        <div class="row mb-0">
+                            <div class="col-sm-12 col-md-12">
+                                <label class="field-label">@Localization.Get("Gönderim Seçeneği", "Shipment Type", lang)</label>
+                                <select class="dropdown-4 select-urun urun-ozellik-select w-dropdown textfield valid" name="ShipmentTypeID" id="shipmentType" required>
+                                    <option value="@((int)Enums.ShipmentType.KargoIleGonderim)"> @Localization.Get("Kargo İle Gönderim", "I can send by Cargo", lang) </option>
+                                    <option value="@((int)Enums.ShipmentType.AdresimdenAlinmali)"> @Localization.Get("Adresimden Alınmalı", "Should be taken from my address", lang) </option>
+                                    <option value="@((int)Enums.ShipmentType.Diger)"> @Localization.Get("Diğer (Görüşelim)", "Other (We'll talk)", lang) </option>
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="row mb-0">
+                            <div class="col-sm-12 col-md-12" id="cargoAreaSelect">
+                                <label class="field-label">@Localization.Get("Gönderim Yeri", "Shipment Area", lang)</label>
+                                <select class="dropdown-4 select-urun urun-ozellik-select w-dropdown textfield valid" name="CargoAreaID" required>
+                                    @foreach (var item in Model.CargoAreas)
+                                    {
+                                        if (Model.Advert?.CargoAreaID == item.ID)
+                                        {
+                                            <option selected value="@item.ID">@item.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.ID">@item.Name</option>
+                                        }
+
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-0" id="freeShippingArea">
+                            <div class="col-sm-12 col-md-12">
+                                <label class="field-label">@Localization.Get("Gönderim Maliyeti", "Cost of Shipment", lang)</label>
+                                <div class="div-block-32">
+                                    <div class="radio-button w-radio">
+                                        <label class="w-form-label">
+                                            <input class="w-radio-input" @(Model.Advert?.FreeShipping == false ? "checked" : "") name="FreeShipping" type="radio" value="false"> @Localization.Get("Alıcıya Ait", "Buyer Pays", lang)
+                                        </label>
+                                    </div>
+                                    <div class="w-radio">
+                                        <label class="w-form-label">
+                                            <input class="w-radio-input" @(Model.Advert?.FreeShipping == true ? "checked" : "") name="FreeShipping" type="radio" value="true"> @Localization.Get("Satıcıya Ait", "Seller Pays", lang)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12 col-md-12" id="shippingPriceArea" style="@(Model.Advert?.FreeShipping==true? "display:none":"display:block")">
+                                <label class="field-label">@Localization.Get("Tahmini Kargo Ücreti", "Estimated Cost of Cargo", lang)</label>
+                                <input type="number" value="@Model.Advert?.ShippingPrice" min="0" name="ShippingPrice" class="textfield w-input" />
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="row mb-0">
+                            <div class="col-sm-12 col-md-12">
+                                <label class="field-label">@Localization.Get("Orijinal Kutusu", "Original Box", lang)</label>
+                                <div class="div-block-32">
+                                    <div class="radio-button w-radio">
+                                        <label class="w-form-label">
+                                            <input class="w-radio-input" name="OriginalBox" type="radio" value="true" required> @Localization.Get("Evet", "Yes", lang)
+                                        </label>
+                                    </div>
+                                    <div class=" w-radio">
+                                        <label class="w-form-label">
+                                            <input class="w-radio-input" name="OriginalBox" type="radio" value="false" required> @Localization.Get("Hayır", "No", lang)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row mb-0">
+                            <div class="col-sm-12 col-md-12">
+                                <label class="field-label">@Localization.Get("Kullanma Talimatı", "User Manual", lang)</label>
+                                <div class="div-block-32">
+                                    <div class="radio-button w-radio">
+                                        <label class="w-form-label">
+                                            <input class="w-radio-input" name="TermsOfUse" type="radio" value="true" required> @Localization.Get("Evet", "Yes", lang)
+                                        </label>
+                                    </div>
+                                    <div class="w-radio">
+                                        <label class="w-form-label">
+                                            <input class="w-radio-input" name="TermsOfUse" type="radio" value="false" required> @Localization.Get("Hayır", "No", lang)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <label class="field-label">@Localization.Get("İlgili Web Adresi", "Related Web Address", lang) </label>
+                        <input class="textfield w-input col-sm-12 col-md-12" maxlength="200" name="WebSite" type="text" value="@(Model.Advert?.WebSite)">
+
+                        <label class="field-label">@Localization.Get("Ürün Ayıpları", "Defects of Product", lang)* </label>
+                        <textarea class="textfield w-input col-sm-12 col-md-12" maxlength="5000" name="ProductDefects" rows="5" required>@(Model.Advert?.ProductDefects)</textarea>
+
+                        <div class="checkbox-field-2 w-checkbox">
+                            <input type="checkbox" name="TermsOfAdvert" id="checkbox" class="w-checkbox-input" required>
+                            <label for="checkbox" class="w-form-label">
+                                <a href="@Constants.GetURL((int)Enums.Routing.KullanimKosullari, lang)" target="_blank">@Localization.Get("İlan verme kurallarını okudum, kabul ediyorum", "I have read the ad rules, I accept", lang)  </a>
+                            </label>
+                        </div>
+
+
+                        <button type="submit" class="button button-main button-satn button-submit submit-center w-button">@Localization.Get("Kaydet ve Devam Et", "Save and Continue", lang)</button>
+                        <div class="warning-advert">
+                            @Html.Raw(Model.WarningAdverts)
+                        </div>
+                    }
+                    <div id="alertArea">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+
+</div>
+
+@section Scripts{
+    <script>
+        $('#shipmentType').on('change', function() {
+            shipmentChange(parseInt($(this).val()));
+        });
+
+        function shipmentChange(val) {
+            if (val !== @((int)Enums.ShipmentType.KargoIleGonderim)) {
+                $('#cargoAreaSelect').css('display', 'none');
+                $('#freeShippingArea').css('display', 'none');
+                $('#shippingPriceArea').css('display', 'none');
+            }
+            else {
+                $('#cargoAreaSelect').css('display', 'block');
+                $('#freeShippingArea').css('display', 'flex');
+                if (JSON.parse($('input[name="FreeShipping"]:checked').val()) === false) {
+                    $('#shippingPriceArea').css('display', 'block');
+                } else {
+                    $('#shippingPriceArea').css('display', 'none');
+                }
+            }
+        }
+
+        $('input[name="FreeShipping"]').on('change', function() {
+            if (JSON.parse($(this).val()) === false) {
+                $('#shippingPriceArea').css('display', 'block');
+            } else {
+                $('#shippingPriceArea').css('display', 'none');
+            }
+        });
+
+        @if (Model.Advert != null)
+        {
+            if (Model.Advert.ShippingTypeID != 0)
+            {
+                <text>
+                $('#shipmentType').val(@Model.Advert?.ShippingTypeID);
+                shipmentChange(@Model.Advert?.ShippingTypeID);
+                </text>
+            }
+            <text>
+                $('input[name="OriginalBox"][value="@Model.Advert.OriginalBox.ToString().ToLower()"]').attr('checked', 'checked');
+                $('input[name="TermsOfUse"][value="@Model.Advert.TermsOfUse.ToString().ToLower()"]').attr('checked', 'checked');
+            </text>
+        }
+
+    </script>
+}
+

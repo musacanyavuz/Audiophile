@@ -1,0 +1,84 @@
+@model List<HomePageItem>
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    
+}
+ 
+@foreach (var item in Model)
+{
+    var itemClass = item.YellowDoping ? "onemli-urun" : "";
+    
+     <div class="product-wrapper pw4 w-clearfix" itemscope itemtype="http://schema.org/Product">
+    <meta itemprop="sku" content="@item.StockAmount">
+    <div class="product product-ana @itemClass">
+        <a href="@item.Url" class="w-inline-block w-full w-clearfix" title="@item.Title" itemprop="url" target="_blank">
+            <div class="urun-imaj">
+                <img alt="@item.Title" src="@(!string.IsNullOrEmpty(item.ImageSource)?item.ImageSource:"/Content/img/no-image.jpg")" onerror="this.src = '/Content/img/no-image.jpg';" itemprop="image"/> 
+            </div>
+            <div class="kategoriler urun-text">
+                <h4 itemprop="name">
+                    @Html.Raw(item.Title)
+                </h4> 
+                <div class="ilan-aciklama-alani">
+                    <p class="category-name">@item.CategoryName</p>
+                    <p><span>@Localization.Get("İlan No", "Ad No: ", lang)</span>: #@item.ID</p>
+                    <p><span>@Localization.Get("İlan Tarihi", "Post Date", lang)</span>: @(item.CreatedDate.ToShortDateString())</p>
+                    <p class="counts"><i class="fa fa-thumbs-up"></i> @item.LikesCount &nbsp;<i class="fa fa-eye"></i> @item.ViewCount </p>
+                </div>
+            </div>
+        </a>
+        <div class="listing-footer">
+            <div class="old-price">@item.OldPrice</div>
+            @if (item.ILiked)
+            {
+                <img alt="Beğenilen amplifikatör, amfi, hoparlör, müzik seti, müzik sistemi ilanları" id="likeImage_@item.ID" src="/Content/img/images/dolu_kalp.png" class="kalp" onclick="unlikeAd(@item.ID)" title="@Localization.Get("Beğenmekten Vazgeç","Unlike",lang)">
+            }
+            else
+            {
+                 <img alt="Beğenilen amplifikatör, amfi, hoparlör, müzik seti, müzik sistemi ilanları" id="likeImage_@item.ID" src="/Content/img/images/kalp.png" class="kalp" onclick="likeAd(@item.ID)" title="@Localization.Get("Beğen","Like",lang)">
+            }
+
+            <meta itemprop="brand" content = "@item.Brand">
+            <div class="new-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                <span itemprop="price">@item.Price</span><span itemprop="priceCurrency"> @item.PriceCurrency</span>
+                
+                <link itemprop="availability" href="http://schema.org/InStock" />
+                <meta itemprop="priceValidUntil" content="@item.CreatedDate.AddYears(1).ToString("yyyy-MM-dd")">
+                <meta itemprop="url" content="https://@(Context.Request.Host+item.Url)">
+                <meta itemprop="sku" content="@item.StockAmount">
+            </div>
+        </div>
+        
+        
+        @if (!string.IsNullOrEmpty(item.LabelDopingType))
+        {
+            string className="", enText = "";
+            if (item.LabelDopingType=="Yeni")
+            {
+                className = "new";
+                enText = "New";
+            }
+            else if (item.LabelDopingType=="Fiyatı Düştü")
+            {
+                className = "fiyati-dustu ";
+                enText = "Price Dropped";
+            }
+            else if (item.LabelDopingType=="Acil")
+            {
+                className = "fiyati-dustu acil";
+                enText = "Urgent";
+            }
+            
+            <div class="div-block-40 @className ">
+                <div>@Localization.Get(item.LabelDopingType, enText, lang)</div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(item.SecurePayment))
+        {
+            <div class="fiyati-dustu gittibu"><div> @item.SecurePayment </div></div>
+        }
+    </div>
+</div>
+}
+

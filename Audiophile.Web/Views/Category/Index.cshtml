@@ -1,0 +1,407 @@
+@model CategoryViewModel
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Model.ChildCategory != null ? Model.ChildCategory.Name : Model.ParentCategory?.Name;
+    var description = Model.ChildCategory != null ? Model.ChildCategory.SeoDescription : Model.ParentCategory?.SeoDescription;
+    var keywords = Model.ChildCategory != null ? Model.ChildCategory.SeoKeywords : Model.ParentCategory?.SeoKeywords;
+    Layout = "_Layout";
+    ViewBag.SeoDescription = description;
+    ViewBag.SeoKeywords = keywords;
+}
+@section style{
+    <style>
+        .unordered-list {
+            margin-left: 0;
+        }
+
+        .link-block.link-list {
+            padding-right: 0;
+        }
+
+        .div-block-2 {
+            width: 20px
+        }
+
+        #btnFilter {
+            width: 100% !important;
+        }
+
+        .text-align-end {
+            text-align: end !important;
+        }
+
+        .all-unset {
+            all: unset;
+        }
+    </style>    @* all-unset icerisinde all:unset kaldirdigimizda sayfa tasarim olarak bozuluyor. Bu yüzden kaldirilmadi. Tespit eden : EmreOz *@
+    <link rel="stylesheet" href="~/Content/css/bootstrap-table.min.css" />
+}
+
+@section MetaTag{
+    @if (Model.Adverts != null && Model.Adverts.Any())
+    {
+        <meta property="og:image" content="https://www.audiophile.org@(Model.Adverts[0].ImageSource)" />
+
+    }
+}
+
+@{
+    await Html.RenderPartialAsync("~/Views/Partials/Submenu.cshtml", Model.AdvertCategories);
+}
+
+
+<div class="div-block-20">
+    <div class="w-container">
+        <h1 class="h-kat h-kategori h2 h4">
+            <strong id="categoryTitle">@ViewBag.Title</strong> (<span id="adCounts">@Model.AdvertsCount</span> @Localization.Get(" kayıt bulundu", " Items", lang))
+        </h1>
+        <div class="paragraph-3">
+            <h2 id="description" class="all-unset">@description</h2>
+            <br>
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <a class="mail" href="@Constants.GetURL((int) Enums.Routing.GirisYap, lang)"> @Localization.Get("Giriş Yapmak için Tıklayınız", "Click for login", lang) </a>
+            }
+        </div>
+    </div>
+</div>
+
+
+
+
+<div id="alisveris" class="sec-altsayfa section-1">
+    <div class="w-container">
+        <div class="side-bar">
+
+            <div class="kategoriler-div divfull w-clearfix">
+                <div class="form-block-7 w-form">
+                    @using (Html.BeginForm("Filter", "Category", FormMethod.Post, new { @class = "w-clearfix", id = "filtre_form" }))
+                    {
+                        <select id="categories" class="dropdown-4 select-urun urun-ozellik-select w-dropdown textfield height-30 z-index-0" name="ParentCategoryID" onchange="fillSubcategories(this.value)">
+                            <option>@Localization.Get("Seçiniz", "Choose", lang)</option>
+                            @foreach (var category in Model.AdvertCategories)
+                            {
+                                <option value="@category.ID">@category.Name</option>
+                            }
+                        </select>
+                        <select id="subcategories" class="height-30 z-index-0 dropdown-4 select-urun urun-ozellik-select w-dropdown textfield" name="CategoryID"></select>
+                        <select id="Drpfilter" class="dropdown-4 select-urun urun-ozellik-select w-dropdown textfield height-30 z-index-0" name="FilterID">
+                            <option value="0">@Localization.Get("Tamamı", "All", lang)</option>
+                            <option value="1">@Localization.Get("Sadee Aktifler", "Active Items", lang)</option>
+                        </select>
+                        <input type="text" class="form_element filtre-aralik" name="Content" placeholder="@Localization.Get("İçerikte ara","Search in Content",lang)">
+                        <input type="text" class="form_element filtre-aralik" name="Brand" placeholder="@Localization.Get("Markada Ara","Search in Brands",lang) ">
+                        <input type="text" class="form_element filtre-aralik" name="Model" placeholder="@Localization.Get("Modelde Ara","Search in Models",lang)">
+                        <input type="number" class="form_element filtre-aralik" name="AdvertID" placeholder="@Localization.Get("İlan No","Ad Number",lang) ">
+                        <input type="number" class="form_element filtre-aralik" name="PriceMin" placeholder="@Localization.Get("Min Fiyat","Min Price",lang) ">
+                        <input type="number" class="form_element filtre-aralik" name="PriceMax" placeholder="@Localization.Get("Max Fiyat","Max Price",lang) ">
+                        <button type="submit" id="btnFilter" class="button button-main button-satn button-ilan button-sub w-button">
+                            @Localization.Get("FİLTRELE", "FILTER", lang)
+                        </button>
+                    }
+                </div>
+            </div>
+
+        </div>
+
+        <div class="div-block-36">
+            <div class="div-head w-clearfix">
+
+                <div class="div-block-36">
+                    <div class="div-head w-clearfix">
+                        <h3 class="heading-2">
+                            @Localization.Get("Bu Alandaki İlanlar", "Items in this category", lang)
+                        </h3>
+                        <i>
+                            &nbsp; (<a href="#" id="listStyle" data-type="2" data-i="@Localization.Get("Resimler Halinde Göster","Show as List",lang)" data-l="@Localization.Get("Liste Halinde Göster","Show as List",lang)">@Localization.Get("Liste Halinde Göster", "Show In List", lang)</a>)
+                        </i>
+                    </div>
+                    <div id="showImages">
+                        <div class="products" id="loadhere">
+                            @{
+                                var index = 0;
+                                foreach (var advert in Model?.Adverts)
+                                {
+                                    await Html.RenderPartialAsync("~/Views/Partials/HomePageItem_4Column.cshtml", advert);
+                                    index++;
+                                    if (index % 4 == 0)
+                                    {
+                                        <div class="w-100">
+                                            <ins class="adsbygoogle"
+                                                 style="display: block;width: 100%"
+                                                 data-ad-client="ca-pub-9703328830778745"
+                                                 data-ad-slot="9567262438"
+                                                 data-ad-format="auto"
+                                                 data-full-width-responsive="true"></ins>
+                                        </div>
+                                    }
+
+                                }
+                            }
+                            <script>
+                                (adsbygoogle = window.adsbygoogle || []).push({});
+                            </script>
+                        </div>
+
+                        <a id="btnLoadMore" onclick="getAdverts()" class="button button-main button-sub w-button load-more-button">
+                            @Localization.Get("Daha Fazla...", "Load More...", lang)
+                        </a>
+                    </div>
+                    <div id="showList" class="table-responsive display-none">
+                        <table class="table table-sm" id="tableCategories">
+                            <thead>
+                                <tr>
+                                    <th data-sortable="true" scope="col">İlan No</th>
+                                    <th data-sortable="true" scope="col">Tarih</th>
+                                    <th data-sortable="true" scope="col">İlan Başlığı</th>
+                                    <th data-sortable="true" scope="col">Orj. Fiyatı</th>
+                                    <th data-sortable="true" scope="col">Satış Fiyatı</th>
+                                    <th data-sortable="true" scope="col">Kullanıcı</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var advert in Model?.Adverts)
+                                {
+                                    <tr>
+                                        <td><a href="@advert.Url" target="_blank">@advert.ID</a></td>
+                                        <td>@advert.CreatedDate.ToString("dd.MM.yyyy")</td>
+                                        <td><a href="@advert.Url" target="_blank">@advert.Title</a></td>
+                                        <td class="text-align-end">@advert.NewProductPrice</td>
+                                        <td class="text-align-end">@advert.DecPrice</td>
+                                        <td>@advert.UserName</td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                        <a id="btnLoadMoreList" onclick="getAdvertsList()" class="button button-main button-sub w-button load-more-button">
+                            @Localization.Get("Daha Fazla...", "Load More...", lang)
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/Content/script/bootstrap-table.min.js"></script>
+    <script>
+       var categories = @Html.Raw(Json.Serialize(Model.AdvertCategories));
+        var filtered = false;
+
+        $('#filtre_form').submit(function (e) {            
+            e.preventDefault();           
+            $("#btnFilter")
+                .html(
+                    '<i class="fa fa-spin fa-spinner m-r-10" ></i> @(Localization.Get("Yükleniyor", "Loading", lang))...')
+                .addClass("disabled");
+
+            var parameters = {
+                parentCategoryID: $('select[name="ParentCategoryID"]').val(),
+                categoryID: $('select[name="CategoryID"]').val(),
+                content: $('input[name="Content"]').val(),
+                brand: $('input[name="Brand"]').val(),
+                model: $('input[name="Model"]').val(),
+                advertID: $('input[name="AdvertID"]').val(),
+                priceMin: $('input[name="PriceMin"]').val(),
+                priceMax: $('input[name="PriceMax"]').val(),
+                filterID: $('select[name="FilterID"]').val(),
+            };
+
+            if ($("#subcategories").val() == "0") {
+                $('#categoryTitle').html($("#categories option:selected").text());
+            } else {
+                $('#categoryTitle').html($("#subcategories option:selected").text());
+            }
+            $('#adCounts').html('...');
+            var categoryId = parseInt(parameters.categoryID);
+            var parentCategoryId = parseInt(parameters.parentCategoryID);
+
+            categories.forEach(function(category) {
+
+                if (categoryId == 0 && category.id == parentCategoryId) {
+                    $('#description').html(category.description);
+                }
+
+                if (categoryId > 0 && category.childCategories != null && category.childCategories.length > 0) {
+                    category.childCategories.forEach(function(child) {
+                        if (child.id == categoryId) {
+                            $('#description').html(child.description);
+                        }
+                    });
+                }
+            });
+            debugger;
+            var request = $.ajax({
+                url: '/Category/Filter/',
+                data: parameters,
+                type: 'POST'
+            });
+            request.done(function(data) {
+                filtered = true;
+                $("#btnLoadMore").remove();
+                $("#loadhere").html(data);
+                var count = $('.product-wrapper').length;
+                $('#adCounts').html('' + count);
+                notify('success', '@Localization.Get("İlanlar listelendi", "Ads listed", lang)');
+                $("#btnFilter").html('@Localization.Get("FİLTRELE", "FILTER", lang)').removeClass("disabled");
+            });
+
+        });
+
+
+    </script>
+
+
+    <script>
+        var offset = 40;
+        var offsetList = 40;
+        function getAdverts() {
+            $("#btnLoadMore")
+                .html(
+                    '<i class="fa fa-spin fa-spinner m-r-10" ></i> @(Localization.Get("Yükleniyor", "Loading", lang))...')
+                .addClass("disabled");
+
+            var categoryId = @(Model.ChildCategory?.ID ?? 0);
+            var parentCategoryId = @(Model.ParentCategory?.ID ?? 0);
+//            if (filtered) {
+//                categoryId = $('select[name="CategoryID"]').val();
+//                parentCategoryId = $('select[name="ParentCategoryID"]').val();
+//            }
+
+            var request = $.ajax({
+                url: "/Category/GetAdverts/",
+                data: {
+                    categoryId,
+                    parentCategoryId,
+                    offset:offset
+                },
+                method: "POST"
+            });
+            request.done(function (data) {
+                offset += 40;
+                $("#loadhere").append(data);
+                //minId = parseInt($('.product-wrapper:last').attr('id').replace('advert_', ''));
+                $("#btnLoadMore").html('@Localization.Get("Daha Fazla...", "Load More...", lang)')
+                    .removeClass("disabled");
+            });
+        }
+
+        $("#tableCategories").bootstrapTable({ sortable: true });
+
+        function getAdvertsList() {
+            $("#btnLoadMoreList")
+                .html(
+                    '<i class="fa fa-spin fa-spinner m-r-10" ></i> @(Localization.Get("Yükleniyor", "Loading", lang))...')
+                .addClass("disabled");
+
+            const categoryId = @(Model.ChildCategory?.ID ?? 0);
+            const parentCategoryId = @(Model.ParentCategory?.ID ?? 0);
+            const request = $.ajax({
+                url: "/Category/GetAdvertsList/",
+                data: {
+                    offset:offsetList,
+                    categoryId,
+                    parentCategoryId
+                },
+                method: "POST"
+            });
+            request.done(function (data) {
+                offsetList += 40;
+                const $table = $("table");
+                data.map(item => {
+                    const date = item.createdDate.toString().split("T")[0].split("-").join(".");
+                    $table.append(`<tr>
+                                                    <td><a href="${item.url}" target="_blank">${item.id}</a></td>
+                                                    <td>${date}</td>
+                                                    <td><a href="${item.url}" target="_blank">${item.title}</a></td>
+                                                    <td  class="text-align-end">${item.newProductPrice}</td>
+                                                    <td  class="text-align-end">${item.decPrice}</td>
+                                                    <td>${item.userName}</td>
+                                               </tr>`);
+                });
+                //minId = parseInt($('.product-wrapper:last').attr('id').replace('advert_', ''));
+                $("#btnLoadMoreList").html('@Localization.Get("Daha Fazla...", "Load More...", lang)')
+                    .removeClass("disabled");
+            });
+        }
+    </script>
+
+    <script>
+
+
+        function fillSubcategories(id) {
+            $('#subcategories').html('');
+            categories.forEach(function(category) {
+                if (category.id === parseInt(id)) {
+                    $('#subcategories').append('<option value="0">@Localization.Get("Tümü", "All", lang)</option>');
+                    category.childCategories = category.childCategories.sort((a, b) => a.order - b.order);
+                    category.childCategories.forEach(function (sub) {
+                        $('#subcategories').append('<option value=' + sub.id + '>' + sub.name + '</option>');
+                    });
+                }
+            });
+        }
+
+        $('#categories').val(@(Model.ParentCategory?.ID ?? 0));
+        fillSubcategories(@(Model.ParentCategory?.ID ?? 0));
+    </script>
+
+    <script>
+        var _throttleTimer = null;
+        var _throttleDelay = 100;
+        var $window = $(window);
+        var $document = $(document);
+
+        $document.ready(function () {
+
+            $window
+                .off('scroll', ScrollHandler)
+                .on('scroll', ScrollHandler);
+
+        });
+
+        function ScrollHandler(e) {
+            clearTimeout(_throttleTimer);
+            _throttleTimer = setTimeout(function () {
+                //do work
+                if ($window.scrollTop() + $window.height() > $document.height() - 100) {
+                    const type = parseInt($("#listStyle").attr("data-type"), 10);
+                    if (type === 1) {
+                        $("#btnLoadMoreList").click();
+                    } else {
+                        $('#btnLoadMore').click();
+                    }
+                }
+            },
+                _throttleDelay);
+        }
+
+        $("#listStyle").click(function () {
+            const $this = $(this);
+            const imageText = $this.attr("data-i");
+            const listText = $this.attr("data-l");
+            const listType = parseInt($this.attr("data-type"));
+            if (listType === 1) {
+                $this.attr("data-type", 2);
+                $this.text(listText);
+                $("#showImages").show();
+                $("#showList").hide();
+            } else {
+                $this.attr("data-type", 1);
+                $this.text(imageText);
+                $("#showList").show();
+                $("#showImages").hide();
+            }
+        });
+    </script>
+}
+
+
+

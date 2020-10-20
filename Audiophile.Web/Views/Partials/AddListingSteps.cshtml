@@ -1,0 +1,37 @@
+@model int 
+@* model olarak aktif stepsin numarasını alır  *@
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+}
+
+
+<div class="steps">
+    <div class="w-row">
+        <div class="c1 w-col w-col-3">
+            <div class="step1"></div>
+            <div class="step-text text-block-10 text-active">@Localization.Get("İlan Bilgileri","Ad Information",lang) </div>
+        </div>
+        <div class="c1 w-col w-col-2">
+            <div class="step1"></div>
+            <div class="step-text text-block-10">@Localization.Get("İlan Detayları","Ad Details",lang) </div>
+        </div>
+        <div class="c1 w-col w-col-2">
+            <div class="step1"></div>
+            <div class="step-text text-block-10">@Localization.Get("İlanı Öne Çıkar","Featured Ad",lang)</div>
+        </div>
+        <div class="w-col w-col-3">
+            <div class="step1"></div>
+            <div class="step-text text-block-10">@Localization.Get("Sonuç","Summary",lang) </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.onload = function() {
+        for (var i = 0; i < @Model; i++) {
+            $($('.step1')[i]).addClass('active');
+            $($('.step-text')[i]).addClass('text-active');
+        }
+        
+    } 
+</script>

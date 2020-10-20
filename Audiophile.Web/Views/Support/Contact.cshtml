@@ -1,0 +1,42 @@
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("İletişim", "Contact", lang);
+    Layout = "_Layout";
+}
+
+<div class="section-1 sec-altsayfa sec-hesaplar">
+    <div class="w-container">
+
+        @{Html.RenderPartial("SupportSideMenu", 6);}
+        
+        <div class="content w-clearfix">
+            <div class="div-block-20 div-ilan hesap w-clearfix">
+                <h4 class="h2 h4 h-kat h-kategori">@ViewBag.Title</h4>
+            </div>
+            <div class="product product-list urulerim bannerlar">
+               
+                <div class="uruns hak">
+                    <img alt="contact" src="/Content/img/contact.jpeg" class="image-12">
+                    <div>
+                        <h4>@Localization.Get("İletişim Bilgileri", "Contact Information", lang)</h4>
+                        <p>
+                            @Html.Raw(@TextService.GetText((int) Enums.Texts.IletisimUstMetin, lang))
+                        </p>
+                        <a href="https://api.whatsapp.com/send?phone=905525196666" rel="nofollow" target="_blank" style="  width: 150px; display: block; margin: 16px auto 0; position: relative; padding-left: 36px; padding-top: 4px; color: #484848;">
+                        <span style="font-weight:normal; font-size: 14px;">WhatsApp Acil Durum Destek</span>
+                        <img src="/Content/img/wapp_logo.png" width="24" style="max-width: 100%; display: block; position: absolute; left: 0; top: 0;">
+                        </a>
+                    </div>
+                </div>
+                
+                @{ await Html.RenderPartialAsync("~/Views/Partials/SupportForm.cshtml"); }
+                <br /><br />
+                <p>
+                    @Html.Raw(TextService.GetText((int)Enums.Texts.IletisimAltMetin, lang))
+                </p>
+                
+            </div> 
+        </div>
+
+    </div>
+</div>

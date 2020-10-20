@@ -1,0 +1,48 @@
+@model int
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+}
+<div class="side-bar width-100-15">
+    <div class="kategoriler-div w-clearfix">
+        <div class="kategoriler">@Localization.Get("Hesap İşlemleri","Account Settings", lang)</div>
+        
+        <a href="@Constants.GetURL((int)Enums.Routing.UyelikBilgilerim, lang)" class="link-block w-inline-block w-clearfix sidemenu-link">
+            <div>@Localization.Get("Üyelik Bilgilerim","Personal Information", lang)</div>
+        </a>
+        
+        <a href="@Constants.GetURL((int)Enums.Routing.AdresBilgierim, lang)" class="link-block w-inline-block w-clearfix sidemenu-link">
+            <div>@Localization.Get("Adres Bilgilerim","Postage Address", lang)</div>
+        </a>
+        <a href="@Constants.GetURL((int)Enums.Routing.SifreDegistir, lang)" class="link-block w-inline-block sidemenu-link">
+            <div>@Localization.Get("Şifre Değiştir","Change Password", lang)</div>
+        </a>
+        <a href="@Constants.GetURL((int)Enums.Routing.CariHesabim, lang)" class="link-block w-inline-block sidemenu-link">
+            <div>@Localization.Get("Cari Hesabım","Transactions", lang)</div>
+        </a>
+        <a href="@Constants.GetURL((int)Enums.Routing.Ilanlarim, lang)" class="link-block w-inline-block sidemenu-link">
+            <div>@Localization.Get("İlanlarım","My Advertisements", lang)</div>
+        </a>
+        <a href="@Constants.GetURL((int)Enums.Routing.YaptigimYorumlar, lang)" class="link-block w-inline-block sidemenu-link">
+            <div>@Localization.Get("Yaptığım Yorumlar","My Comments", lang)</div>
+        </a>
+        <a href="@Constants.GetURL((int)Enums.Routing.BegendigimIlanlar, lang)" class="link-block w-inline-block sidemenu-link">
+            <div>@Localization.Get("Beğendiğim İlanlar","My Likes", lang)</div>
+        </a>
+        <a href="@Constants.GetURL((int)Enums.Routing.Bannerlarim, lang)" class="link-block w-inline-block sidemenu-link">
+            <div>@Localization.Get("Bannerlarım","My Banners", lang)</div>
+        </a>
+        <a href="@Constants.GetURL((int)Enums.Routing.HaberVeFirmalarim, lang)" class="link-block w-inline-block sidemenu-link">
+            <div>@Localization.Get("Haber ve Firmalarım","My News and Firms", lang)</div>
+        </a>
+        <a href="@Constants.GetURL((int)Enums.Routing.SistemVeMakalelerim, lang)" class="link-block w-inline-block sidemenu-link">
+            <div>@Localization.Get("Sistem ve Makalelerim","My Systems and Arcticles", lang)</div>
+        </a>
+    </div>
+</div>
+ 
+<script>
+    window.onload = function() {
+        $($('.sidemenu-link')[@Model]).addClass('w--current');
+    } 
+</script> 
+

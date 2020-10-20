@@ -1,0 +1,156 @@
+@model AddAddressViewModel
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("Adres Ekle", "Add Address", lang);
+    Layout = "_Layout";
+}
+
+
+<div class="section-1 sec-altsayfa sec-hesaplar">
+    <div class="w-container">
+
+        @{Html.RenderPartial("~/Views/Partials/AccountSideMenu.cshtml", 1);}
+
+        <div class="content w-clearfix">
+            <div class="div-block-20 div-ilan hesap w-clearfix">
+                <h4 class="h2 h4 h-kat h-kategori">@ViewBag.Title </h4>
+            </div>
+            <div id="question">
+                
+            </div>
+            <div class="product product-list urulerim bannerlar">
+                 
+                @using (Html.BeginForm("SaveAddAddress","Account", FormMethod.Post))
+                {
+                    <div class="row margin_bottom">
+                        <div class="col-12">
+                            <label class="field-label">@Localization.Get("Adres Başlık", "Address Title", lang)*:</label>
+                            <input class="textfield w-input" data-val="true" maxlength="50" name="Title" type="text" required>
+                        </div>
+                    </div> 
+    
+                    <div class="row margin_bottom">
+                        <div class="col-12">
+                            <label class="field-label">@Localization.Get("Adres", "Address", lang)*:</label>
+                            <input class="textfield w-input" data-val="true" maxlength="300" name="Address" type="text" required>
+                        </div>
+                    </div> 
+                    
+                    <div class="row margin_bottom">
+                        <div class="col-12">
+                            <label class="field-label">@Localization.Get("Ülke", "Country", lang)*:</label>
+                            <select class="form-control w-dropdown textfield" name="CountryID" id="country" required>
+                                @foreach (var country in Model.Countries)
+                                {
+                                    <option value="@country.ID">@country.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div> 
+                
+                    <div id="selects">
+                        <div class="row margin_bottom">
+                            <div class="col-12">
+                                <label class="field-label">@Localization.Get("Şehir", "City", lang)*:</label>
+                                <select class="form-control w-dropdown textfield" name="CityID" id="city">
+                                    @foreach (var city in Model.Cities)
+                                    {
+                                        <option value="@city.ID">@city.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div> 
+                
+                        <div class="row margin_bottom">
+                            <div class="col-12">
+                                <label class="field-label">@Localization.Get("İlçe", "District", lang)*:</label>
+                                <select class="form-control w-dropdown textfield" name="DistrictID" id="district">
+                                    @foreach (var district in Model.Districts.Where(x=>x.CityID == Model.Cities.First().ID))
+                                    {
+                                        <option value="@district.ID">@district.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div id="inputs" class="display-none">
+                        <div class="row margin_bottom">
+                            <div class="col-12">
+                                <label class="field-label">@Localization.Get("Şehir", "City", lang)*:</label>
+                                <input class="textfield w-input" data-val="true" maxlength="50" name="CityText" type="text">
+                            </div>
+                        </div> 
+                    </div>
+                
+                    
+                
+                
+                <div class="row margin_bottom">
+                    <div class="col-4"> 
+                        <input class="w-checkbox-input m-l-0" name="IsDefault" type="checkbox" value="true" >
+                        &nbsp;
+                        @Localization.Get("Varsayılan","Default",lang)
+                    </div>
+                </div> 
+                
+                    <div class="row align-items-center">
+                        <input type="submit" value="@Localization.Get("Kaydet", "Save", lang)" class="button button-main button-satn button-submit w-button">
+                    </div>
+                
+                }
+                
+                
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $('#country').change(function() {
+            var country = parseInt($(this).val());
+            if (country > 1) {
+                $('#selects').css("display", "none");
+                $('#inputs').css("display", "block");
+                $('input[name="CityText"]').attr("required", "");
+            } else {
+                $('input[name="CityText"]').removeAttr("required");
+                $('#selects').css("display", "block");
+                $('#inputs').css("display", "none");
+            }
+        });
+    </script>
+    <script>
+        var cities = @Html.Raw(Json.Serialize(Model.Cities));
+        var districts = @Html.Raw(Json.Serialize(Model.Districts));
+        
+        $('#city').change(function() {
+            var city = parseInt($(this).val()); 
+            loadDistricts(city);
+        });
+        
+        function loadCities(country) {
+            $('#city').html('');
+            $('#district').html('');
+            cities.forEach(function(item) {
+                if (item.countryID === country) {
+                    $('#city').append('<option value="'+item.id+'">'+item.name+'</option>'); 
+                }
+            });
+            loadDistricts(parseInt($('#city').val()));
+        }
+        
+        function loadDistricts(city) {
+            $('#district').html('');
+            districts.forEach(function(item) {
+                if (item.cityID === city) {
+                    $('#district').append('<option value="'+item.id+'">'+item.name+'</option>'); 
+                }
+            });
+        } 
+    </script>
+}
+

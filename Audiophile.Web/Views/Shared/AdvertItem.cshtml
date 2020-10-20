@@ -1,0 +1,65 @@
+@model Audiophile.Models.Advert
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    var itemClass = (Model.YellowFrameDoping > 0) ? "onemli-urun" : "";
+}
+ 
+<div class="product-wrapper pw4 w-clearfix">
+    <div class="product product-ana @itemClass">
+        <a href="@Constants.GetURL((int)Enums.Routing.Ilan,lang)/@Model.CategorySlug/@Model.ID" class="w-inline-block w-full w-clearfix" title="@Model.Title">
+            <div class="urun-imaj">
+                <img alt="@Model.Title" src="@(!string.IsNullOrEmpty(Model.Thumbnail)?Model.Thumbnail:"/Content/img/no-image.jpg")" onerror="this.src = '/Content/img/no-image.jpg';"/> 
+            </div>
+            <div class="kategoriler urun-text">
+                @Model.Title <br>
+                <div class="ilan-aciklama-alani">
+                    <p><span>@Localization.Get("İlan No","Ad No: ",lang)</span>: #@Model.ID</p>
+                    <p><span>@Localization.Get("İlan Tarihi","Post Date",lang)</span>: @Model.CreatedDate.ToString("dd.MM.yyyy")</p>
+                    <p><span>@Localization.Get("Beğeni", "Likes", lang)</span>: <span class="begeni-span">@Model.LikesCount</span></p>
+                </div>
+            </div>
+        </a>
+        <div class="listing-footer">
+            <div class="old-price">@Model.NewProductPrice @Constants.GetMoney(Model.MoneyTypeID)</div>
+            @if (Model.IsILiked)
+            {
+                <img id="likeImage_@Model.ID" src="/Content/img/images/dolu_kalp.png" class="kalp" onclick="unlikeAd(@Model.ID)" title="@Localization.Get("Beğenmekten Vazgeç","Unlike",lang)">
+            }
+            else
+            {
+                 <img id="likeImage_@Model.ID" src="/Content/img/images/kalp.png" class="kalp" onclick="likeAd(@Model.ID)" title="@Localization.Get("Beğen","Like",lang)">
+            }
+            
+            <div class="new-price">@Model.Price @Constants.GetMoney(Model.MoneyTypeID) </div>
+        </div>
+        
+        
+        @if (Model.LabelDopingModel != null)
+        {
+            string className="", enText = "";
+            if (Model.LabelDopingModel.Name=="Yeni")
+            {
+                className = "new";
+                enText = "New";
+            }
+            else if (Model.LabelDopingModel.Name=="Fiyatı Düştü")
+            {
+                className = "fiyati-dustu ";
+                enText = "Price Dropped";
+            }
+            else if (Model.LabelDopingModel.Name=="Acil")
+            {
+                className = "fiyati-dustu acil";
+                enText = "Urgent";
+            }
+            
+            <div class="div-block-40 @className ">
+                <div>@Localization.Get(Model.LabelDopingModel.Name, enText, lang)</div>
+            </div>
+        }
+        @if (Model.UseSecurePayment)
+        {
+            <div class="fiyati-dustu gittibu"><div>@Localization.Get("Gitti Bu","Secure Payment",lang)</div></div>
+        }
+    </div>
+</div>

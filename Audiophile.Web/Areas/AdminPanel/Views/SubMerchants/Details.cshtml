@@ -1,0 +1,221 @@
+@model UserSecurePaymentDetail
+
+@{
+    ViewBag.Title = "Alt Üye İşyeri Bilgileri";
+    Layout = "AdminLayout";
+    ViewData["ActiveMenu"] = "menu-item-submerchants";
+}
+
+@using (Html.BeginForm("Details", "SubMerchants", FormMethod.Post,
+    new {@class = "m-form"}))
+{
+    <div class="m-content">
+
+        <div class="row">
+            <div class="col-xl-12">
+
+                <div class="m-portlet">
+                    <div class="m-portlet__head">
+                        <div class="m-portlet__head-caption">
+                            <div class="m-portlet__head-title">
+                                <span class="m-portlet__head-icon m--hide">
+                                    <i class="la la-gear"></i>
+                                </span>
+                                <h3 class="m-portlet__head-text">
+                                    Alt Üye İşyeri Bilgileri
+                                </h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-6">
+                            <div class="m-portlet__body ">
+                                <div class="m-form__section m-form__section--first">
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">ID:</label>
+                                        <div class="col-lg-6 col-form-label">
+                                            #@Model.ID
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">Ad:</label>
+                                        <div class="col-lg-6 col-form-label">
+
+                                            <input type="text" name="Name" value="@Model.Name" class="form-control m-input">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">Soyad:</label>
+                                        <div class="col-lg-6 col-form-label">
+
+                                            <input type="text" name="Surname" value="@Model.Surname" class="form-control m-input">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">IBAN:</label>
+                                        <div class="col-lg-6 col-form-label">
+                                            <input type="text" name="IBAN" value="@Model.IBAN  " class="form-control m-input">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">Telefon:</label>
+                                        <div class="col-lg-6 col-form-label">
+                                            <input type="text" name="MobilePhone" value="@Model.MobilePhone" class="form-control m-input">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">Email:</label>
+                                        <div class="col-lg-6 col-form-label">
+
+                                            <input type="text" name="Email" value="@Model.Email" class="form-control m-input">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">Gönderici Adresi:</label>
+                                        <div class="col-lg-6 col-form-label">
+                                            <input type="text" name="SenderAddress" value="@Model.SenderAddress" class="form-control m-input">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">Fatura Adresi:</label>
+                                        <div class="col-lg-6 col-form-label">
+                                            <input type="text" name="InvoiceAddress" value="@Model.InvoiceAddress" class="form-control m-input">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">Kayıt Tipi:</label>
+                                        <div class="col-lg-6 col-form-label">
+                                            @Model.Type
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">Iyzico Key:</label>
+                                        <div class="col-lg-6 col-form-label">
+                                            <input type="text" name="IyzicoSubMerchantKey" value="@Model.IyzicoSubMerchantKey" class="form-control m-input">
+                                        </div>
+                                    </div>
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">TC:</label>
+                                        <div class="col-lg-6 col-form-label">
+                                            <input type="text" name="TC" value="@Model.TC" class="form-control m-input">
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">Kayıt Tarihi:</label>
+                                        <div class="col-lg-6 col-form-label">
+                                            @Model.CreatedDate 
+                                                <input hidden="hidden" type="text" name="CreatedDate" value="@Model.CreatedDate" class="form-control m-input">
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="m-portlet__body ">
+                                <div class="m-form__section m-form__section--first">
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">Ünvan:</label>
+                                        <div class="col-lg-6 col-form-label">
+                                            <input type="text" name="CompanyName" value="@Model.CompanyName" class="form-control m-input">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">Vergi Dairesi:</label>
+                                        <div class="col-lg-6 col-form-label">
+                                            <input type="text" name="TaxOffice" value="@Model.TaxOffice" class="form-control m-input">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">Vergi Numarası:</label>
+                                        <div class="col-lg-6 col-form-label">
+                                            <input type="text" name="TaxNumber" value="@Model.TaxNumber" class="form-control m-input">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">Telefon:</label>
+                                        <div class="col-lg-6 col-form-label">
+                                            <input type="text" name="CompanyPhone" value="@Model.CompanyPhone" class="form-control m-input">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">Fax:</label>
+                                        <div class="col-lg-6 col-form-label">
+                                            <input type="text" name="CompanyFax" value="@Model.CompanyFax" class="form-control m-input">
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group m-form__group row">
+                                        <label class="col-lg-4 col-form-label">Email:</label>
+                                        <div class="col-lg-6 col-form-label">
+                                            <input type="text" name="CompanyEmail" value="@Model.CompanyEmail" class="form-control m-input">
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+ 
+                            <input hidden="hidden" type="number" name="UserId" value="@Model.UserID"/>
+                        </div>
+                        <div class="col-xl-12">
+                            <div class="m-portlet__foot m-portlet__foot--fit">
+                                <div class="m-form__actions m-form__actions">
+                                    <div class="row">
+                                        <div class="col-lg-4"></div>
+                                        <div class="col-lg-6">
+                                            <button type="submit" class="btn btn-success">Kaydet</button>
+                                            <button type="button" onclick="deleteMessage(@Model.ID)" class="btn btn-danger">Sil</button>
+                                            <a href="/AdminPanel/SubMerchants/Details/@Model.ID" class="btn btn-secondary">Vazgeç</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+
+@section Scripts
+{
+    <script>
+ function deleteMessage(id) {
+            Swal({
+                title: '#'+id+' kodlu alt üye işyerini silmek istediğinize emin misiniz?',
+                text: "Alt üye işyeri silinmek üzere.",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet',
+                cancelButtonText: 'Vazgeç'
+            }).then((result) => {
+                if (result.value) {
+                    deleteSub(id);
+                }
+            });
+        }
+    </script>
+}

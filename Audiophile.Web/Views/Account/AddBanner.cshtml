@@ -1,0 +1,458 @@
+@model AddBannerViewModel
+
+@{
+var lang = Constants.GetLang(Context.Session.GetString("lang"));
+ViewBag.Title = Localization.Get("Banner Ekle", "Add Banner", lang);
+Layout = "_Layout";
+}
+
+@section style{
+<link rel="stylesheet" href="~/Content/css/cropper.css">
+<style>
+    /* Limit image width to avoid overflow the container */
+        .crop-area { }
+
+        .crop-area img {
+            max-width: 100%; /* This rule is very important, please do not ignore this! */
+            max-height: 300px;
+        }
+
+        .crop-area #canvas, #canvas2, #canvas3 {
+            height: 300px;
+            width: 300px;
+            background-color: #ffffff;
+            cursor: default;
+            border: 1px solid black;
+        }
+    </style>
+}
+
+<div class="section-1 sec-altsayfa sec-hesaplar">
+    <div class="w-container">
+
+        @{Html.RenderPartial("~/Views/Partials/AccountSideMenu.cshtml", 8);}
+
+        <div class="content w-clearfix">
+            <div class="div-block-20 div-ilan hesap w-clearfix m-b-0 display-grid" >
+                <h4 class="h2 h4 h-kat h-kategori">@ViewBag.Title </h4>
+                <ul class="list-style-type-decimal">
+                    @if (lang == 1)
+                    {
+                    <li>Banner tipini seçiniz. (Slider, Resim Logo, Gif Logo)</li>
+                    <li>Dosya seç butonu ile yüklemek istediğiniz görseli seçiniz. (max 3mb)</li>
+                    <li>Slider veya Resim Logo tipinde bir banner seçtiyseniz, resim düzenleme alanında resmi kırpınız
+                        ve Kırp butonuna tıklayınıc.</li>
+                    <li>Banner bilgilerini ve ödeme bilgilerini doldurunuz.</li>
+                    <li>Onaylıyorum butonuna tıklayınız.</li>
+                    }
+                    else
+                    {
+                    <li>Select the type of banner.</li>
+                    <li>Click to Choose File button and select to image you want to upload. (max 3mb)</li>
+                    <li>If you selected a Slider Banner or Logo Banner, crop the image in the image editing area and
+                        press the Crop button.</li>
+                    <li>Please complete in the banner information and payment information.</li>
+                    <li>Click the Confirm button.</li>
+                    }
+                </ul>
+            </div>
+            <div id="question"></div>
+            <div class="product product-list urulerim bannerlar">
+                <div>
+                    @using (Html.BeginForm("AddLogoBanner", "Account", FormMethod.Post, new {@class = "form-3", id ="form2", enctype = "multipart/form-data"}))
+                    {
+                    <input name="file64" id="file64" value="" hidden />
+                    <input name="fileType" id="fileType" value="1" hidden />
+
+                    <div data-duration-in="300" data-duration-out="100" class="w-tabs">
+                        <div class="w-tab-menu">
+                            <a data-w-tab="Tab 1" onclick="changeFileType(1)" class="tab-link-5 w-inline-block w-tab-link w--current">
+                                <div>@Localization.Get("Anasayfa Banner Yükle", "Buy Homepage Banner", lang) </div>
+                            </a>
+                            <a data-w-tab="Tab 2" onclick="changeFileType(2)" class="tab-link-5 w-inline-block w-tab-link">
+                                <div>@Localization.Get("Slider Banner Yükle", "Buy Slider Banner", lang) </div>
+                            </a>
+                            <a data-w-tab="Tab 3" onclick="changeFileType(3)" class="tab-link-5 w-inline-block w-tab-link">
+                                <div>@Localization.Get("Resim Logo Yükle", "Buy Logo", lang) </div>
+                            </a>
+                            <a data-w-tab="Tab 4" onclick="changeFileType(4)" class="tab-link-5 w-inline-block w-tab-link">
+                                <div>@Localization.Get("Gif Logo Yükle", "Buy Gif Logo", lang) </div>
+                            </a>
+                        </div>
+                        <div class="w-tab-content">
+
+                            <div data-w-tab="Tab 1" class="tab-pane w-clearfix w-tab-pane w--tab-active">
+                                <p>
+                                    @Localization.Get("Anasayfa banner ise ilanların arasında gösterilir.", "Home Page Banner to be shown among the products.", lang)
+                                </p>
+                                <div class="crop-area">
+                                    <p>
+                                        <input type="file" id="fileInput" accept="image/*" />
+                                        <input type="button" class="btn btn-primary" id="btnCrop" value="@Localization.Get("Kırp", "Crop" , lang)" />
+                                        <input type="button" class="btn btn-default" id="btnRestore" value="@Localization.Get("Geri al", "Restore" , lang)" />
+                                    </p>
+                                    <div class="row">
+                                        <div class="col-md-6 col-12" id="crop-container">
+                                            <canvas id="canvas">
+                                                @Localization.Get("Tarayıcınız HTML5 desteklemiyor, lütfen güncelleyinveya farklı bir tarayıcı kullanınız.", "Your browser does not support the HTML5 canvas element.", lang)
+                                            </canvas>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-12">
+                                            <div id="result"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div data-w-tab="Tab 2" class="tab-pane w-clearfix w-tab-pane w--tab-active">
+                                <p>
+                                    @Localization.Get("Slider banner anasayfanın alt kısmında gösterilir.", "Slider Banner is shown in the slider section at the bottom of the main page.", lang)
+                                </p>
+                                <div class="crop-area">
+                                    <p>
+                                        <input type="file" id="fileInput2" accept="image/*" />
+                                        <input type="button" class="btn btn-primary" id="btnCrop2" value="@Localization.Get("Kırp", "Crop" , lang)" />
+                                        <input type="button" class="btn btn-default" id="btnRestore2" value="@Localization.Get("Geri al", "Restore" , lang)" />
+                                    </p>
+                                    <div class="row">
+                                        <div class="col-md-6 col-12" id="crop-container2">
+                                            <canvas id="canvas2">
+                                                @Localization.Get("Tarayıcınız HTML5 desteklemiyor, lütfen güncelleyinveya farklı bir tarayıcı kullanınız.", "Your browser does not support the HTML5 canvas element.", lang)
+                                            </canvas>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-12">
+                                            <div id="result2"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div data-w-tab="Tab 3" class="tab-pane w-clearfix w-tab-pane w--tab-active">
+                                <div class="crop-area">
+                                    <input type="file" id="fileInput3" accept="image/*" />
+                                    <br /><br />
+                                    <input type="button" class="btn btn-primary" id="btnCrop3" value="@Localization.Get("Kırp", "Crop" , lang)" />
+                                    <input type="button" class="btn btn-default" id="btnRestore3" value="@Localization.Get("Geri al", "Restore" , lang)" />
+                                    <div class="row">
+                                        <div class="col-md-6 col-12" id="crop-container3">
+                                            <canvas id="canvas3">
+                                                @Localization.Get("Tarayıcınız HTML5 desteklemiyor, lütfen güncelleyin veya farklı bir tarayıcı kullanınız.", "Your browser does not support the HTML5 canvas element.", lang)
+                                            </canvas>
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 col-12">
+                                            <div id="result3"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-w-tab="Tab 4" class="tab-pane w-tab-pane" >
+                                <input type="file" name="gifFile" /> <br><br>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="div-block-17 form-wrapper banner-form w-clearfix">
+                        <h3 class="heading-2 form-text">@Localization.Get("Banner Bilgileri", "Banner Information",lang)*</h3>
+                        <div class="form-block-5 w-form">
+
+                            <label class="field-label">@Localization.Get("Başlık", "Title", lang) *</label>
+                            <input type="text" class="textfield w-input" maxlength="100" name="title" required>
+
+                            <label class="field-label">URL *</label>
+                            <input type="text" class="textfield w-input" maxlength="250" name="url" required>
+
+                            <label for="field-5" class="field-label">@Localization.Get("Bannerı Yayınlamak İstediğiniz Süre", "The Period You Want To Publish Banner", lang) </label>
+
+                            <select id="logoDopingSelect" name="dopingId" class="select-field-2 w-select width-200"
+                                onchange="updateLogoPrice()" required>
+                                <option value="0">@Localization.Get("Seçiniz", "Choose", lang)</option>
+                                @foreach (var doping in Model.BannerDopings)
+                                {
+                                <option value="@doping.ID">@doping.Day @Localization.Get("gün", "days", lang)
+                                    @doping.Price TL</option>
+                                }
+                            </select>
+                            <div class="banner-fiyat"></div><label for="name-5" class="field-label kirmizi">*
+                                @Localization.Get("ile işaretli alanlar zorunludur", "Fields marked with are mandatory", lang).</label>
+
+
+                            <div class="form-block-5 w-form">
+                                <div class="div-block-31 m-b-0" >
+                                    <div class="radio-button-field-3 w-checkbox">
+                                        <label class="field-label-4 w-form-label"><input class="w-checkbox-input" type="radio" name="paymentType" value="false">
+                                            @Localization.Get("Banka Havalesi", "Wire Transfer", lang) 
+                                        </label>
+                                    </div>
+                                    <div class="radio-button-field-3 w-checkbox">
+                                        <label class="field-label-4 w-form-label"><input class="w-checkbox-input" type="radio" name="paymentType" value="true">
+                                            @Localization.Get("Kredi Kartı", "Credit Card", lang) 
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-block-5 w-form" id="bankPayment">
+                                <b> @TextService.GetText((int) Enums.Texts.BankaHavalesiText, lang) </b>
+                            </div>
+
+                            <div class="form-block-5 w-form" id="creditCardPayment">
+                                <h3 class="mb-5">@Localization.Get("Ödeme Bilgileri", "Credit Card Information", lang)</h3>
+                                <div class="row mb-0">
+                                    <div class="col-md-12">
+                                        <input class="textfield field-col kart w-input" id="CardName2" name="fullname"
+                                            placeholder="@Localization.Get("Kart Üzerindeki Ad Soyad", "Name Surname", lang)" type="text" value="">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input class="textfield field-col kart w-input" id="CardNumber2" name="number"
+                                            placeholder="@Localization.Get("Kart No", "Card No", lang)" type="text" value="">
+                                    </div>
+                                </div>
+                                <div class="row mb-0">
+                                    <div class="col-md-4">
+                                        <select class="textfield w-select" id="Month2" name="month">
+                                            <option value="">@Localization.Get("Ay", "Month", lang)</option>
+                                            <option value="1">01</option>
+                                            <option value="2">02</option>
+                                            <option value="3">03</option>
+                                            <option value="4">04</option>
+                                            <option value="5">05</option>
+                                            <option value="6">06</option>
+                                            <option value="7">07</option>
+                                            <option value="8">08</option>
+                                            <option value="9">09</option>
+                                            <option value="10">10</option>
+                                            <option value="11">11</option>
+                                            <option value="12">12</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <select class="textfield w-select" id="Year2" name="year">
+                                            <option value="">@Localization.Get("Yıl", "Year", lang)</option>
+                                            @for (int i = DateTime.Now.Year; i <= DateTime.Now.Year + 15; i++) {
+                                                <option value="@i">@i</option>
+                                                }
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input class="textfield w-input" id="CVC2" maxlength="4" name="cvc" placeholder="CVC"
+                                            type="text" value="">
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <input type="submit" value="@Localization.Get(" Onaylıyorum", "Confirm" , lang)" class="button button-main button-satn button-submit w-button">
+                        </div>
+                    </div>
+                    }
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+<script src="~/Content/script/cropper.js"></script>
+<script src="~/Content/script/jquerycropper.js"></script>
+
+<script>
+    var logoDopings = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.LogoDopings));
+    var bannerDopings = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BannerDopings));
+    var dayText = '@Localization.Get("gün", "day", lang)';
+
+    function loadLogoDopings() {
+        $('#logoDopingSelect').html('');
+        logoDopings.forEach(function (item) {
+            var option = '<option value="' + item.ID + '">' + item.Day + ' ' + dayText + ' ' + item.Price +
+                ' TL</option>';
+            $('#logoDopingSelect').append(option);
+        });
+    }
+
+    function loadBannerDopings() {
+        $('#logoDopingSelect').html('');
+        bannerDopings.forEach(function (item) {
+            var option = '<option value="' + item.ID + '">' + item.Day + ' ' + dayText + ' ' + item.Price +
+                ' TL</option>';
+            $('#logoDopingSelect').append(option);
+        });
+    }
+</script>
+
+
+<script>
+    function changeFileType(id) {
+        $('#fileType').val(id);
+        if (id === 1) {
+            loadBannerDopings();
+        } else if (id === 2 || id === 3) {
+            loadLogoDopings();
+        }
+    }
+</script>
+
+
+<script>
+    function updateLogoPrice() {
+        var id = $('#logoDopingSelect').val();
+
+        @*console.log('selected logo: ' + id);*@
+    }
+
+    $('#fileInput').on('change',
+        function () {
+            var canvas = $("#canvas"),
+                context = canvas.get(0).getContext("2d"),
+                $result = $('#result');
+
+            if (this.files && this.files[0]) {
+                if (this.files[0].type.match(/^image\//)) {
+                    var reader = new FileReader();
+                    reader.onload = function (evt) {
+                        var img = new Image();
+                        img.onload = function () {
+                            context.canvas.height = img.height;
+                            context.canvas.width = img.width;
+                            context.drawImage(img, 0, 0);
+                            var cropper = canvas.cropper({
+                                aspectRatio: 1200 / 200,
+                                dragMode: 'move'
+                            });
+                            $('#btnCrop').click(function () {
+                                // Get a string base 64 data url
+                                var croppedImageDataURL = canvas.cropper('getCroppedCanvas').toDataURL(
+                                    "image/png");
+                                $result.html($('<img>').attr('src', croppedImageDataURL));
+                                $('#crop-container').css('display', 'none');
+                                $('#file64').val(croppedImageDataURL);
+                            });
+                            $('#btnRestore').click(function () {
+                                canvas.cropper('reset');
+                                $result.empty();
+                                $('#file64').val('');
+                                $('#crop-container').css('display', 'block');
+                            });
+                        };
+                        img.src = evt.target.result;
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                } else {
+                    alert("Invalid file type! Please select an image file.");
+                }
+            } else {
+                alert('No file(s) selected.');
+            }
+    });
+
+    $('#fileInput2').on('change',
+        function () {
+            var canvas = $("#canvas2"),
+                context = canvas.get(0).getContext("2d"),
+                $result = $('#result2');
+
+            if (this.files && this.files[0]) {
+                if (this.files[0].type.match(/^image\//)) {
+                    var reader = new FileReader();
+                    reader.onload = function (evt) {
+                        var img = new Image();
+                        img.onload = function () {
+                            context.canvas.height = img.height;
+                            context.canvas.width = img.width;
+                            context.drawImage(img, 0, 0);
+                            var cropper2 = canvas.cropper({
+                                aspectRatio: 1200 / 340,
+                                dragMode: 'move'
+                            });
+                            $('#btnCrop2').click(function () {
+                                // Get a string base 64 data url
+                                var croppedImageDataURL = canvas.cropper('getCroppedCanvas').toDataURL(
+                                    "image/png");
+                                $result.html($('<img>').attr('src', croppedImageDataURL));
+                                $('#crop-container2').css('display', 'none');
+                                $('#file64').val(croppedImageDataURL);
+                            });
+                            $('#btnRestore').click(function () {
+                                canvas.cropper('reset');
+                                $result.empty();
+                                $('#file64').val('');
+                                $('#crop-container2').css('display', 'block');
+                            });
+                        };
+                        img.src = evt.target.result;
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                } else {
+                    alert("Invalid file type! Please select an image file.");
+                }
+            } else {
+                alert('No file(s) selected.');
+            }
+    });
+
+
+    $('#fileInput3').on('change',
+        function () {
+            var canvas = $("#canvas3"),
+                context = canvas.get(0).getContext("2d"),
+                $result = $('#result3');
+
+            if (this.files && this.files[0]) {
+                if (this.files[0].type.match(/^image\//)) {
+                    var reader = new FileReader();
+                    reader.onload = function (evt) {
+                        var img = new Image();
+                        img.onload = function () {
+                            context.canvas.height = img.height;
+                            context.canvas.width = img.width;
+                            context.drawImage(img, 0, 0);
+                            var cropper3 = canvas.cropper({
+                                aspectRatio: 1 / 1,
+                                dragMode: 'move'
+                            });
+                            $('#btnCrop3').click(function () {
+                                // Get a string base 64 data url
+                                var croppedImageDataURL = canvas.cropper('getCroppedCanvas').toDataURL(
+                                    "image/png");
+                                $result.html($('<img>').attr('src', croppedImageDataURL));
+                                $('#crop-container3').css('display', 'none');
+                                $('#file64').val(croppedImageDataURL);
+                            });
+                            $('#btnRestore3').click(function () {
+                                canvas.cropper('reset');
+                                $result.empty();
+                                $('#file64').val('');
+                                $('#crop-container3').css('display', 'block');
+                            });
+                        };
+                        img.src = evt.target.result;
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                } else {
+                    alert("Invalid file type! Please select an image file.");
+                }
+            } else {
+                alert('No file(s) selected.');
+            }
+        });
+
+    $('input[name="paymentType"]').on('change',
+        function () {
+            if ($(this).val() === 'false') {
+                $('#bankPayment').css('display', 'block');
+                $('#creditCardPayment').css('display', 'none');
+            }
+            if ($(this).val() === 'true') {
+                $('#bankPayment').css('display', 'none');
+                $('#creditCardPayment').css('display', 'block');
+            }
+        });
+</script>
+}

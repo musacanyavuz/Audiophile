@@ -1,0 +1,472 @@
+@model Advert
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("İlan Fotoğrafları", "Add Photos", lang);
+    Layout = "_Layout";
+}
+@section style{
+    <link rel="stylesheet" href="~/Content/css/dropzone.min.css">
+    <style>
+        .dz-image-preview {
+            display: table-cell;
+            text-align: center;
+        }
+
+        #sortable {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+            #sortable li {
+                margin: 3px 3px 3px 0;
+                padding: 1px;
+                float: left;
+                text-align: center;
+                cursor: grab;
+            }
+
+        .btn {
+            color: #fff !important;
+        }
+    </style>
+    <link rel="stylesheet" href="~/Content/css/dropzone.min.css">
+    <link rel="stylesheet" href="~/Content/css/cropper.css">
+    <style>
+        /* Limit image width to avoid overflow the container */
+        .crop-area {
+        }
+
+            .crop-area img {
+                max-width: 100%; /* This rule is very important, please do not ignore this! */
+                max-height: 300px;
+            }
+
+            .crop-area #canvas, #canvas2 {
+                height: 300px;
+                width: 300px;
+                background-color: #ffffff;
+                cursor: default;
+                border: 1px solid black;
+            }
+    </style>
+}
+
+<div class="sec-altsayfa sec-hesaplar section-1">
+    <div class="w-container">
+
+        <div class="w-clearfix">
+
+            <div class="div-block-20 div-ilan hesap urun-ekle w-clearfix">
+                <h4 class="h2 h4 h-kat h-kategori">@ViewBag.Title</h4>
+            </div>
+            @{
+                Html.RenderPartial("~/Views/Partials/AddListingSteps.cshtml", 2);
+            }
+
+            <div class="div-block-17 form-wrapper form-hesaplar urun-ekle w-clearfix">
+                <h3 class="heading-2 form-text">@Localization.Get("Fotoğraf Ekle", "Add Photos", lang)</h3>
+                <h5 class="heading-2 form-text istemiyorum"></h5>
+                <div class="form-block-5 w-form">
+                    <h5>@Localization.Get("Mevcut Fotoğraflar", "Added Photos", lang)</h5>
+                    <p>
+                        @Localization.Get("Fotoğraf sıralamalarını düzenlemek için fotoğrafları sürükleyebilirsiniz.", "You can drag photos to edit the photo rankings.", lang)
+                    </p>
+                    @if (Model.Photos != null && Model.Photos.Any())
+                    {
+                        <button onclick="saveOrder()" class="button w-button m-r-10 float-left m-b-10">@Localization.Get("Sıralamayı Kaydet", "Save Photos Order", lang)</button>
+                        @*                         <button onclick="updateMainImage()"  class="button w-button width-auto " >@Localization.Get("Ana Fotoğraf Seçimini Kaydet", "Save Main Photo", lang)</button> *@
+                        <br>
+                        <br>
+                    }
+                    <br>
+                    <li class="row ">
+                        @if (Model.Photos != null && Model.Photos.Any())
+                        {
+                            <ul id="sortable">
+                                @foreach (var photo in Model.Photos.OrderBy(p => p.OrderNumber))
+                                {
+                                    <li class="ui-state-default" id="q_@photo.ID">
+                                        <div class="card width-rem-10">
+                                            <img class="card-img-top old-image" src="@photo.Source" />
+                                            <div class="card-body">
+                                                <h5 class="card-title">@photo.CreatedDate.ToString("g")</h5>
+                                                <input onclick="javascript:updateMainImage(@photo.ID)" @(Model.Thumbnail == photo.Thumbnail ? "checked" : " ") type="radio" name="mainImage" value="@photo.ID" />
+                                                <span onclick="updateMainImage(@photo.ID)"> @Localization.Get("Ana fotoğraf", "Main photo", lang)</span>
+                                                <a href="javascript:;" onclick="ask(@photo.ID, '')" style="width: 72px !important;" class="button w-button button-sil m-t-10 display-inline-grid">@Localization.Get("Sil", "Delete", lang)</a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                </div>
+
+                @using (Html.BeginForm("AdPhotoUpload", "Adverts", FormMethod.Post, new { @class = "w-clearfix", enctype = "multipart/form-data" }))
+                {
+                    <div class="div--marka w-clearfix">
+                        <div class="p-b-5">
+                            <label class="field-label">@Localization.Get("Fotoğraflar", "Photos", lang)</label>
+                        </div>
+                        <hr><br>
+                        <h5>@Localization.Get("İşaretlediğiniz görsel ana fotoğraf olarak kullanılacak.", "Marked picture will be used as main picture", lang)</h5>
+                        <small>*@Localization.Get("Max. Dosya Boyutu: 10mb. Max. 10 dosya.", "Max. File Size: 5mb. Max. 10 file.", lang) </small>
+                        <div>
+                            @*<form action="/Adverts/AddListing" enctype="multipart/form-data" method="POST">*@
+                            <div class="dropzone" id="myDropzone">
+                                <div class="dz-message" data-dz-message>
+                                    <span>
+                                        @Localization.Get("Fotoğraf eklemek için buraya tıklayınız veya fotoğrafları sürükleyiniz.", "Click here to add photos or drag photos", lang)
+                                    </span>
+                                </div>
+                            </div> <br />
+                            @*</form>*@
+                        </div>
+                    </div>
+
+
+                    <button type="button" id="save" class="button button-main button-satn button-submit submit-center w-button">
+                        @Localization.Get("Kaydet ve Devam Et", "Save and Continue", lang)
+                    </button>
+                   
+                }
+                <div id="alertArea">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="preview" class="preview display-none">
+    <li>
+        <div>
+            <div class="dz-preview dz-file-preview">
+                <input type="radio" name="main-image" class="m-100-1 f-l" />
+                <img data-dz-thumbnail />
+                <div class="dz-progress">
+                    <span class="dz-upload" data-dz-uploadprogress></span>
+                </div>
+                @*<button onclick="editPhoto()" class="m-t-5 m-b--10" >Düzenle</button>*@
+
+                <div class="dz-success-mark">
+                    <span>✔</span>
+                </div>
+                <div class="dz-error-mark">
+                    <span>✘</span>
+                </div>
+                <div class="dz-error-message">
+                    <span data-dz-errormessage></span>
+                </div>
+            </div>
+        </div>
+    </li>
+</div>
+
+@section Scripts{
+    <script src="~/Content/script/jquery-ui.min.js"></script>
+    <script>
+        $(function() {
+            $("#sortable").sortable();
+            $("#sortable").disableSelection();
+        });
+
+        function updateMainImage(mainImageId) {
+            if (mainImageId == null) {
+                notify("error",
+                    '@Localization.Get("Mevcut fotoğraflar kısmından bir fotoğraf seçmeniz gerekiyor.",
+                         "You need to select a photo from the existing photos.", lang)');
+                return;
+            }
+            notify("info", '@Localization.Get("Lütfen bekleyiniz", "Please wait", lang)');
+
+            $.ajax({
+                url: "/UpdateMainPhoto",
+                type: "POST",
+                data: { id: @Model.ID, photoId: parseInt(mainImageId) },
+                success: function(data) {
+                    if (data.isSuccess) {
+                        notify("success", data.message);
+                    } else {
+                        notify("danger", data.message);
+                    }
+                }
+            });
+        }
+
+        function saveOrder() {
+            var items = $('#sortable li');
+            if (items.length == 0) {
+                noitfy("danger", '@Localization.Get("Fotoğraf bulunamadı", "Photo not found", lang)');
+                return;
+            }
+            var ids = [];
+            for (var i = 0; i < items.length; i++) {
+                var id = $($('#sortable li')[i]).prop("id").replace("q_", "");
+                ids.push(parseInt(id));
+            }
+            if (ids.length > 0) {
+                notify("info", '@Localization.Get("Lütfen bekleyiniz", "Please wait", lang)');
+                $.ajax({
+                    url: "/UpdatePhotosOrder",
+                    type: "POST",
+                    data: { id: @Model.ID, photos: ids },
+                    success: function(data) {
+                        if (data.isSuccess) {
+                            notify("success", data.message);
+                        } else {
+                            notify("danger", data.message);
+                        }
+                    }
+                });
+            }
+        }
+
+    </script>
+    <script>
+        function ask(id, name) {
+
+            var q = ' @Localization.Get("Silmek istediğinize emin misiniz?", "Are you sure you want to delete?", lang) ';
+            var n = new Noty({
+                container: '#q_' + id,
+                text: name + ' </br>' + q,
+                buttons: [
+                    Noty.button('@Localization.Get("EVET", "YES", lang)',
+                        'button w-button button-yes m-r-10',
+                        function() {
+                            publishRequest(id);
+                            n.close();
+                        },
+                        { id: 'button1', 'data-status': 'ok' }),
+                    Noty.button('@Localization.Get("HAYIR", "NO", lang)',
+                        'button w-button button-sil display-inline',
+                        function() {
+                            n.close();
+                        })
+                ]
+            });
+            n.show();
+        }
+
+        function publishRequest(id) {
+            $.ajax({
+                url: '/DeleteAdPhoto',
+                data: { id },
+                type: 'POST',
+                dataType: 'json',
+                success: function(data) {
+                    var type = '';
+                    if (data.isSuccess) {
+                        type = 'success';
+                        $('#q_' + id).remove();
+                    } else {
+                        type = 'error';
+                    }
+                    new Noty({
+                        theme: 'sunset',
+                        type: type,
+                        text: data.message,
+                        progressBar: true,
+                        timeout: 4000
+                    }).show();
+                }
+            });
+        }
+    </script>
+
+
+    <script src="~/Content/script/cropper.js"></script>
+    <script src="~/Content/script/jquerycropper.js"></script>
+    <script src="/Content/plugins/dropzone/dropzone.js"></script>
+    <script src="/Content/plugins/exif-js-master/exif.js"></script>
+    <script src="~/Content/script/jquery-ui.min.js"></script>
+    <script>
+        Dropzone.prototype.defaultOptions.dictRemoveFile = '@Localization.Get("Resmi Kaldır", "Remove File", lang)';
+
+        Dropzone.options.myDropzone = {
+            url: '/AddListing/AdPhotoUpload/@Model.ID',
+            autoProcessQueue: false,
+            uploadMultiple: true,
+            parallelUploads: 10,
+            maxFiles: 10,
+            maxFilesize: 100,
+            timeout: 540000,
+            paramName: "Files",
+            acceptedFiles: 'image/*',
+            addRemoveLinks: true,
+            transformFile: function(file, done) {
+                // Create Dropzone reference for use in confirm button click handler
+                var myDropZone = this;
+                // Create the image editor overlay
+                var editor = document.createElement('div');
+                editor.style.position = 'fixed';
+                editor.style.left = 0;
+                editor.style.right = 0;
+                editor.style.top = 0;
+                editor.style.bottom = 0;
+                editor.style.zIndex = 9999;
+                editor.style.backgroundColor = '#000';
+                document.body.appendChild(editor);
+                // Create confirm button at the top left of the viewport
+                var buttonConfirm = document.createElement('button');
+                buttonConfirm.classList.add("button");
+                buttonConfirm.classList.add("w-button");
+                buttonConfirm.style.position = 'absolute';
+                buttonConfirm.style.width = '120px';
+                buttonConfirm.style.left = '10px';
+                buttonConfirm.style.top = '10px';
+                buttonConfirm.style.zIndex = 9999;
+                buttonConfirm.textContent = 'Kırp';
+                editor.appendChild(buttonConfirm);
+
+                var buttonRotate = document.createElement('button');
+                buttonRotate.classList.add("button");
+                buttonRotate.classList.add("w-button");
+                buttonRotate.style.position = 'absolute';
+                buttonRotate.style.left = '10px';
+                buttonRotate.style.width = '120px';
+                buttonRotate.style.top = '52px';
+                buttonRotate.style.zIndex = 9999;
+                buttonRotate.textContent = 'Sola Döndür';
+                editor.appendChild(buttonRotate);
+
+                var buttonRotateTers = document.createElement('button');
+                buttonRotateTers.classList.add("button");
+                buttonRotateTers.classList.add("w-button");
+                buttonRotateTers.style.position = 'absolute';
+                buttonRotateTers.style.left = '10px';
+                buttonRotateTers.style.top = '94px';
+                buttonRotateTers.style.width = '120px';
+                buttonRotateTers.style.zIndex = 9999;
+                buttonRotateTers.textContent = 'Sağa Döndür';
+                editor.appendChild(buttonRotateTers);
+
+                var butunGorsel = document.createElement('button');
+                butunGorsel.classList.add("button");
+                butunGorsel.classList.add("w-button");
+                butunGorsel.style.position = 'absolute';
+                butunGorsel.style.left = '10px';
+                butunGorsel.style.top = '136px';
+                butunGorsel.style.zIndex = 9999;
+                butunGorsel.style.width = '120px';
+                butunGorsel.textContent = 'Tümünü Seç';
+                editor.appendChild(butunGorsel);
+
+                buttonRotate.addEventListener('click',
+                    function () {
+
+                        cropper.rotate(-90);
+                    });
+
+                butunGorsel.addEventListener('click',
+                    function () {
+
+                        cropper.setCropBoxData({ left: 0, top: 0, width: 1920, height: 1080 });
+
+                    });
+                buttonRotateTers.addEventListener('click',
+                    function () {
+
+                        cropper.rotate(90);
+
+                    });
+                buttonConfirm.addEventListener('click',
+                    function () {
+                        // Get the canvas with image data from Cropper.js
+                        var canvas = cropper.getCroppedCanvas({
+
+                        });
+                        // Turn the canvas into a Blob (file object without a name)
+                        canvas.toBlob(function (blob) {
+                            // Create a new Dropzone file thumbnail
+                            myDropZone.createThumbnail(
+                                blob,
+                                myDropZone.options.thumbnailWidth,
+                                myDropZone.options.thumbnailHeight,
+                                myDropZone.options.thumbnailMethod,
+                                false,
+                                function (dataURL) {
+
+                                    // Update the Dropzone file thumbnail
+                                    myDropZone.emit('thumbnail', file, dataURL);
+                                    // Return the file to Dropzone
+                                    done(blob);
+                                });
+                        });
+                        // Remove the editor from the view
+                        document.body.removeChild(editor);
+                    });
+
+                var image = new Image();
+                image.src = URL.createObjectURL(file);
+                editor.appendChild(image);
+                var cropper = new Cropper(image,
+                    {
+                        viewMode: 1,
+                        minCropBoxHeight: 1,
+                        minCropBoxWidth: 1,
+                        rotatable: true
+                    });
+                @*console.log(file);*@
+            },
+            previewTemplate: $('#preview').html(),
+            init: function() {
+                 myDropzone = this;
+                document.getElementById("save").addEventListener("click",
+                    function(e) {
+                        if ($('.old-image').length == 0 &&
+                            typeof $('input[name="main-image"]:checked').val() === "undefined") {
+                            showAlert(
+                                '@Localization.Get("Ana fotoğrafı seçmediniz.", "You did not select main photo.", lang)',
+                                "danger");
+                            return;
+                        }
+                        if ($('.old-image').length > 0 && myDropzone.files.length == 0) {
+                            window.location =
+                                '/@Localization.Get("IlanEkle/IlanDetaylari/", "AddListing/AdDetails/", lang)@Model.ID';
+                            return;
+                        }
+                        $('#save').css('display', 'none');
+                        showAlert('@Localization.Get("Lütfen bekleyin...", "Please wait...", lang)', 'info');
+                        e.preventDefault();
+                        e.stopPropagation();
+                        myDropzone.processQueue();
+                    });
+                this.on("sendingmultiple",
+                    function(data, xhr, formData) {
+                        formData.append("MainImage", $('input[name="main-image"]:checked').val());
+                    });
+                this.on("addedfile",
+                    function (file) {
+                        @*console.log(file);*@
+                        var boyut = (file.size) / 1024;
+                        if (boyut > 10000) {
+                            @*console.log("Dikkat 10 mb büyük!");*@
+                            alert("DİKKAT 10 MB DAN BÜYÜK RESİM YÜKLEYEMEZSİNİZ.");
+                            var id = parseInt($(file.previewElement).attr("id"));
+                            @*console.log("remove it: " + id);*@
+                            $(file.previewElement).remove();
+                            myDropzone.removeFile(file);
+                        } else {
+                            @*console.log("Uyumlu.");*@
+                            $(file.previewElement).find('input').val(file.name);
+                        }
+
+
+
+                    });
+                this.on("queuecomplete",
+                    function(file) {
+                        var route =
+                            '@(Localization.Get("/IlanEkle/IlanDetaylari/", "/AddListing/AdDetails/", lang) + Model.ID)';
+                        window.location = route;
+                    });
+
+            }
+        };
+    </script>
+}

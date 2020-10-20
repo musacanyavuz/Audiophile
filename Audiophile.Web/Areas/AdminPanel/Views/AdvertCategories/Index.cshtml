@@ -1,0 +1,131 @@
+@model List<AdvertCategory>
+
+@{
+    ViewBag.Title = "İlan Kategorileri";
+    ViewData["ActiveMenu"] = "menu-item-ad-categories";
+}
+
+@section Styles{
+    <link href="/AdminContent/assets/vendors/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css">
+}
+
+<div class="m-portlet m-portlet--mobile">
+    <div class="m-portlet__head">
+        <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+                <h3 class="m-portlet__head-text">
+                    İlan Kategorileri
+                </h3>
+            </div>
+        </div>
+        <div class="m-portlet__head-tools">
+            <ul class="m-portlet__nav">
+                <li class="m-portlet__nav-item">
+                    <a href="/AdminPanel/AdvertCategories/Create" class="btn btn-primary m-btn m-btn--pill m-btn--custom m-btn--icon m-btn--air">
+                        <span>
+                            <i class="la la-plus"></i>
+                            <span>Yeni Kategori</span>
+                        </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="m-portlet__body">
+        <div class="table-responsive">
+            <table class="table table-striped- table-bordered table-hover table-checkable" id="m_table_1">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Adı</th>
+                    <th>SEO URL</th>
+                    <th>Üst Kategori</th>
+                    <th>Aktif</th>
+                    <th>İşlemler</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                @foreach (var category in Model)
+                {
+                    <tr id="row_@category.ID">
+                        <td> @category.ID</td>
+                        <td> @category.Name </td>
+                        <td> @category.Slug </td>
+                        <td> @(category.ParentCategory?.Name) </td>
+                        <td id="status_@category.ID"> @(category.IsActive ? "Aktif" : "Pasif") </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="/AdminPanel/AdvertCategories/Edit/@category.ID" class="m-btn btn btn-info" title="Güncelle">
+                                    <i class="la la-pencil-square"></i>
+                                </a>
+                                @if (category.IsActive)
+                                {
+                                    <button onclick="updateStatusMessage(@category.ID, false, '@category.Name')" class="m-btn btn btn-warning" title="Pasifleştir">
+                                        <i class="la la-close"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button onclick="updateStatusMessage(@category.ID, true, '@category.Name')" class="m-btn btn btn-success" title="Aktifleştir">
+                                        <i class="la la-check"></i>
+                                    </button>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="/AdminContent/assets/vendors/custom/datatables/datatables.bundle.js" type="text/javascript"></script>
+    <script>
+        $("#m_table_1").DataTable({
+            order: [0, 'desc'],
+            dom: "<'row'<'col-sm-6 text-left'f><'col-sm-6 text-right'B>>\n\t\t\t<'row'<'col-sm-12'tr>>\n\t\t\t<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>",
+            buttons: ["print", "copyHtml5", "excelHtml5", "csvHtml5", "pdfHtml5"]
+        });
+    </script>
+    <script>
+        function updateStatusMessage(id, isActive, title) {
+            var status = isActive ? "aktifleştirmek" : "pasifleştirmek";
+            
+            Swal({
+                title: '#'+id+' '+title+' başlıklı kategoriyi '+status+' istediğinize emin misiniz?',
+                text: "Kategori güncellenmek üzere",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Evet',
+                cancelButtonText: 'Vazgeç'
+            }).then((result) => {
+                if (result.value) {
+                    updateStatus(id, isActive);
+                }
+            });
+        }
+        function updateStatus(id, status) {
+            var newStatus = status ? "Aktif" : "Pasif";
+            $.ajax({
+                url: "/AdminPanel/AdvertCategories/UpdateStatus",
+                type: "POST",
+                data: { id, status },
+                success: function(data) {
+                    if (data.isSuccess) {
+                        $('#status_' + id).html(newStatus);
+                        notify("success", data.message);
+                    } else {
+                        notify("danger", data.message);
+                    }
+                }
+            });
+        }
+    </script>
+}

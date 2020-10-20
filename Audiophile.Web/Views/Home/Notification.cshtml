@@ -1,0 +1,18 @@
+@model User
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("Bildirim", "Notification", lang);
+    Layout = "_Layout";
+}
+
+<div class="urun-det">
+    <div class="container-4 w-container">
+        <div class="div-cizgi div-head">
+            <div class="div-block-17 form-wrapper w-clearfix"> 
+                <div id="alertArea"> 
+                </div>  
+            </div>
+        </div>
+    </div>
+</div>
+

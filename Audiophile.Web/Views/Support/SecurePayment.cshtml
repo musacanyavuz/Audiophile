@@ -1,0 +1,37 @@
+@model List<ContentArray>
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("Güvenli Ödeme Gitti Bu", "Secure Payment", lang);
+    Layout = "_Layout";
+}
+
+
+<div class="section-1 sec-altsayfa sec-hesaplar">
+    <div class="w-container">
+
+        @{Html.RenderPartial("SupportSideMenu", 4);}
+        
+        <div class="content w-clearfix">
+            <div class="div-block-20 div-ilan hesap w-clearfix">
+                <h4 class="h2 h4 h-kat h-kategori">@Localization.Get("Güvenli Ödeme Gitti Bu", "Secure Payment", lang)</h4>
+            </div>
+            <div class="product product-list urulerim bannerlar"> 
+                <div class="uruns hak box-sss"> 
+                    @for (var i = 0; i < Model.Count; i++)
+                    { var item = Model[i];
+                        <div class="sss">
+                            <a href="#" class="accordion w-inline-block">
+                                <div>@(i+1) @item.Title</div>
+                            </a>
+                            <div class="panel">
+                                @Html.Raw(item.Content)
+                            </div>
+                        </div>
+                    }
+                </div> 
+                @{ Html.RenderPartial("~/Views/Partials/SupportForm.cshtml"); }
+            </div>
+        </div>
+    </div>
+</div>

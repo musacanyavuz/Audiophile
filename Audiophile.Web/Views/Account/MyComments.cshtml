@@ -1,0 +1,127 @@
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("Yorumlarım", "My Comments", lang);
+    Layout = "_Layout";
+}
+
+@section Style{
+    <style>
+        table tr {
+            height: 76px;
+            -webkit-transition: all .3s cubic-bezier(.47,0,.745,.715);
+            transition: all .3s cubic-bezier(.47,0,.745,.715);
+            padding-top: 17px;
+            padding-bottom: 17px;
+            padding-left: 10px;
+            cursor: pointer
+        }
+
+            table tr, table tr td {
+                height: 76px !important
+            }
+
+        table tbody tr {
+            border-top: 1px solid #ebebeb
+        }
+
+            table tbody tr:hover {
+                padding-right: 0;
+                padding-left: 10px;
+                box-shadow: 0 3px 42px -5px rgba(46,46,46,.26);
+                -webkit-transform: scale(1);
+                -ms-transform: scale(1);
+                transform: scale(1)
+            }
+
+        table tr td {
+            padding-top: 7px;
+            padding-bottom: 7px;
+            padding-left: 10px;
+            overflow: no-display
+        }
+
+        table tbody {
+            margin-top: 5px
+        }
+
+        .profil-value {
+            width: 100px;
+            float: right
+        }
+
+        .profil-value-large {
+            width: 200px;
+            float: right
+        }
+
+        .profil-key {
+            float: left;
+            width: 300px
+        }
+
+        .profil-key-large {
+            float: left;
+            width: 400px
+        }
+
+        .profil-scale {
+            padding-top: 10px;
+            padding-bottom: 30px
+        }
+
+        td {
+            vertical-align: middle !important;
+        }
+
+        .profile-box {
+            box-shadow: -1px 13px 24px -5px rgba(0, 0, 0, .13);
+        }
+
+        #statsTable tr {
+            height: unset !important;
+        }
+
+        #statsTable td {
+            padding: 2%;
+            height: unset !important;
+        }
+    </style>
+}
+
+<div class="section-1 sec-altsayfa sec-hesaplar">
+    <div class="w-container">
+
+        @{Html.RenderPartial("~/Views/Partials/AccountSideMenu.cshtml", 5);}
+
+        <div class="content w-clearfix">
+            <div class="div-block-20 div-ilan hesap w-clearfix">
+                <h4 class="h2 h4 h-kat h-kategori">@ViewBag.Title </h4>
+            </div>
+
+            <div data-duration-in="300" data-duration-out="100" class="w-tabs">
+                <div class="w-tab-menu">
+                    <a data-w-tab="Tab 1" class="tab-link-3 w-inline-block w-tab-link w--current">
+                        <div>@Localization.Get("Gelen Yorumlar", "Incoming Comments", lang)</div>
+                    </a>
+                    <a data-w-tab="Tab 2" class="tab-link-3 w-inline-block w-tab-link">
+                        <div>@Localization.Get("Yorumlarım", "My Comments", lang)</div>
+                    </a>
+                </div>
+                <div class="w-tab-content">
+                    <div data-w-tab="Tab 1" class="w-clearfix w-tab-pane w--tab-active tab-style">
+                        <div class="alert alert-warning">
+                            @Localization.Get("İlanlarınıza gelen herhangi bir yorum yok", "No comments on your ads", lang)
+                        </div>
+                    </div>
+                    <div data-w-tab="Tab 2" class="w-clearfix w-tab-pane">
+                        <div class="alert alert-warning">
+                            @Localization.Get("Herhangi bir yorumunuz yok", "You have no comments", lang)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

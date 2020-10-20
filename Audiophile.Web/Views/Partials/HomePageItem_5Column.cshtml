@@ -1,0 +1,128 @@
+@model HomePageItem
+@using System.Net
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    var itemClass = Model.YellowDoping ? "onemli-urun" : "";
+}
+
+@if (Model.Type == Enums.HomePageItemType.Ilan)
+{
+    <div class="product-wrapper pw4 w-clearfix AcilSatilikUrun" id="advert_@Model.ID" itemscope itemtype="http://schema.org/Product">
+        <meta itemprop="sku" content="@Model.StockAmount"><meta itemprop="productID" content="isbn:@Model.ID" /><meta itemprop="mpn" content="@Model.ID" />
+        <div class="product product-ana @itemClass">
+            <a href="@Model.Url" class="w-inline-block w-full w-clearfix" title="@Model.Title" itemprop="url" target="_blank">
+                <div class="urun-imaj">
+                    <img alt="@Model.Title" src="@(!string.IsNullOrEmpty(Model.ImageSource)?Model.ImageSource:"/Content/img/no-image.jpg")" onerror="this.src = '/Content/img/no-image.jpg';" itemprop="image" />
+                </div>
+                <div class="kategoriler urun-text">
+                    <h4 itemprop="name">
+                        @Html.Raw(Model.Title)
+                    </h4>
+                    <div class="ilan-aciklama-alani">
+                        <p class="category-name">@Model.CategoryName</p>
+                        <p class="@Html.Raw(!string.IsNullOrEmpty(itemClass) ? "ilan-aciklama-p-rgb" : "ilan-aciklama-p-wh")">@Model.CategoryName @Model.CategoryName </p>
+                        <p><span>@Localization.Get("İlan No", "Ad No: ", lang)</span>: #@Model.ID</p>
+                        <p><span>@Localization.Get("İlan Tarihi", "Post Date", lang)</span>: @(Model.CreatedDate.ToShortDateString())</p>
+                        <p class="counts"><i class="fa fa-thumbs-up"></i> @Model.LikesCount &nbsp;<i class="fa fa-eye"></i> @Model.ViewCount </p>
+                    </div>
+                </div>
+            </a>
+            <div class="listing-footer">
+                <div class="old-price">@Model.OldPrice</div>
+                @if (Model.ILiked)
+                {
+                    <img alt="Beğenilen amplifikatör, amfi, hoparlör, müzik seti, müzik sistemi ilanları" id="likeImage_@Model.ID" src="/Content/img/images/dolu_kalp.png" class="kalp" onclick="unlikeAd(@Model.ID)" title="@Localization.Get("Beğenmekten Vazgeç","Unlike",lang)">
+                }
+                else
+                {
+                    <img alt="Beğenilen amplifikatör, amfi, hoparlör, müzik seti, müzik sistemi ilanları" id="likeImage_@Model.ID" src="/Content/img/images/kalp.png" class="kalp" onclick="likeAd(@Model.ID)" title="@Localization.Get("Beğen","Like",lang)">
+                }
+
+                <span class="description" hidden>
+                    <span itemprop="description">@Html.Raw(Model.Description)</span>
+                </span>
+                <meta itemprop="brand" content="@Html.Raw(Model.Brand)" />
+                <meta itemprop="model" content="@Html.Raw(Model.Model)" />
+                <div class="new-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                    <span itemprop="priceCurrency"> @Model.PriceCurrency</span>
+                    <span itemprop="price">@Model.Price</span>
+                    <link itemprop="availability" href="http://schema.org/InStock" />
+                    <meta itemprop="priceValidUntil" content="@Model.CreatedDate.AddYears(1).ToString("yyyy-MM-dd")">
+                    <meta itemprop="url" content="https://@(Context.Request.Host+Model.Url)">
+                    <meta itemprop="sku" content="@Model.StockAmount">
+                </div>
+            </div>
+
+            <div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating" hidden>
+                <span itemprop="ratingCount">5</span>
+                <span itemprop="reviewCount" hidden>@Model.ViewCount</span>
+                <span itemprop="ratingValue">5</span>
+            </div>
+            <div itemprop="review" itemscope itemtype="http://schema.org/Review" hidden>
+                <div itemprop="reviewRating" itemscope itemtype="http://schema.org/Rating">
+                    <span itemprop="ratingValue">5</span>
+                </div>
+                <span itemprop="author" hidden>@Model.UserName</span>
+                @if (Model.LastUpdateDate.HasValue)
+                {
+                    <meta itemprop="datePublished" content="@Model.LastUpdateDate.Value.AddHours(1)" />
+                }
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.LabelDopingType))
+            {
+                string className = "", enText = "";
+                if (Model.LabelDopingType == "Yeni")
+                {
+                    className = "new";
+                    enText = "New";
+                }
+                else if (Model.LabelDopingType == "Fiyatı Düştü")
+                {
+                    className = "fiyati-dustu ";
+                    enText = "Price Dropped";
+                }
+                else if (Model.LabelDopingType == "Acil")
+                {
+                    className = "fiyati-dustu acil";
+                    enText = "Urgent";
+                }
+
+                <div class="div-block-40 @className ">
+                    <div>@Localization.Get(Model.LabelDopingType, enText, lang)</div>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.SecurePayment))
+            {
+                <div class="fiyati-dustu gittibu"><div> @Model.SecurePayment </div></div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="product-wrapper pw4 w-clearfix AcilSatilikUrun blogpost">
+        <div class="product product-ana ">
+            <a href="@Model.Url" class="w-inline-block w-full w-clearfix" title="@Model.Title" target="_blank">
+                <div class="urun-imaj">
+                    <img alt="@Model.Title" src="@(!string.IsNullOrEmpty(Model.ImageSource)?Model.ImageSource:"/Content/img/no-image.jpg")" onerror="this.src = '/Content/img/no-image.jpg';">
+                </div>
+                <div class="kategoriler urun-text">
+                    @(Model.Title.Length > 50 ? Model.Title.Substring(0, 40) + "..." : Model.Title)
+
+                    <div class="ilan-aciklama-alani">
+                        <p><span>@Localization.Get("İlan No", "Post No", lang)</span>: #@Model.ID</p>
+                        <p><span>@Localization.Get("İlan Tarihi", "Posted Date", lang)</span>: @(Model.CreatedDate.ToShortDateString())</p>
+                        <p><span>@Localization.Get("Görüntülenme", "Seen", lang)</span>: <span class="begeni-span">@Model.ViewCount</span></p>
+                    </div>
+                </div>
+                <div class="new-price white"></div>
+            </a>
+            <div class="listing-footer">
+                <div class="old-price"></div>
+                <div class="new-price">&nbsp; </div>
+            </div>
+        </div>
+    </div>
+}
+

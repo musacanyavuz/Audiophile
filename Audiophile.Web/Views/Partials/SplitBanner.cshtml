@@ -1,0 +1,11 @@
+@model Banner
+
+<div class="ayirackalip splitbanner">
+    <a href='@(Model.Url.Contains("http") ? Model.Url : "http://"+Model.Url)' title="@Model.Title" target="_blank">
+        <div class="section-2 background-repeat-no background-size-contain splitbanner-bg-@Model.ID.ToString()" style="background-image: url('@Model.ImageSource');">
+            <div class="div-ad-text">
+
+            </div>
+        </div>
+    </a>
+</div>

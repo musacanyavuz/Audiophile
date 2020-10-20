@@ -1,0 +1,140 @@
+@model UiMessage
+@using static Audiophile.Common.Enums;
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("Giriş Yap", "Login", lang);
+    Layout = "_Layout";
+}
+
+@section style{
+    <style>
+        .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+            background-color: red !important;
+        }
+
+        .custom-control-label::before {
+            background-color: #a5a7a9 !important;
+        }
+
+        .cc-window {
+            position: fixed;
+            overflow: hidden;
+            box-sizing: border-box;
+            font-family: Helvetica,Calibri,Arial,sans-serif;
+            font-size: 14px;
+            line-height: 18px;
+            z-index: 9999;
+            transition: opacity 1s ease;
+            color: rgb(131, 131, 145);
+            background-color: rgb(237, 239, 245);
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1em 1.8em;
+            text-align: center;
+        }
+    </style>
+
+}
+
+<div class="urun-det">
+    <div class="container-4 w-container">
+        <div class="div-cizgi div-head">
+            <div class="div-block-17 form-wrapper w-clearfix">
+
+                @if (Model != null)
+                {
+                    <div class="alert alert-danger background-color-red border-color-e70c1e color-white">
+                        <b>@Localization.Get("Hata", "Error", lang) : </b>@Model.Message
+                    </div>
+                }
+
+                <h3 class="form-text heading-2">@Localization.Get("Giriş Yap", "Login", lang)</h3>
+                <div class="form-block-5 w-form m-0">
+                    @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { @class = "w-clearfix" }))
+                    {
+                        <label for="name" class="field-label">@Localization.Get("Kullanıcı Adı veya E-posta Adresi", "Username or E-mail", lang)*:</label>
+                        <input class="textfield w-input" data-val="true" id="kullanici_adi" maxlength="100" name="username" type="text" value="" autocomplete="off" required>
+
+                        <label for="name-3" class="field-label">@Localization.Get("Şifre", "Password", lang)*:</label>
+                        <input class="textfield w-input" data-val="true" id="sifre" maxlength="250" name="password" type="password" autocomplete="off" required>
+
+
+                        <div class="custom-control custom-checkbox mb-2 ml-4">
+                            <input type="checkbox" class="custom-control-input" id="rememberMe" name="rememberMe">
+                            <label class="custom-control-label font-weight-normal" for="rememberMe">@Localization.Get("Hesabımı sürekli açık tut", "Keep me logged in", lang)</label>
+                        </div>
+                        <input type="submit" value="@Localization.Get("Giriş Yap","Login",lang)" class="button button-main button-satn button-submit w-button">
+
+
+
+                        <div class="text-right">
+                            <div>
+                                <fb:login-button size="large" scope="public_profile,email" onlogin="checkLoginState();">
+                                    @Localization.Get("Facebook ile Giriş Yap", "Continue with Facebook", lang)
+                                </fb:login-button>
+                            </div>
+                            <div class="flex-column d-flex d-md-block mt-3">
+                                <a class="text-right order-2 mt-1 mt-md-0" href="@Constants.GetURL((int)Enums.Routing.UyeOl, lang)">@Localization.Get("Henüz Üye Değilmisiniz", "Register", lang)</a>
+                                <a class="text-right order-1" href="@Constants.GetURL((int)Enums.Routing.SifremiUnuttum, lang)">@Localization.Get("Şifremi Unuttum", "I forgot my password", lang)</a>
+
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="cc-window">
+    @Localization.Get("Sitemizi daha rahat kullanabilmeniz için yasalara uygun ve kısıtlı çerezler kullanıyoruz", "We use cookies to enhance your experience. By continuing you agree with it", lang)
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+@section Scripts{
+
+    <script>
+        $(".cc-window .close").click(function () { $(".cc-window").hide(); });
+    FB.getLoginStatus(function (response) {
+        statusChangeCallback(response);
+    });
+
+    function statusChangeCallback(response) {
+        if (response.status === 'connected') {
+            testAPI();
+        }
+    }
+
+    function checkLoginState() {
+        FB.getLoginStatus(function (response) {
+            statusChangeCallback(response);
+        });
+    }
+
+    function testAPI() {
+        FB.api('/me', { fields: 'id,name,email,picture.width(180).height(180)' }, function (response) {
+            saveUserData(response);
+        });
+    }
+
+
+    function saveUserData(userInfo) {
+        var data = { OAuth_Uid: userInfo.id, Name: userInfo.name, Email: userInfo.email, PictureUrl: userInfo.picture.data.url };
+        $.post('/Account/FBLogin', {
+            oauth_provider: @Html.Raw((int)OauthProviders.Facebook), userData: data
+        }, function (response) {
+            if (response) {
+                window.location.href = '@Url.Content("/")';
+            }
+            else {
+                alert("Bir Hata Oluştu Tekrar Deneyiniz.");
+            }
+
+        });
+    }
+    </script>
+}

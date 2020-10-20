@@ -1,0 +1,46 @@
+@model List<InstallmentPrice>
+@{
+    var lang= Constants.GetLang(Context.Session.GetString("lang")); 
+}
+<div class="row">
+
+
+    @foreach (var card in Model)
+    {
+       
+        <div class="col-md-4 col-12">
+            <table class="table table-hover table-bordered bank-table">
+                <thead>
+                <tr class="bank is-bankasi">
+                    <th class="text-center" colspan="4">
+                        @card.CardName
+                        <br> @*(@card.BankName)*@
+                    </th>
+                </tr>
+                <tr class="title">
+                    <th class="text-center">@Localization.Get("Taksit", "Ins.", lang)</th>
+                    <th class="text-center">@Localization.Get("Tak.Tut", "Ins.Amt", lang)</th>
+                    <th class="text-center">@Localization.Get("Toplam", "Total", lang)</th>
+                    <th class="text-center">@Localization.Get("Size Kalan", "Remaining to you", lang)</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var installment in card.Details)
+                {
+                    var price = double.Parse(installment.Price);
+
+                    var _total = double.Parse(installment.TotalPrice);
+                    var res = (_total / installment.InstallmentNumber);
+
+                    <tr>
+                        <td class="text-center">@installment.InstallmentNumber</td>
+                        <td class="text-center">₺@(res.Value.ToString("#.##")) </td>
+                        <td class="text-center">₺@(installment.TotalPrice)</td>
+                        <td class="text-center">₺@(installment.SubmerchantPrice)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

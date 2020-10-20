@@ -1,0 +1,109 @@
+@model CheckoutSelectAddressViewModel
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang")); 
+    ViewBag.Title = Localization.Get("Satın Al | Adres Seç", "Checkout | Select Address", lang);
+    Layout = "_Layout";
+}
+
+
+<div class="section-1 sec-altsayfa sec-urun" id="adres-altsayfa">
+    <div class="container-6 w-container">
+        <div class="steps">
+            <div class="w-row">
+                <div class="c1 w-col w-col-4">
+                    <div class="step1 active"></div>
+                    <div class="text-block-10 text-active">@Localization.Get("Adres Bilgileri","Address Information",lang)</div>
+                </div>
+                <div class="c1 w-col w-col-4">
+                    <div class="step1"></div>
+                    <div class="text-block-10">@Localization.Get("Kredi / ATM kartı ile güvenli ödeyin","Secure Payment with Credit/Bank Card",lang)</div>
+                </div>
+                <div class="c1 w-col w-col-4">
+                    <div class="step1"></div>
+                    <div class="text-block-10">@Localization.Get("Alışveriş Özeti","Shopping Summary",lang)</div>
+                </div>
+            </div>
+        </div>
+        @using(Html.BeginForm("Payment", "Checkout", FormMethod.Post))
+        {
+            <input name="id" value="@Model.Advert.ID" type="hidden"/>
+            <input name="amount" value="@Model.Amount" type="hidden"/>                                                       
+            <div class="urun-content alisveris-ozet">
+                <div class="div-block-8 div-alisveris w-clearfix">
+                    <div class="div-block-9 div-ozet">
+                        <div class="div-block-12 urun-sayisi urun-ozet w-clearfix">
+                            <div class="div-block-11"></div>
+                            <h2 class="h2 h2-alisveris h2-beyaz sepet-ozet">@Localization.Get("Alışveriş Özeti","Shopping Summary",lang)</h2>
+                            <div class="div-block-11 div-oz"></div>
+                        </div>
+
+                        <div class="div-block-12 ozellik-urunler w-clearfix">
+                            <div class="div-block-11 urunadi">
+                                <div class="text-urun">@Localization.Get("Adet","Amount",lang)</div>
+                            </div>
+                            <div class="div-block-11 div-oz ozet-fiyat">
+                                <div class="text-block-11"><strong>@Model.Amount @Localization.Get("Ürün","Product",lang)</strong></div>
+                            </div>
+                        </div>
+
+                        <div class="div-block-12 ozellik-urunler toplamfiyat w-clearfix">
+                            <div class="div-block-11 urunadi width-100-35">
+                                <div class="toplam">@Localization.Get("Toplam","Total",lang)</div>
+                            </div>
+                            <div class="div-block-11 div-oz ozet-fiyat width-100-60">
+                                <div class="text-block-11 toplam-fiyat">
+                                    @{
+                                        var total = Model.Advert.Price * Model.Amount;
+                                    }
+                                    @total TL
+                                </div>
+                            </div>
+                        </div>
+                        <div class="div-block-18">
+                            <button type="submit" class="button button-main button-satn devam devam-beyaz w-button">@Localization.Get("Devam","Continue", lang)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="urun-content alisveris-ozet adres">
+                <div class="div-block-8 w-clearfix">
+                    <div class="div-block-9 div-ozet div-adres">
+                        <div class="div-block-12 urun-sayisi urun-ozet adres-div w-clearfix">
+                            <div class="div-block-11"></div>
+                            <h2 class="h2 h2-alisveris">@Localization.Get("Adresiniz","Your Address",lang)</h2>
+                        </div>
+
+                        <div class="div-block-12 ozellik-urunler adres-sec w-clearfix">
+                            <div class="div-block-11 urunadi"></div>
+                            <div class="div-block-11 div-oz ozet-fiyat"></div>
+                            <div class="w-form">
+
+                                <label>@Localization.Get("Teslimat Adresi","Shipping Address", lang)</label>
+                                <select class="w-select" data-val="true" id="ShippingId" name="shippingAddressId">
+                                    @foreach (var a in Model.Addresses)
+                                    {
+                                        <option value="@a.ID">@a.Title</option>
+                                    }
+                                </select>
+
+                                <label>@Localization.Get("Fatura Adresi", "Invoice Address", lang)</label>
+                                <select class="w-select" data-val="true" id="BillingId" name="invoiceAddressId">
+                                    @foreach (var a in Model.Addresses)
+                                    {
+                                        <option value="@a.ID">@a.Title</option>
+                                    }
+                                </select>
+
+                            </div>
+
+                            <a href="@Constants.GetURL((int) Enums.Routing.AdresEkle, lang)" class="link-8" class="border-1-solid-f8f8f8 p-10 f-r m-t-10 background-color-e70c1e color-fff">
+                                <i class="fa fa-plus fa-fw"></i>@Localization.Get("Adres Ekle","Add Address", lang)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

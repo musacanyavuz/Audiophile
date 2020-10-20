@@ -1,0 +1,26 @@
+@model string
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("Hakkımızda","About Us", lang);
+    Layout = "_Layout";
+}
+
+<div class="section-1 sec-altsayfa sec-hesaplar">
+    <div class="w-container">
+
+        @{Html.RenderPartial("SupportSideMenu", 0);}
+        
+        <div class="content w-clearfix">
+            <div class="div-block-20 div-ilan hesap w-clearfix">
+                <h4 class="h2 h4 h-kat h-kategori">@Localization.Get("Hakkımızda","About Us", lang)</h4>
+            </div>
+            <div class="product product-list urulerim bannerlar">
+               
+                @Html.Raw(Model)
+                
+            </div> 
+        </div>
+
+    </div>
+</div>

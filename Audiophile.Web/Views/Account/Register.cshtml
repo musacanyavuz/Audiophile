@@ -1,0 +1,399 @@
+@model RegisterViewModel
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("Kayıt Ol", "Register", lang);
+    Layout = "_Layout";
+}
+
+@section style
+    {
+    <link rel="stylesheet" href="/Content/plugins/intl/intlTelInput.min.css" />
+
+    <style>
+
+        .error {
+            color: red;
+        }
+
+        .textfield {
+            margin-bottom: 0
+        }
+
+        .button.button-main.button-satn {
+            margin-bottom: 14px;
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        .div-block-17 {
+            background-color: #ffffff;
+        }
+
+        @@media screen and (min-width: 1200px) {
+            .w-container {
+                max-width: 960px;
+            }
+        }
+    </style>
+}
+<div class="urun-det">
+    <div class="container-4 w-container">
+        <div class="div-cizgi div-head">
+            <div class="div-block-17 form-wrapper form-hesaplar formfull w-clearfix">
+                <h3 class="form-text heading-2">@ViewBag.Title </h3>
+                <div class="form-block-5 w-form m-0">
+                    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "w-clearfix", id = "form-register", enctype = "multipart/form-data" }))
+                    {
+                        <div class="center text-center">
+                            <img src="~/Content/img/no-image-user.png" width="180" height="180" id="imgpp" alt="no-user" class="object-fit-cover" />
+                            <br />
+                            <a href="javascript:;" onclick="fileInput()">@Localization.Get("Profil Resmi Seç", "Choose Profile Picture", lang)</a>
+                            <input type="file" name="ProfilePictureFile" class="display-none" id="ppFile" />
+                        </div>
+
+
+                        <div class="row margin_bottom">
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <label class="field-label">@Localization.Get("Ad Soyad", "Name Surname", lang)*:</label>
+                                <input class="textfield w-input text-transform-capitalize" data-val="true" maxlength="100" name="Name" type="text" required onkeydown="letterControl(this,event)">
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <label class="field-label">@Localization.Get("Kullanıcı Adı", "Username", lang)*:</label>
+                                <input class="textfield w-input" data-val="true" maxlength="100" name="UserName" type="text" id="username" required onkeydown="letterControl(this,event)">
+                            </div>
+                        </div>
+
+                        <div class="row margin_bottom">
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <label class="field-label">@Localization.Get("E-Posta", "E-Mail", lang)*:</label>
+                                <input class="textfield w-input" data-val="true" maxlength="100" name="Email" type="email" id="email" required>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <label class="field-label">@Localization.Get("Web Sitesi", "Website", lang):</label>
+                                <input class="textfield w-input" data-val="true" maxlength="100" name="WebSite" type="url">
+                            </div>
+                        </div>
+                        <div class="row margin_bottom">
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <label class="field-label">@Localization.Get("Şifre", "Password", lang)*:</label>
+                                <input id="pass1" class="textfield w-input" data-val="true" maxlength="100" name="Password" type="password" autocomplete="off" required>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <label class="field-label">@Localization.Get("Şifre Tekrar", "Re Password", lang)*:</label>
+                                <input id="pass2" class="textfield w-input" data-val="true" maxlength="100" name="password2" type="password" autocomplete="off" required>
+                            </div>
+                        </div>
+                        <div class="row margin_bottom">
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <label class="field-label">@Localization.Get("Cep Telefonu", "Mobile Phone", lang)*:</label>
+                                <input class="textfield w-input" data-val="true" maxlength="100" name="MobilePhone" type="text" id="phone" required>
+
+                                @* <input type="text" class="form-control int-phone" name="Phone" value="+90" required> *@
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <label class="field-label">@Localization.Get("İş Telefonu", "Work Phone", lang):</label>
+                                <input class="textfield w-input" data-val="true" maxlength="100" name="WorkPhone" id="workPhone" type="text">
+                            </div>
+                        </div>
+                        <div class="row margin_bottom">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <label class="field-label">@Localization.Get("Hakkınızda", "About You", lang):</label>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                                @*<input class="textfield w-input" data-val="true" maxlength="100" name="About" type="text">*@
+                                <textarea class="textfield w-input" cols="1" id="content" name="About" rows="10"></textarea>
+                            </div>
+                        </div>
+                        <div class="row margin_bottom">
+                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                <label class="field-label">@Localization.Get("Ülke", "Country", lang)*:</label>
+                                <select class="form-control w-dropdown textfield" name="CountryID" id="country">
+                                    @foreach (var country in Model.Countries)
+                                    {
+                                        <option value="@country.ID">@country.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                <label class="field-label">@Localization.Get("Şehir", "City", lang)*:</label>
+                                <select class="form-control w-dropdown textfield" name="CityID" id="city">
+                                    @foreach (var city in Model.Cities.Where(x => x.CountryID == Model.Countries.First().ID))
+                                    {
+                                        <option value="@city.ID">@city.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                <label class="field-label">@Localization.Get("İlçe", "District", lang)*:</label>
+                                <select class="form-control w-dropdown textfield" name="DistrictID" id="district"></select>
+                            </div>
+                        </div>
+
+
+                        @*<div class="row margin_bottom">
+                                <div class="col-6">
+                                    <label class="field-label">@Localization.Get("Cinsiyet", "Gender", lang)*:</label>
+                                    <select class="form-control w-dropdown textfield" name="GenderID">
+                                        <option value="1">@Localization.Get("Erkek", "Man", lang)</option>
+                                        <option value="2">@Localization.Get("Kadın", "Woman", lang)</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+
+                                </div>
+                            </div>*@
+
+
+
+                        <div class="row margin_bottom">
+                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                                <label class="field-label">@Localization.Get("Dil", "Language", lang)*:</label>
+                                <select class="form-control w-dropdown textfield" name="LanguageID">
+                                    <option value="1">Türkçe</option>
+                                    <option value="2">English</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+
+                            </div>
+                        </div>
+
+                        <div class="row margin_bottom">
+                            @*<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                    <label class="field-label">@Localization.Get("Doğum Tarihi", "Birthday", lang)*:</label>
+
+                                    <input class="textfield w-input" name="BirthDate" id="birthDay" type="date">
+                                </div>*@
+
+                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <label class="field-label">@Localization.Get("Üyelik Şartları", "Terms of Membership", lang)*: </label>
+                                <div class="checkbox-field-2 w-checkbox">
+                                    <input type="checkbox" id="checkbox" name="checkbox" value="false" class="w-checkbox-input" required="">
+                                    <label for="checkbox" class="w-form-label">
+                                        <a href="@(Constants.GetURL(Enums.Routing.KullanimKosullari,lang))" target="_blank">@Localization.Get("Üyelik Sözleşmesini okudum, kabul ediyorum", "I have read the membership agreement, I accept", lang) </a>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row margin_bottom">
+                            <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <input type="button" onclick="register()" id="btnRegister" value="@Localization.Get("Kayıt Ol", "Register", lang)" class="button button-main button-satn button-submit w-button">
+                            </div>
+
+                            <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                            </div>
+                        </div>
+                    }
+                    <div id="alertArea">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="/Content/plugins/intl/intlTelInput.min.js"></script>
+    <script src="/Content/plugins/jquery-validate/jquery.validate.min.js"></script>
+    <script>
+        var countries = @Html.Raw(Json.Serialize(Model.Countries));
+        var cities = @Html.Raw(Json.Serialize(Model.Cities));
+        var districts = @Html.Raw(Json.Serialize(Model.Districts));
+
+
+        var input = document.querySelector("#phone");
+        var input2 = document.querySelector("#workPhone");
+        var iti = window.intlTelInput(input, {
+            dropdownContainer: document.body,
+            initialCountry: "tr",
+            preferredCountries: ['tr', 'us'],
+            utilsScript: "/Content/plugins/intl/utils.js",
+        });
+        var iti2 = window.intlTelInput(input2, {
+            dropdownContainer: document.body,
+            initialCountry: "tr",
+            preferredCountries: ['tr', 'us'],
+            utilsScript: "/Content/plugins/intl/utils.js",
+        });
+
+
+
+        $('#country').change(function() {
+            var country = parseInt($(this).val());
+            loadCities(country);
+        });
+
+        $('#city').change(function() {
+            var city = parseInt($(this).val());
+            loadDistricts(city);
+        });
+
+        function loadCities(country) {
+            $('#city').html('');
+            $('#district').html('');
+            cities.forEach(function(item) {
+                if (item.countryID === country) {
+                    $('#city').append('<option value="'+item.id+'">'+item.name+'</option>');
+                }
+            });
+            loadDistricts(parseInt($('#city').val()));
+        }
+
+        function loadDistricts(city) {
+            $('#district').html('');
+            districts.forEach(function(item) {
+                if (item.cityID === city) {
+                    $('#district').append('<option value="'+item.id+'">'+item.name+'</option>');
+                }
+            });
+        }
+
+        $(function () {
+            loadDistricts(parseInt($('#city').val()));
+        });
+
+        function fileInput() {
+            $('#ppFile').click();
+        }
+
+        $('#ppFile').change(function() {
+            var input = $('#ppFile')[0];
+            @* console.log(input.files); *@
+            if ( true ) {
+                @*console.log('reader');*@
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    $('#imgpp').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+
+    </script>
+
+    <script>
+        function register() {
+            if ($('#pass1').val().length < 6) {
+                const minLengthError = '@Localization.Get("Şifreniz en az 6 karakter olmalıdır.","Your password must be at least 6 characters.",lang)';
+                showAlert(minLengthError, "danger");
+                return;
+            }
+
+            if ($('#pass1').val() !== $('#pass2').val()) {
+                const samePasswordError = '@Localization.Get("Şifreler aynı değil lütfen kontrol edin.","Please check if passwords are not the same.",lang)';
+                showAlert(samePasswordError, "danger");
+                return;
+            }
+
+            if ($('#checkbox').val() === 'false') {
+                const terms = '@Localization.Get("Üye olmak için üyelik sözleşmesini kabul etmeniz gerekiyor.","You must accept the membership agreement to become a member.",lang)';
+                showAlert(terms, "danger");
+                return;
+            }
+            const waitMessage = '@Localization.Get("İşleminiz yapılıyor lütfen bekleyin.","Please wait while your transaction is in progress.",lang)';
+            showAlert(waitMessage, 'info');
+            var username = $('#username').val();
+            $.ajax({
+                url : '/Account/UserNameIsUsable/',
+                type:'POST',
+                dataType:'json',
+                data: {username},
+                success:function(data){
+                    if (!data.isSuccess) {
+                        showAlert(data.message, "danger");
+                    } else {
+                        $('#alertArea').html('');
+                        var email = $('#email').val();
+                        $.ajax({
+                            url : '/Account/EmailIsUsable/',
+                            type:'POST',
+                            dataType:'json',
+                            data: {email},
+                            success:function(data){
+                                if (!data.isSuccess) {
+                                    showAlert(data.message, "danger");
+                                } else {
+                                    //save
+                                    if ($('#form-register').valid()) {
+                                        showAlert(waitMessage, 'info');
+                                        $("#btnRegister").attr("disabled", "disabled");
+                                        $('#form-register').submit();
+                                    }
+
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+            return false;
+        }
+
+        function usernameIsUsable(username) {
+
+        }
+    </script>
+    <script src="/Content/plugins/tinymce/tinymce.min.js"></script>
+    <script>
+        tinymce.init({
+            selector: '#content',
+            plugins: 'image code',
+            toolbar: 'undo redo | image code',
+            menubar: false,
+            plugins: [
+                "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+                "searchreplace wordcount visualblocks visualchars code fullscreen",
+                "insertdatetime media nonbreaking save table contextmenu directionality",
+                "emoticons template paste textcolor colorpicker textpattern"
+            ],
+            image_advtab: true,
+            toolbar: 'insert | undo redo |  formatselect | bold italic underline backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | image | help',
+            // without images_upload_url set, Upload tab won't show up
+            images_upload_url: '/Account/Blog/UploadImage',
+
+            // we override default upload handler to simulate successful upload
+            images_upload_handler: function (blobInfo, success, failure) {
+
+                var xhr, formData;
+                xhr = new XMLHttpRequest();
+                xhr.withCredentials = false;
+                xhr.open('POST', '/Account/Blog/UploadImage');
+                xhr.onload = function () {
+                    var json;
+
+                    if (xhr.status !== 200) {
+                        failure('HTTP Error: ' + xhr.status);
+                        return;
+                    }
+                    json = JSON.parse(xhr.responseText);
+
+                    if (!json || typeof json.location != 'string') {
+                        failure('Invalid JSON: ' + xhr.responseText);
+                        return;
+                    }
+                    success(json.location);
+                };
+                formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.fileName);
+                xhr.send(formData);
+
+
+            },
+
+            init_instance_callback: function (ed) {
+                //ed.execCommand('mceImage');
+            }
+        });
+    </script>
+}

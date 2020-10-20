@@ -1,0 +1,31 @@
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+}
+
+<div class="product product-list urulerim bannerlar">
+    <div class="form-block-6 w-form">
+
+        <form action="/Support/PostForm" method="post" name="email-form-3" class="w-clearfix">
+            @Html.AntiForgeryToken()
+            <h4>@Localization.Get("Tüm sorularınıza cevap alamadınız mı?","Have you not answered all your questions?",lang)</h4>
+            <label>@Localization.Get("İsim, Soyisim", "Name, Surname", lang)</label>
+            <input type="text" class="w-input" maxlength="256" name="name" required>
+            <label>Email</label>
+            <input type="email" class="w-input" maxlength="256" name="email"  required>
+            <label>@Localization.Get("Konu", "Subject", lang)</label> 
+            <select id="field-4" name="subject" class="dropdown-4 select-urun urun-ozellik-select w-dropdown textfield">
+                <option>@Localization.Get("Destek", "Support", lang) </option>
+                <option>@Localization.Get("Şikayet", "Complaint", lang) </option>
+                <option>@Localization.Get("İstek", "Claim", lang) </option>
+                <option>@Localization.Get("İletişim", "Contact", lang) </option>
+            </select>
+            <label>@Localization.Get("Mesajınız","Your Message", lang)</label>
+            <textarea name="message" maxlength="500" class="w-input" required></textarea>
+            
+            <div class="g-recaptcha" data-sitekey="@Constants.RecaptchaSiteKey"></div>
+            <br/>
+            <input type="submit" value="Gönder" data-wait="Please wait..." class="button button-main button-satn button-submit w-button">
+        </form>
+
+    </div>
+</div>

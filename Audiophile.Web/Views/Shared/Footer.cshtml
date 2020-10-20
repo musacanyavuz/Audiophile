@@ -1,0 +1,99 @@
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+}
+<div class="footer w-clearfix">
+    <div class="w-container">
+        <div class="div-block-42">
+            <a href="/" class="link-block-3 brand-footer w-inline-block w--current">
+                <img alt="logo" src="/Content/img/images/logo.gif" class="image-4">
+            </a>
+        </div>
+        <div class="div-footer-link w-clearfix">
+            <div class="footer-links div-block-3  " style="-o-justify-content: center; -webkit-justify-content: center; justify-content: center;display: inline-block;
+    text-align: center;">
+                <a href="/Blog/@Constants.GetBlogCategorySlug((int)Enums.BlogCategory.SaticilarIthalatcilar, lang)" class="f-link">@Localization.Get("Satıcılar", "Sellers", lang)</a>
+                &nbsp;
+                &nbsp;
+                -&nbsp;
+                &nbsp;
+                <a href="@Constants.GetURL((int)Enums.Routing.Hakkimizda, lang)" class="f-link">@Localization.Get("Hakkımızda", "About", lang)</a>
+                &nbsp;
+                -&nbsp;
+                &nbsp;
+                <a href="@Constants.GetURL((int)Enums.Routing.Videolar, lang)" class="f-link">@Localization.Get("Videolar", "Videos", lang)</a>
+                &nbsp;
+                -&nbsp;
+                &nbsp;
+                <a href="@Constants.GetURL((int)Enums.Routing.Yardim, lang)" class="f-link">@Localization.Get("Yardım", "Help", lang)</a>
+                &nbsp;
+                -&nbsp;
+                &nbsp;
+                <a href="@Constants.GetURL((int)Enums.Routing.KullanimKosullari, lang)" class="f-link">@Localization.Get("Kullanım Koşulları", "Terms of Use", lang)</a>
+                &nbsp;
+                -&nbsp;
+                &nbsp;
+                <a href="@Constants.GetURL((int)Enums.Routing.GuvenliOdemeGittiBu, lang)" class="f-link">@Localization.Get("Güvenli Ödeme Gitti Bu", "Secure Payment", lang)</a>
+                &nbsp;
+                -&nbsp;
+                &nbsp;
+                <a href="@Constants.GetURL((int)Enums.Routing.Ucretler, lang)" class="f-link">@Localization.Get("Ücretler", "Fees", lang)</a>
+                &nbsp;
+                -&nbsp;
+                &nbsp;
+                <a href="@Constants.GetURL((int)Enums.Routing.Iletisim, lang)" class="f-link">@Localization.Get("İletişim", "Contact Us", lang)</a>
+            </div>
+            <div>
+                <a></a>
+                <a></a>
+                <a></a>
+            </div>
+       
+            <div class="footer-links  div-center" style="-o-justify-content: center; -webkit-justify-content: center; justify-content: center">
+                <div class="center-mobil">
+                    <a href="#" class="link-block-9 w-inline-block p-l-0-i">
+                        <img src="/content/img/VISAMaster.png" alt="Visa Master" class="app-logo-width-ios" style="width: 120px; vertical-align: middle;    padding-bottom: 12px;"/>
+                    </a>
+                    <a target="_blank" href="https://play.google.com/store/apps/details?id=com.audiophile" title="Audiophile Mobil Uygulama" class="link-block-9 w-inline-block social-media-link p-l-0" >
+                        <img src="/Content/img/GooglePlay.png" alt="Google Play Audiophile" title="Google Play Audiophile" class="google-play" />
+                    </a>
+                    @*<a target="_blank" href="https://www.crunchbase.com/organization/audiophile" title="Crunchbase" class="link-block-9 w-inline-block social-media-link p-l-0" >
+                        <img src="/Content/img/AppStore.png" alt="IOS Audiophile" title="IOS Audiophile" class="app-logo-width-ios" style="width: 120px;    padding-bottom: 12px;" />
+                    </a>*@
+
+
+                    @*<a target="_blank" href="https://play.google.com/store/apps/details?id=com.audiophile" title="Audiophile Mobil Uygulama" class="link-block-9 w-inline-block social-media-link p-l-0">
+                        <img src="/Content/img/android_logo.png" alt="Google Play Audiophile" title="Google Play Audiophile" class="app-logo-width" />
+                    </a>
+                    <a target="_blank" href="https://www.crunchbase.com/organization/audiophile" title="Crunchbase" class="link-block-9 w-inline-block social-media-link p-l-0">
+                        <img src="/Content/img/cb.png" width="30" height="30" alt="Crunchbase Audiophile" />
+                    </a>*@
+
+                    <a target="_blank" href="https://www.facebook.com/audiophileorg/" title="@Localization.Get("Facebook'ta bizi takip et", "Follow-us on Facebook", lang)" class="link-block-9 w-inline-block social-media-link">
+                        <i class="fa fa-facebook fa-2x"></i>
+                    </a>
+                    <a target="_blank" href="https://www.facebook.com/groups/audiophile.community/" title="@Localization.Get("Facebook'ta bizi takip et", "Follow-us on Facebook", lang)" class="link-block-9 w-inline-block social-media-link">
+                        <i class="fa fa-facebook fa-2x"></i>
+                    </a>
+                    <a target="_blank" href="https://twitter.com/AudiophileOrg" title="@Localization.Get("Twitter'ta bizi takip et", "Follow-us on Twitter", lang)" class="link-block-9 w-inline-block social-media-link">
+                        <i class="fa fa-twitter fa-2x"></i>
+                    </a>
+                    <a target="_blank" href="https://www.instagram.com/audiophile_org/" title="@Localization.Get("Instagram'da bizi takip et", "Follow-us on Instagra", lang)" class="link-block-9 w-inline-block social-media-link">
+                        <i class="fa fa-instagram fa-2x"></i>
+                    </a>
+                    <a target="_blank" href="https://www.youtube.com/user/AudiophileCommunity/" title="@Localization.Get("Google+'ta bizi takip et", "Follow-us on Google+", lang)" class="link-block-9 w-inline-block social-media-link">
+                        <i class="fa fa-youtube fa-2x"></i>
+                    </a>
+                    <a target="_blank" href="https://tr.pinterest.com/audiophileorg/" title="@Localization.Get("Pinterest'te bizi takip et", "Follow-us on Pinterest", lang)" class="link-block-9 w-inline-block social-media-link">
+                        <i class="fa fa-pinterest fa-2x"></i>
+                    </a>
+                    <a href="/rss" title="Rss" class="link-block-9 w-inline-block social-media-link">
+                        <i class="fa fa-rss fa-2x"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="div-son">
+        <div class="text-block-4">© Copyright 2018 . @Localization.Get("Tüm Hakları Saklıdır", "All Rights Reserved", lang).</div>
+    </div>
+</div>

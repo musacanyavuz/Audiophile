@@ -1,0 +1,618 @@
+@using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime
+@model FeaturedAdStep3ViewModel
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("İlanı Öne Çıkar", "Product Display Enhancements", lang);
+    Layout = "_Layout";
+    var updateAdvert = Model.DopingTypes.FirstOrDefault(p => p.ID == (int)Enums.Dopings.IlanTarihiGuncelle);
+}
+<style>
+    .crop-area #canvas, #canvas2 {
+        height: 300px;
+        width: 300px;
+        background-color: #ffffff;
+        cursor: default;
+        border: 1px solid black;
+    }
+
+    .div-block-17.form-wrapper.form-hesaplar.urun-ekle {
+        background-color: white;
+    }
+
+    .div--marka {
+        width: 100%;
+        margin-bottom: 71px;
+        padding: 0px;
+        border: 1px #e4e4e4;
+        background-color: white;
+    }
+
+    .sec-altsayfa.sec-hesaplar.section-1 {
+        background-color: #fff !important;
+    }
+
+    .div-block-20.div-ilan.hesap {
+        background-color: white !important;
+    }
+
+    .heading-2 {
+        text-align: center;
+    }
+
+    @@media screen and (min-width: 1200px) {
+
+        .w-container {
+            max-width: 906px !important;
+        }
+
+        .register-form {
+            width: 80%;
+            margin: auto;
+        }
+
+            .register-form .w-checkbox-input, .register-form .w-radio-input,
+            .checkbox-field-2 {
+                float: none !important;
+            }
+    }
+
+    @@media screen and (max-width: 992px) {
+        .h2.h4.h-kat {
+            margin-bottom: 0px;
+        }
+
+        .div-block-20.div-ilan.hesap {
+            padding-top: 25px;
+            padding-bottom: 0px;
+        }
+
+        .radio-button {
+            margin-right: 5px;
+        }
+    }
+
+
+</style>
+
+<div class="sec-altsayfa sec-hesaplar section-1">
+    <div class="w-container">
+
+        <div class="w-clearfix">
+
+            <div class="div-block-20 div-ilan hesap urun-ekle w-clearfix">
+                <h4 class="h2 h4 h-kat h-kategori">@Localization.Get("İlan Girişi", "Add Listing", lang)</h4>
+            </div>
+
+            @{
+                await Html.RenderPartialAsync("~/Views/Partials/AddListingSteps.cshtml", 3);
+            }
+
+            <div class="div-block-17 form-wrapper form-hesaplar urun-ekle w-clearfix">
+                <h3 class="heading-2 form-text">@Localization.Get("İlanı Öne Çıkar", "Product Display Enhancements", lang)</h3>
+
+
+                <div class="form-block-5 w-form">
+
+                    <h3 class="heading-2 form-text formtext">
+                        @Localization.Get("Daha fazla alıcıya ulaşmak ister misiniz?", "Do you want to reach more buyers?", lang)
+                    </h3>
+                    <h5 class="heading-2 form-text textsmall">
+                        @Localization.Get("Doping alın, ilanınızın 251 kata kadar daha fazla görüntülenmesini sağlayın.", "Get doping, make your ad show up to 251 times more.", lang)
+                    </h5>
+
+                    <div class="div-block-48 w-clearfix">
+                        <label for="name-5" class="field-label ilanim">
+                            @Localization.Get("İlanı görüntülemek istediğiniz yeri seçiniz", "Select where you want to display the ad", lang)
+                        </label>
+                        <p class="p-info">
+
+                        </p>
+                        <div class="div-block-33 nerede1 cizgi-no">
+                            <div class="div-block-34 ">
+                                <div class="div-block-45 w-clearfix">
+                                    <label class="field-label goruntu">@Localization.Get("Anasayfa'da Görüntülensin", "Display on Home Page", lang)</label>
+                                    <select  @(!Model.AdvertDopings.Any(x => x.DopingType.Group == Enums.DopingGroup.Goruntulenme) ? "" : "disabled")  id="homepage" onchange="calc()" class="form-control width-100-100">
+                                        <option value="0">@Localization.Get("Kullanılmayacak", "Don't use", lang)</option>
+
+                                        @foreach (var item in Model.DopingTypes.Where(x => x.Group == Enums.DopingGroup.Goruntulenme))
+                                        {
+                                            <option value="@item.ID">@item.Day @Localization.Get("Gün", "Day", lang) (@item.Price,00 ₺)</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="div-block-33 nerede1 cizgi-no">
+                            <div class="div-block-34">
+                                <div class="div-block-45 w-clearfix">
+                                    <label class="field-label goruntu">@Localization.Get("İlan Tarihini Güncelle", "Update advert date", lang) </label>
+                                    <select @(Model.Advert.LastUpdateDate.HasValue ? "" : "disabled") id="advertDate" onchange="calc()" class="form-control width-100-100">
+                                        <option value="0">@Localization.Get("Kullanılmayacak", "Don't use", lang)</option>
+                                        @foreach (var item in Model.DopingTypes.Where(x => x.Group == Enums.DopingGroup.IlanTarihiGuncelle))
+                                        {
+                                            <option value="@item.ID">@item.Name @item.Price,00 ₺</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#" class="link-10" data-ix="new-interaction-3">@Localization.Get("Nasıl Görünecek?", "How will it look like?", lang)</a>
+                        <div class="nasil">
+                            <div class="div-block-49 w-clearfix">
+                                <h3 class="heading-2 form-text formtext">@Localization.Get("Anasayfa ve Kategori Görünümü", "Home and Category Page View", lang)</h3>
+                                <h5 class="heading-2 form-text textsmall textbox">
+                                    @Localization.Get("Doping alın, ilanınızın 251 kata kadar daha fazla görüntülenmesini sağlayın.", "Get doping, make your ad show up to 251 times more.", lang)
+                                </h5>
+                                <img src="/Content/img/images/Screen-Shot-2018-01-08-at-16.33.56.png" sizes="100vw" class="image-17">
+                                <a href="#" class="link-block-8 w-inline-block" data-ix="close">
+                                    <img alt="cancel-1" src="/Content/img/images/cancel-1.png">
+                                </a>
+                            </div>
+                            <div class="div-block-50"></div>
+                        </div>
+                    </div>
+
+
+                    <div class="div-block-48 w-clearfix">
+                        <label for="name-5" class="field-label ilanim">
+                            @Localization.Get("Etiket Seçiniz", "Select Tag", lang)
+                        </label>
+                        <p class="p-info">
+
+                        </p>
+                        <div class="div-block-33 nerede1 cizgi-no">
+                            <div class="div-block-34 div-cizgili">
+                                <div class="div-block-45 w-clearfix">
+                                    <label class="field-label goruntu">@Localization.Get("Yeni Etiketi İstiyorum", "Add a New Tag", lang)</label>
+                                    <div class="div-block-46">
+                                        <div class="div-block-40 et">
+                                            <div>@Localization.Get("Yeni", "New", lang)</div>
+                                        </div>
+                                    </div>
+                                    <select id="new" @(!Model.AdvertDopings.Any(x => x.DopingType.Group == Enums.DopingGroup.SiyahEtiket) ? "" : "disabled") onchange="calc('new')" class="form-control width-100-100">
+                                        <option value="0">@Localization.Get("Kullanılmayacak", "Don't use", lang)</option>
+                                        @foreach (var item in Model.DopingTypes.Where(x => x.Group == Enums.DopingGroup.SiyahEtiket))
+                                        {
+                                            <option value="@item.ID">@item.Day @Localization.Get("Gün", "Day", lang) (@item.Price,00 ₺)</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="div-block-34 div-cizgili">
+                                <div class="div-block-45 w-clearfix">
+                                    <label class="field-label goruntu">@Localization.Get("Fiyatı Düştü Etiketi İstiyorum", "Add a Price Down Tag", lang)</label>
+                                    <div class="div-block-46">
+                                        <div class="div-block-40 et et-yesil">
+                                            <div>@Localization.Get("Fiyatı Düştü", "Price Down", lang)</div>
+                                        </div>
+                                    </div>
+                                    <select id="priceDown"  @(!Model.AdvertDopings.Any(x => x.DopingType.Group == Enums.DopingGroup.YesilEtiket) ? "" : "disabled") onchange="calc('priceDown')" class="form-control width-100-100">
+                                        <option value="0">@Localization.Get("Kullanılmayacak", "Don't use", lang)</option>
+                                        @foreach (var item in Model.DopingTypes.Where(x => x.Group == Enums.DopingGroup.YesilEtiket))
+                                        {
+                                            <option value="@item.ID">@item.Day @Localization.Get("Gün", "Day", lang) (@item.Price,00 ₺)</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="div-block-34 div-cizgili cizgisiz">
+                                <div class="div-block-45 w-clearfix">
+                                    <label class="field-label goruntu">@Localization.Get("Acil Etiketi İstiyorum", "Add an Urgent Tag", lang)</label>
+                                    <div class="div-block-46">
+                                        <div class="div-block-40 et et-acil">
+                                            <div>@Localization.Get("Acil", "Urgent", lang)</div>
+                                        </div>
+                                    </div>
+                                    <select id="urgent" @(!Model.AdvertDopings.Any(x => x.DopingType.Group == Enums.DopingGroup.KirmiziEtiket) ? "" : "disabled") onchange="calc('urgent')" class="form-control width-100-100">
+                                        <option value="0">@Localization.Get("Kullanılmayacak", "Don't use", lang)</option>
+                                        @foreach (var item in Model.DopingTypes.Where(x => x.Group == Enums.DopingGroup.KirmiziEtiket))
+                                        {
+                                            <option value="@item.ID">@item.Day @Localization.Get("Gün", "Day", lang) (@item.Price,00 ₺)</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#" class="link-10" data-ix="new-interaction-3">@Localization.Get("Nasıl Görünecek?", "How will it look like?", lang)</a>
+                        <div class="nasil">
+                            <div class="div-block-49 w-clearfix">
+                                <h3 class="heading-2 form-text formtext">@Localization.Get("Anasayfa ve Kategori Görünümü", "Home and Category Page View", lang)</h3>
+                                <h5 class="heading-2 form-text textsmall textbox">
+                                    @Localization.Get("Doping alın, ilanınızın 251 kata kadar daha fazla görüntülenmesini sağlayın.", "Get doping, make your ad show up to 251 times more.", lang)
+                                </h5>
+                                <img src="/Content/img/images/Screen-Shot-2018-01-08-at-16.33.56.png" sizes="100vw" class="image-17">
+                                <a href="#" class="link-block-8 w-inline-block" data-ix="close">
+                                    <img alt="cancel-1" src="/Content/img/images/cancel-1.png">
+                                </a>
+                            </div>
+                            <div class="div-block-50"></div>
+                        </div>
+                    </div>
+
+
+                    <div class="div-block-48 w-clearfix">
+                        <label for="name-5" class="field-label ilanim">
+                            @Localization.Get("Ürününüzü Ekstra Öne Çıkartın", "Highlights Your Product", lang)
+                        </label>
+                        <p class="p-info">
+
+                        </p>
+                        <div class="div-block-33 nerede1 cizgi-no">
+                            <div class="div-block-34 div-cizgili cizgisiz">
+                                <div class="div-block-45 w-clearfix">
+                                    <label class="field-label goruntu">@Localization.Get("Sarıya Boyalı Çerçeve", "Yellow Coloured Frame", lang)</label>
+                                    <img alt="Screen-Shot-2018-01-07-at-15.35.23" src="/Content/img/images/Screen-Shot-2018-01-07-at-15.35.23.png" class="image-15">
+                                    <select @(!Model.AdvertDopings.Any(x => x.DopingType.Group == Enums.DopingGroup.Gorunum) ? "" : "disabled") id="highlight" onchange="calc()" class="form-control width-100-100">
+                                        <option value="0">@Localization.Get("Kullanılmayacak", "Don't use", lang)</option>
+                                        @foreach (var item in Model.DopingTypes.Where(x => x.Group == Enums.DopingGroup.Gorunum))
+                                        {
+                                            <option value="@item.ID">@item.Day @Localization.Get("Gün", "Day", lang) (@item.Price,00 ₺)</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#" class="link-10" data-ix="new-interaction-3">@Localization.Get("Nasıl Görünecek?", "How will it look like?", lang)</a>
+                        <div class="nasil nasil3">
+                            <div class="div-block-49 w-clearfix">
+                                <h3 class="heading-2 form-text formtext">@Localization.Get("Öne Çıkar Görünümü", "Highlight View", lang)</h3>
+                                <h5 class="heading-2 form-text textsmall textbox">
+                                    @Localization.Get("Doping alın, ilanınızın 251 kata kadar daha fazla görüntülenmesini sağlayın.", "Get doping, make your ad show up to 251 times more.", lang)
+                                </h5><img alt="Screen-Shot-2018-01-08-at-17.39.58" src="/Content/img/images/Screen-Shot-2018-01-08-at-17.39.58.png" srcset="/Content/img/images/Screen-Shot-2018-01-08-at-17.39.58-p-500.png 500w, /Content/img/images/Screen-Shot-2018-01-08-at-17.39.58.png 1266w" sizes="100vw" class="image-17">
+                                <a href="#" class="link-block-8 w-inline-block" data-ix="close">
+                                    <img alt="cancel-1" src="/Content/img/images/cancel-1.png">
+                                </a>
+                            </div>
+                            <div class="div-block-50"></div>
+                        </div>
+                    </div>
+
+
+                    <hr />
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="row m-b-0">
+                                <div class="col-md-12 col-12">
+                                    <center>
+                                        <h3>
+                                            @Localization.Get("Toplam", "Payment Type", lang)
+                                        </h3>
+                                        <p class="p-info">
+
+                                        </p>
+                                    </center>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5>@Localization.Get("Seçilen Dopingler", "Selected Dopings", lang)</h5>
+
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Doping</th>
+                                                <th>@Localization.Get("Birim Fiyat", "Price", lang)</th>
+                                                <th>@Localization.Get("Süre", "Time", lang)</th>
+                                                <th>@Localization.Get("Bitiş Tarihi", "End Date", lang)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="invoice">
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                                <div class="col-12">
+                                    <h5>@Localization.Get("Ödeme Seçenekleri", "Payment Methods", lang)</h5>
+                                    <div class="div-block-33 nerede1 p-t-13 p-b-13 f-l width-100-50">
+                                        <label class="text-center m-auto">
+                                            <input class="w-checkbox-input" type="radio" name="paymentType" value="bank">
+                                            @Localization.Get("Banka Havalesi", "Wire Transfer", lang)
+                                        </label>
+                                    </div>
+                                    <div class="div-block-33 nerede1 p-t-13 p-b-13 f-l width-100-50">
+                                        <label class="text-center m-auto">
+                                            <input class="w-checkbox-input" type="radio" name="paymentType" value="creditCard">
+                                            @Localization.Get("Kredi Kartı", "Credit Card", lang)
+                                        </label>
+                                    </div>
+
+                                    <div class="form-block-5 w-form display-none" id="bankPayment">
+                                        <h5> @TextService.GetText((int)Enums.Texts.BankaHavalesiText, lang)</h5>
+                                    </div>
+                                    <div id="creditCardPayment" class="display-none">
+                                        <h5> @Localization.Get("Ödeme Bilgileri", "Credit Card Information", lang) </h5>
+                                        <p><i>@Localization.Get("Bu bilgiler site yönetimimiz tarafından hiçbir şekilde görünmemekte, kaydedilmemekte, direkt olarak bankamıza gönderilmektedir.", "This information is neither visible nor recorded to us and directly sent to our bank by the system.", lang)</i></p>
+                                        <div class="row mb-0">
+                                            <div class="col-md-12">
+                                                <input class="textfield field-col kart w-input" id="cardName" placeholder="@Localization.Get("Kart Üzerindeki Ad Soyad", "Name Surname", lang)" type="text">
+                                            </div>
+                                            <div class="col-md-12">
+                                                <input class="textfield field-col kart w-input" id="cardNumber" placeholder="@Localization.Get("Kart No", "Card No", lang)" type="text">
+                                            </div>
+                                        </div>
+                                        <div class="row mb-0">
+                                            <div class="col-md-4">
+                                                <select class="textfield w-select" id="month" name="Month">
+                                                    <option value="">@Localization.Get("Ay", "Month", lang)</option>
+                                                    <option value="1">01</option>
+                                                    <option value="2">02</option>
+                                                    <option value="3">03</option>
+                                                    <option value="4">04</option>
+                                                    <option value="5">05</option>
+                                                    <option value="6">06</option>
+                                                    <option value="7">07</option>
+                                                    <option value="8">08</option>
+                                                    <option value="9">09</option>
+                                                    <option value="10">10</option>
+                                                    <option value="11">11</option>
+                                                    <option value="12">12</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <select class="textfield w-select" id="year" name="Year">
+                                                    <option value="">@Localization.Get("Yıl", "Year", lang)</option>
+                                                    @for (int i = DateTime.Now.Year; i <= DateTime.Now.Year + 15; i++)
+                                                    {
+                                                        <option value="@i">@i</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input class="textfield w-input" maxlength="4" id="cvc" placeholder="CVC" type="text" value="">
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <button type="button" onclick="save()" class="button button-main button-satn button-submit submit-center w-button">Kaydet ve Devam Et</button>
+                    <div id="alertArea"> </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts{
+    <script>
+        var dopings = @Html.Raw(Json.Serialize(Model.DopingTypes));
+
+        function save() {
+            var homepage = $('#homepage').val();
+            var category = $('#category').val();
+            const advertDate = $("#advertDate").val();
+            var label = getLabelDoping();
+            var highlight = $('#highlight').val();
+
+            if (homepage == 0 && category == 0 && label == 0 && highlight == 0) {
+                var route = '@(Localization.Get("/IlanEkle/Sonuc/", "/AddListing/Summary/", lang)+Model.Advert.ID)';
+                window.location = route;
+                return;
+            }
+            var dopingTypeIds = [homepage, category, label, highlight,advertDate];
+            var postModel = {
+                securePayment: false,
+                dopingTypeIds
+            };
+
+            if ($('input[name="paymentType"]:checked').val() === "creditCard") {
+                var cardName = $('#cardName').val();
+                var cardNumber = $('#cardNumber').val();
+                var month = $('#month').val();
+                var year = $('#year').val();
+                var cvc = $('#cvc').val();
+
+                if (cardName == "" || cardNumber == "" || month == "" || year == "" || cvc == "") {
+                    var message = '@Html.Raw(Localization.Get("Kredi kartı ile ödeme yapmak için lütfen kredi kartı bilgileriniz doldurunuz.","Please fill in your credit card details to pay by credit card.",lang))';
+                    notify("error", message);
+                    return;
+                }
+                postModel = {
+                    dopingTypeIds,cardName,cardNumber,
+                    month,year,cvc, securePayment: true
+                };
+            }
+            notify("info", '@Localization.Get("Lütfen Bekleyiniz", "Please Wait", lang)');
+
+            $.ajax({
+                url: '/AddListing/FeaturedAd/' + @Model.Advert.ID,
+                type: 'POST',
+                data: postModel,
+                success: function(data) {
+                    if (data.isSuccess && data.url != null) {
+                        window.location = data.url;
+                    }
+                    else if (data.url != null) {
+                        window.location = data.url;
+                    }
+                    else if (data.isSuccess && data.html != null) {
+                        document.write(data.html);
+                        $("form[name='returnform']").submit();
+                    }
+                    else {
+                        notify("error", data.message);
+                    }
+                }
+            });
+        }
+
+
+        function calc(lbl) {
+            if (lbl !== null) {
+                labelOptimizer(lbl);
+            }
+
+            var homepage = $('#homepage').val();
+            var category = $('#category').val();
+            var label = getLabelDoping();
+            var highlight = $('#highlight').val();
+            const advertDate = $("#advertDate").val();
+            var sum = 0;
+            $('#invoice').html('');
+
+            var hPrice = getPrice(homepage);
+            if (hPrice > 0) {
+                sum = sum + hPrice;
+                row(homepage, hPrice, '@Localization.Get("Anasayfa", "Homepage", lang)');
+            }
+            var catPrice = getPrice(category);
+            if (catPrice > 0) {
+                sum = sum + catPrice;
+                row(category, catPrice, '@Localization.Get("Kategori", "Category", lang)');
+            }
+
+            var labelPrice = getPrice(getLabelDoping());
+            if (labelPrice > 0) {
+                sum = sum + labelPrice;
+                var labelText = getLabelDopingText();
+                row(label, labelPrice, labelText);
+            }
+
+            var highlightPrice = getPrice(highlight);
+            if (highlightPrice > 0) {
+                sum = sum + highlightPrice;
+                row(highlight, highlightPrice, '@Localization.Get("Sarı Çerçeve", "Yellow Frame", lang)');
+            }
+            const advertPrice = getPrice(advertDate);
+            if (advertPrice> 0) {
+                sum = sum + advertPrice;
+                row(advertDate, advertPrice, "@Localization.Get("İlan Tarihini Güncelleme","Update advert date",lang)");
+            }
+            if (sum > 0) {
+                $("[name='paymentType'][value='bank']").attr("checked", true);
+                $('#invoice').append('<tr class="sum-row"> ' +
+                    '<td><b>@Localization.Get("Toplam", "Sum", lang)</b></td>' +
+                    ' <td><b>' +
+                    sum +
+                    ' TL</b> </td> <td></td> <td></td> </tr>');
+            }
+            //var sum = getPrice(homepage) + getPrice(category) + getPrice(label) + getPrice(highlight);
+        }
+
+        function row(id, price, type) {
+            var day = getDay(id);
+            var date = new Date();
+
+            date.setDate(date.getDate() + day);
+            var dd = date.getDate();
+            dd = dd > 9 ? dd : '0' + dd;
+            var yy = date.getFullYear();
+            var mm = (date.getMonth() + 1);
+            mm = mm > 9 ? mm : '0' + mm;
+            var hh = date.getHours();
+            hh = hh > 9 ? hh : '0' + hh;
+            var mM = date.getMinutes();
+            mM = mM > 9 ? mM : '0' + mM;
+
+            //if (day === 7) {
+            //    date = after7Days;
+            //} else if (day === 30) {
+            //    date = after30Days;
+            //}
+            $('#invoice').append('<tr> <td>' +
+                type +
+                '</td> ' +
+                ' <td>' +
+                price +
+                ' TL</td>  <td>' +
+                day +
+                ' @Localization.Get("Gün", "Day", lang)</td>' +
+                ' <td>' +
+                dd + '.' + mm + '.' + yy + ' ' + hh + ':' + mM +
+                '</td> </tr>');
+        }
+
+        function getPrice(id) {
+            var result = 0;
+            dopings.forEach(function(item) {
+                if (item.id === parseInt(id)) {
+                    result = item.price;
+                }
+            });
+            return result;
+        }
+
+        function getDay(id) {
+            var result = 0;
+            dopings.forEach(function(item) {
+                if (item.id === parseInt(id)) {
+                    result = item.day;
+                }
+            });
+            return result;
+        }
+
+        function labelOptimizer(id) {
+            if (id === 'new') {
+                $('#priceDown').val(0);
+                $('#urgent').val(0);
+            } else if (id === 'priceDown') {
+                $('#new').val(0);
+                $('#urgent').val(0);
+            } else if (id === 'urgent') {
+                $('#new').val(0);
+                $('#priceDown').val(0);
+            }
+        }
+
+        function getLabelDoping() {
+            var newLabel = $('#new').val();
+            var priceDown = $('#priceDown').val();
+            var urgent = $('#urgent').val();
+            if (parseInt(newLabel)) {
+                return newLabel;
+            }
+            if (parseInt(priceDown)) {
+                return priceDown;
+            }
+            if (parseInt(urgent)) {
+                return urgent;
+            }
+            return 0;
+        }
+
+        function getLabelDopingText() {
+            var newLabel = $('#new').val();
+            var priceDown = $('#priceDown').val();
+            var urgent = $('#urgent').val();
+            if (parseInt(newLabel)) {
+                return '@Localization.Get("Yeni", "New", lang)';
+            }
+            if (parseInt(priceDown)) {
+                return '@Localization.Get("Fiyatı Düştü", "Price Down", lang)';
+            }
+            if (parseInt(urgent)) {
+                return '@Localization.Get("Acil", "Urgent", lang)';
+            }
+            return 0;
+        }
+        $(function () {
+            
+            var $radios = $('input:radio[name=paymentType]');
+            if ($radios.is(':checked') === false) {
+                $radios.filter('[value=bank]').click();
+            }
+        });
+
+        $('input[name="paymentType"]').on('change',
+            function() {
+                if ($(this).val() === 'bank') {
+                    $('#bankPayment').css('display', 'block');
+                    $('#creditCardPayment').css('display', 'none');
+                }
+                if ($(this).val() === 'creditCard') {
+                    $('#bankPayment').css('display', 'none');
+                    $('#creditCardPayment').css('display', 'block');
+                }
+        });
+    </script>
+}

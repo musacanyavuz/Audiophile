@@ -1,0 +1,381 @@
+@using System.Text.RegularExpressions
+@using Microsoft.AspNetCore.Http.Extensions
+@model BlogPostDetailViewModel
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Model.BlogPost.Title;
+    Layout = "_Layout";
+    ViewBag.SeoDescription = Html.Raw(Regex.Replace((Model.BlogPost.Content?.Length > 500 ? Model.BlogPost.Content.Substring(0, 500) : Model.BlogPost.Content) ?? "", "<.*?>", string.Empty));
+    ViewBag.SeoKeywords = Model.BlogPost.Tags;
+}
+@section MetaTag{
+    <meta name="twitter:image" content="https://audiophile.org@(Model.BlogPost.CoverImage)">
+    <meta name="twitter:image" content="https://www.audiophile.org@(Model.BlogPost.CoverImage)">
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="@Model.BlogPost.Title" />
+    <meta name="twitter:image" content="https://www.audiophile.org@(Model.BlogPost.CoverImage)" />
+    <meta property="og:type" content="product.item" />
+    <meta property="og:url" content="https://@(Context.Request.Host+Context.Request.Path)" />
+    <meta property="og:image" content="https://www.audiophile.org@(Model.BlogPost.CoverImage)">
+}
+@section style{
+    <link href="/Content/plugins/fancybox/jquery.fancybox.css" rel="stylesheet" />
+    <style>
+        .advert-sm-icons > li {
+            float: left;
+            margin-left: 10px;
+        }
+
+        .social label {
+            float: left;
+            background-color: #EEEEEE;
+            opacity: 0.5;
+            border: 1px solid #000000;
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            padding: 6px 0 6px 15px;
+            font-family: sans-serif,fantasy,serif;
+            margin-right: 9px;
+        }
+
+            .social label:after {
+                border-top: 8px solid rgba(0, 0, 0, 0);
+                border-bottom: 8px solid rgba(0, 0, 0, 0);
+                border-right: 8px solid rgba(0, 0, 0, 0);
+                border-left: 8px solid #000000;
+                content: "";
+                display: inline-block;
+                position: relative;
+                left: 17px;
+                top: 2px;
+                width: 0;
+                height: 0;
+            }
+
+        .social ul {
+            float: left;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .social li {
+            float: left;
+            width: 40px;
+            height: 32px;
+            cursor: pointer;
+            color: #FFFFFF;
+        }
+
+            .social li:hover {
+                -webkit-box-shadow: inset 0px 0px 12px rgba(255,255,255,0.6);
+                -moz-box-shadow: inset 0px 0px 12px rgba(255,255,255,0.6);
+                box-shadow: inset 0px 0px 12px rgba(255,255,255,0.6);
+            }
+
+        .social div {
+            clear: both;
+        }
+
+        /* for vertical alignment */
+        .social .vertical {
+            float: none;
+        }
+
+        .social .vertical-label:after {
+            border-top: 8px solid #000000;
+            border-bottom: 8px solid rgba(0, 0, 0, 0);
+            border-right: 8px solid rgba(0, 0, 0, 0);
+            border-left: 8px solid rgba(0, 0, 0, 0);
+            content: "";
+            display: inline-block;
+            position: relative;
+            left: -36px;
+            top: 26px;
+            width: 0;
+            height: 0;
+        }
+
+        .social .vertical-ul {
+            margin: 14px 0 0 23px;
+        }
+        /* social network styles */
+        .social-facebook {
+            background: #3B5998 url("/Content/img/social-buttons.png") no-repeat 0 0;
+        }
+
+        .social-twitter {
+            background: #55ACEE url("/Content/img/social-buttons.png") no-repeat 0 -52px;
+        }
+
+        .social-googleplus {
+            background: #DD4B39 url("/Content/img/social-buttons.png") no-repeat 0 -104px;
+        }
+
+        caption, td, th {
+            text-align: right !important
+        }
+
+        .bloj-imaj {
+            display: block;
+            text-align: center;
+            margin-bottom: 20px
+        }
+
+        .product a {
+            text-decoration: none !important
+        }
+
+        .blog-date {
+            color: #a4a4a4
+        }
+
+        .blog-heading {
+            color: #000
+        }
+
+        .blog-icerik {
+            color: #000;
+            margin-top: 20px;
+            display: flow-root;
+            width: 100%;
+        }
+
+        .blog-header-line {
+            height: 3px;
+            width: 60px;
+            background-color: red;
+            float: left;
+            position: relative;
+            top: -8px
+        }
+
+        .blog-desc {
+            padding: 15px
+        }
+
+        h2 {
+            all: unset
+        }
+
+        .blog-nav {
+            margin-bottom: 40px;
+            margin-top: 40px;
+            width: 90%
+        }
+
+        .blog-nav-a {
+            text-decoration: none;
+            color: #000
+        }
+
+        .blog-nav-span-left {
+            font-weight: 700;
+            color: #000;
+            float: left
+        }
+
+        .blog-nav-span-right {
+            font-weight: 700;
+            color: #000;
+            float: right
+        }
+
+        .comment-heading {
+            margin-top: 1px;
+            background-color: #fff;
+            float: left;
+            width: 100%;
+            padding: 15px 20px
+        }
+
+        .comment-button {
+            cursor: pointer;
+            margin-bottom: 15px;
+            border: 1px solid #e7e7e7;
+            padding: 20px;
+            background: 0 0
+        }
+
+        .blogImageResize {
+            width: 350px;
+            height: auto;
+            display: table;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            margin: 0 auto
+        }
+
+        .div-urun-foto {
+            width: 100% !important;
+            height: 100% !important;
+            padding-bottom: 20px !important
+        }
+
+        .tabs-content {
+            height: auto
+        }
+
+        .content {
+            margin-top: 20px;
+            width: 72% !important;
+        }
+
+        .product-wrapper {
+            width: 90% !important;
+        }
+
+        @@media screen and (max-width: 40em) {
+            .content {
+                width: 100% !important;
+            }
+
+            .product-wrapper {
+                width: 100% !important;
+            }
+        }
+    </style>
+}
+
+
+@{Html.RenderPartial("~/Views/Partials/Submenu.cshtml", Model.AdvertCategories);}
+
+
+<div class="div-block-20">
+    <div class="w-container">
+        <h4 class="h-kat h-kategori h2 h4">
+            <strong>@Model.Title</strong>
+        </h4>
+        <p class="paragraph-3">
+            @Model.Title @Localization.Get(" kategorisine ait (" + Model.PostCount + " kayıt bulundu)", " (" + Model.PostCount + " records found)", lang)
+
+            <br>
+            <a class="mail" href="@Constants.GetURL((int) Enums.Routing.BlogEkle, lang)">
+                @Model.Title @Localization.Get("Ekle", "Add", lang)
+            </a>
+        </p>
+    </div>
+</div>
+
+<div class="sec-altsayfa section-1" id="blog-altsayfa">
+    <div class="w-container">
+
+        @{
+            Html.RenderPartial("Sidebar", Model.BlogPost.CategoryID - 1);
+        }
+        <div class="content w-clearfix">
+            <div class="div-block-36">
+                <div class="products">
+                    <div class="product-wrapper w-clearfix">
+                        <div class="product width-100-100">
+                            <div class="w-inline-block w-full w-clearfix width-100-100">
+                                <div class="div-urun-foto">
+                                    <div data-duration-in="300" data-duration-out="100" class="tabs w-tabs">
+                                        <div class="tabs-content w-tab-content gallery">
+                                            @foreach (var img in Model.BlogPost.Images)
+                                            {
+                                                <div data-w-tab="Tab @img.ID" class="w--tab-active w-tab-pane">
+                                                    <a data-fancybox="gallery" title="@Model.BlogPost.Title" href="@img.Source">
+                                                        <img alt="@Model.BlogPost" src="@img.Source" onerror="this.src = '/Content/img/no-image-buyuk.jpg';" class="object-fit-contain">
+                                                    </a>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="tabs-menu-2 w-tab-menu display-block top-5 position-relative">
+                                            @foreach (var img in Model.BlogPost.Images)
+                                            {
+                                                <a data-w-tab="Tab @img.ID" class="w--current t1 w-inline-block w-tab-link" itemprop="@Model.BlogPost.Title">
+                                                    <img src="@img.Thumbnail" alt="@Model.BlogPost.Title" onerror="this.src = '/Content/img/no-image-kucuk.jpg';" class="object-fit-cover">
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="blog-desc">
+                                    <p class="blog-date">ID No: #@Model.BlogPost.ID <br />  @Model.BlogPost.CreatedDate.ToString("dd.MM.yyyy HH:mm")</p>
+                                    <h5>
+                                        <a href="@Constants.GetURL(Enums.Routing.SaticiDigerIlanlari, lang)/@Model.BlogPost.User.ID/@Localization.Slug(Model.BlogPost?.User?.Name)">
+                                            @Model.BlogPost.User.UserName
+                                        </a>
+                                    </h5>
+                                    <h4 class="blog-heading">@Model.BlogPost.Title</h4>
+                                    <div class="blog-header-line"></div>
+                                    <div class="blog-icerik">
+                                        @Html.Raw(Model.BlogPost.Content)
+                                    </div>
+                                </div>
+                                <br />
+
+                                <ul class="advert-sm-icons">
+                                    <li>
+                                        @Localization.Get("Paylaş ", "Share ", lang)
+                                    </li>
+                                    <li>
+                                        <a href="https://facebook.com/sharer/sharer.php?u=@(Context.Request.Host+Context.Request.Path)" target="_blank">
+                                            <i class="fa fa-facebook fa-2x"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://twitter.com/share?url=@(Context.Request.Host+Context.Request.Path)&text=@Model.BlogPost.Title" target="_blank">
+                                            <i class="fa fa-twitter fa-2x"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://pinterest.com/pin/create/bookmarklet/?&url=@(Context.Request.Host+Context.Request.Path)&description=@Model.BlogPost.Title" target="_blank">
+                                            <i class="fa fa-pinterest fa-2x"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://plus.google.com/share?url=@(Context.Request.Host+Context.Request.Path)" target="_blank" title='@Localization.Get("Google Plusta Paylaş", "Share on Google Plus", lang)'>
+                                            <i class="fa fa-google-plus fa-2x"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="whatsapp://send?text=Audiophile.org'ta bir haber buldum! @(Context.Request.Host+Context.Request.Path)">
+                                            <i class="fa fa-whatsapp fa-2x"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="mailto:?subject=@Model.BlogPost.Title&body=Audiophile.org'ta bir haber buldum! @Model.BlogPost.ShortContent @(Context.Request.Host+Context.Request.Path)">
+                                            <i class="fa fa-envelope fa-2x"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <br><br>
+                                <div>
+                                    @Localization.Get("Etiketler", "Tags", lang)
+                                    @if (!string.IsNullOrEmpty(Model.BlogPost.Tags) && Model.BlogPost.Tags.Contains(","))
+                                    {
+                                        foreach (var item in Model.BlogPost.Tags?.Split(','))
+                                        {
+                                            <a href="javascript:;" rel="tag">@item</a>
+                                            <span>, </span>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="/Content/plugins/fancybox/jquery.fancybox.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/social-buttons.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".fancybox a").fancybox();
+
+            const table = document.querySelector("table");
+            const responsive = document.createElement("div");
+            responsive.classList.add("table-responsive");
+            table.parentNode.insertBefore(responsive, table);
+            responsive.appendChild(table);
+        });
+    </script>
+}

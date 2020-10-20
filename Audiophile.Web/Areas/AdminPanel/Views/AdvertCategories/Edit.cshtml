@@ -1,0 +1,162 @@
+@model AdvertCategoryEditViewModel
+
+@{
+    ViewBag.Title = "İlan Kategorisi Düzenle";
+    Layout = "AdminLayout";
+    ViewData["ActiveMenu"] = "menu-item-ad-categories";
+}
+
+
+<div class="m-portlet">
+    <div class="m-portlet__head">
+        <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+                <span class="m-portlet__head-icon m--hide">
+                    <i class="la la-gear"></i>
+                </span>
+                <h3 class="m-portlet__head-text">
+                    #@Model.CategoryTr.ID | @Model.CategoryTr.Name
+                </h3>
+            </div>
+        </div>
+    </div>
+
+    
+    @using(Html.BeginForm("SaveEdit", "AdvertCategories", FormMethod.Post, new { @class = "m-form m-form--fit m-form--label-align-right m-form--group-seperator-dashed" }))
+    {
+        <input type="hidden" name="ID" value="@Model.CategoryTr.ID"/>
+        <div class="m-portlet__body">
+            <div class="form-group m-form__group row">
+                <label class="col-lg-2 col-form-label">Üst Kategori:</label>
+                <div class="col-lg-3">
+                    <select name="ParentCategoryID" class="form-control">
+                        <option value="0">Yok</option>
+                        @foreach (var category in (List<AdvertCategory>) ViewBag.Categories)
+                        {
+                            <option value="@category.ID">@category.Name</option>
+                        }
+                    </select>
+                </div>
+                <label class="col-lg-2 col-form-label">Icon:</label>
+                <div class="col-lg-3">
+                    <input type="file" name="File" class="form-control"/>
+                </div>
+            </div>
+            <div class="form-group m-form__group row">
+                <label class="col-lg-2 col-form-label">Sıralama:</label>
+                <div class="col-lg-3">
+                    <input type="number" name="Order" class="form-control" value="@Model.CategoryTr.Order" required/>
+                </div>
+                <label class="col-lg-2 col-form-label"></label>
+                <div class="col-lg-3">
+                    <label class="m-checkbox m-checkbox--state-success">
+                        <input type="checkbox" name="IsActive" value="@Model.CategoryTr.IsActive.ToString().ToLower()" @(Model.CategoryTr.IsActive?"checked":null)> Aktif
+                        <span></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="m-divider">
+            <span></span>
+            <span>Türkçe İçerik</span>
+            <span></span>
+        </div>
+        
+        <div class="m-portlet__body">
+            <div class="form-group m-form__group row">
+                <label class="col-lg-2 col-form-label">Ad:</label>
+                <div class="col-lg-3">
+                    <input type="text" class="form-control m-input" value="@Model.CategoryTr.Name" name="NameTr">
+                </div>
+                <label class="col-lg-2 col-form-label">Açıklama:</label>
+                <div class="col-lg-3">
+                    <textarea class="form-control m-input" name="DescriptionTr" rows="3">@Model.CategoryTr.Description</textarea>
+                </div>
+                
+            </div>
+        </div>
+        
+        <div class="m-portlet__body">
+            <div class="form-group m-form__group row">
+                <label class="col-lg-2 col-form-label">[SEO] Açıklama:</label>
+                <div class="col-lg-3">
+                    <textarea class="form-control m-input" name="SeoDescriptionTr" rows="3">@Model.CategoryTr.SeoDescription</textarea>
+                </div>
+                <label class="col-lg-2 col-form-label">[SEO] Keywords:</label>
+                <div class="col-lg-3">
+                    <textarea class="form-control m-input" name="SeoKeywordsTr" rows="3">@Model.CategoryTr.SeoKeywords</textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="m-portlet__body">
+            <div class="form-group m-form__group row">
+                <label class="col-lg-2 col-form-label">[SEO] URL Yapısı:</label>
+                <div class="col-lg-3">
+                    <input type="text" class="form-control m-input" name="SlugTr" value="@Model.CategoryTr.Slug">
+                </div>
+            </div>
+        </div>
+        
+        <div class="m-divider">
+            <span></span>
+            <span>İngilizce İçerik</span>
+            <span></span>
+        </div>
+        
+        <div class="m-portlet__body">
+            <div class="form-group m-form__group row">
+                <label class="col-lg-2 col-form-label">Ad:</label>
+                <div class="col-lg-3">
+                    <input type="text" class="form-control m-input" value="@Model.CategoryEn.Name" name="NameEn">
+                </div>
+                <label class="col-lg-2 col-form-label">Açıklama:</label>
+                <div class="col-lg-3">
+                    <textarea class="form-control m-input" name="DescriptionEn" rows="3">@Model.CategoryEn.Description</textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="m-portlet__body">
+            <div class="form-group m-form__group row">
+                <label class="col-lg-2 col-form-label">[SEO] Açıklama:</label>
+                <div class="col-lg-3">
+                    <textarea class="form-control m-input" name="SeoDescriptionEn" rows="3">@Model.CategoryEn.SeoDescription</textarea>
+                </div>
+                <label class="col-lg-2 col-form-label">[SEO] Keywords:</label>
+                <div class="col-lg-3">
+                    <textarea class="form-control m-input" name="SeoKeywordsEn" rows="3">@Model.CategoryEn.SeoKeywords</textarea>
+                </div>
+            </div>
+        </div>
+        
+        <div class="m-portlet__body">
+            <div class="form-group m-form__group row">
+                <label class="col-lg-2 col-form-label">[SEO] URL Yapısı:</label>
+                <div class="col-lg-3">
+                    <input type="text" class="form-control m-input" name="SlugEn" value="@Model.CategoryEn.Slug">
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="m-portlet__foot m-portlet__no-border m-portlet__foot--fit">
+            <div class="m-form__actions m-form__actions--solid">
+                <div class="row">
+                    <div class="col-lg-2"></div>
+                    <div class="col-lg-10">
+                        <button type="submit" class="btn btn-success">Kaydet</button>
+                        <a href="/AdminPanel/AdvertCategories" class="btn btn-secondary">Vazgeç</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts{
+    <script>
+        $('select[name="ParentCategoryID"]').val(@(Model.CategoryTr.ParentCategoryID));
+    </script>
+}

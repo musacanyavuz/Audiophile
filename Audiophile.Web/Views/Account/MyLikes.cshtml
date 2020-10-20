@@ -1,0 +1,211 @@
+@model List<AdvertLike>
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("Beğendiğim İlanlar", "My Likes", lang);
+    Layout = "_Layout";
+}
+
+@section style{
+    <style>
+        table tr {
+            height: 76px;
+            -webkit-transition: all .3s cubic-bezier(.47,0,.745,.715);
+            transition: all .3s cubic-bezier(.47,0,.745,.715);
+            padding-top: 17px;
+            padding-bottom: 17px;
+            padding-left: 10px;
+            cursor: pointer
+        }
+
+            table tr, table tr td {
+                height: 76px !important
+            }
+
+        table tbody tr {
+            border-top: 1px solid #ebebeb
+        }
+
+            table tbody tr:hover {
+                padding-right: 0;
+                padding-left: 10px;
+                box-shadow: 0 3px 42px -5px rgba(46,46,46,.26);
+                -webkit-transform: scale(1);
+                -ms-transform: scale(1);
+                transform: scale(1)
+            }
+
+        table tr td {
+            padding-top: 7px;
+            padding-bottom: 7px;
+            padding-left: 10px;
+            overflow: no-display
+        }
+
+        table tbody {
+            margin-top: 5px
+        }
+
+        .profil-value {
+            width: 100px;
+            float: right
+        }
+
+        .profil-value-large {
+            width: 200px;
+            float: right
+        }
+
+        .profil-key {
+            float: left;
+            width: 300px
+        }
+
+        .profil-key-large {
+            float: left;
+            width: 400px
+        }
+
+        .profil-scale {
+            padding-top: 10px;
+            padding-bottom: 30px
+        }
+
+        td {
+            vertical-align: middle !important;
+        }
+
+        .profile-box {
+            box-shadow: -1px 13px 24px -5px rgba(0, 0, 0, .13);
+        }
+
+        #statsTable tr {
+            height: unset !important;
+        }
+
+        #statsTable td {
+            padding: 2%;
+            height: unset !important;
+        }
+    </style>
+}
+
+<div class="section-1 sec-altsayfa sec-hesaplar">
+    <div class="w-container">
+
+        @{Html.RenderPartial("~/Views/Partials/AccountSideMenu.cshtml", 6);}
+
+        <div class="content w-clearfix">
+            <div class="div-block-20 div-ilan hesap w-clearfix">
+                <h4 class="h2 h4 h-kat h-kategori">@ViewBag.Title </h4>
+            </div>
+            <div id="question"></div>
+            <div class="product product-list urulerim bannerlar">
+                <div class="table-responsive">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <td>
+                                    <div class="new-price pro-text">No</div>
+                                </td>
+                                <td>
+                                    <div class="new-price pro-text">@Localization.Get("Başlık", "Title", lang)</div>
+                                </td>
+                                <td>
+                                    <div class="new-price pro-text">@Localization.Get("Resim", "Image", lang) </div>
+                                </td>
+                                <td>
+                                    <div class="new-price pro-text">@Localization.Get("Fiyat", "Price", lang)</div>
+                                </td>
+                                <td>
+                                    <div class="new-price pro-text">@Localization.Get("Oluşturma Tarihi", "Created Date", lang)</div>
+                                </td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                foreach (var ad in Model.OrderByDescending(x => x.ID))
+                                {
+                                    <tr id="row_@ad.ID">
+                                        <td>@ad.Advert.ID</td>
+                                        <td>@ad.Advert.Title</td>
+                                        <td>
+                                            <img alt="@(ad.Advert.Title)" src="@ad.Advert.Thumbnail" onerror="this.src ='/Content/img/no-image.jpg';" class="image-9">
+                                        </td>
+                                        <td>@ad.Advert.Price @Constants.GetMoney(ad.Advert.MoneyTypeID) </td>
+                                        <td>@(ad.CreatedDate.ToString("g"))</td>
+                                        <td>
+                                            <a class="link-12" onclick="ask(@ad.ID,'#@ad.Advert.ID @ad.Advert.Title')" href="javascript:;" id="unfollow_@ad.ID">
+                                                <span class="cursor-pointer">@Localization.Get("Takibi Bırak", "Unfollow", lang)</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function ask(id, name) {
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            var q = ' @Localization.Get("Takibi bırakmak istediğinize emin misiniz?", "Are you sure you want to unfollow?", lang) ';
+            var n = new Noty({
+                container: '#question',
+                text: name + ' </br>' + q,
+                buttons: [
+                    Noty.button('@Localization.Get("EVET", "YES", lang)',
+                        'btn btn-success',
+                        function() {
+                            unfollowRequest(id);
+                            n.close();
+                        },
+                        { id: 'button1', 'data-status': 'ok' }),
+                    Noty.button('@Localization.Get("HAYIR", "NO", lang)',
+                        'btn btn-error',
+                        function() {
+                            n.close();
+                        })
+                ]
+            });
+            n.show();
+        }
+
+        function unfollowRequest(id) {
+            $.ajax({
+                url: '/MyLikes/Unfollow/',
+                data: { id },
+                type: 'POST',
+                dataType: 'json',
+                success: function(data) {
+                    var type = '';
+                    if (data.isSuccess) {
+                        type = 'success';
+                        $('#row_' + id).remove();
+                    } else {
+                        type = 'error';
+                    }
+                    new Noty({
+                        theme: 'sunset',
+                        type: type,
+                        text: data.message,
+                        progressBar: true,
+                        timeout: 4000
+                    }).show();
+                }
+            });
+        }
+    </script>
+
+}
+
+

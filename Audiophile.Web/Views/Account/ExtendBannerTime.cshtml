@@ -1,0 +1,139 @@
+@using Microsoft.AspNetCore.SignalR.Protocol
+@model ExtendBannerTimeViewModel
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang")); 
+    ViewBag.Title = Localization.Get("Yazı Yayın Süresini Uzat", "Extend Banner Period", lang);
+    Layout = "_Layout";
+}
+
+
+<div class="section-1 sec-altsayfa sec-hesaplar">
+    <div class="w-container">
+
+        @{Html.RenderPartial("~/Views/Partials/AccountSideMenu.cshtml", 8);}
+
+        <div class="content w-clearfix">
+            <div class="div-block-20 div-ilan hesap w-clearfix">
+                <h4 class="h2 h4 h-kat h-kategori">@ViewBag.Title </h4>
+            </div> 
+            <div class="product product-list urulerim bannerlar">
+                @using (Html.BeginForm("ExtendBannerTime", "Account", FormMethod.Post))
+                {
+                
+                <div class="row">
+                    <div class="col">
+                        <p>
+                            @Localization.Get("Başlık", "Title", lang) : @Model.Banner.Title
+                        </p>
+                        <p>
+                            @Localization.Get("Adres","Url", lang) : @Model.Banner.Url
+                        </p>
+                        <p>
+                            @Localization.Get("Bitiş Tarihi","End Date", lang) : @(Model.Banner.EndDate?.ToShortDateString())
+                        </p>
+                        <br/><br/>
+                        <p>
+                            @Localization.Get("Ne kadar uzatmak istiyorsunuz?", "How long do you want to extend?", lang)
+                            <select name="DopingID" class="">
+                                @foreach (var item in Model.Dopings)
+                                {
+                                    <option value="@item.ID">@item.Day @Localization.Get("Gün", "Days", lang) @item.Price TL</option>
+                                }
+                            </select>
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        
+                        <div id="selectPaymentMethod">
+                            <label for="name-2" class="field-label kirmizi"> @Localization.Get("Ödeme Seçenekleri", "Payment Methods", lang)</label>
+                            <div class="form-wrapper form-hesaplar urun-ekle w-clearfix">
+                                <div class="div-block-33 nerede1 f-l width-100-50"  >
+                                    <label class="text-center m-auto">
+                                        <input class="w-checkbox-input" type="radio" name="paymentType" value="false">@Localization.Get("Banka Havalesi", "Bank Transfer", lang)
+                                    </label>
+                                </div>
+                                <div class="div-block-33 nerede1 width-100-50">
+                                    <label class="text-center m-auto" >
+                                        <input class="w-checkbox-input" type="radio" name="paymentType" value="true">@Localization.Get("Kredi Kartı", "Credit Card", lang)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row p-10 display-none" id="bankPayment" >
+                            <h5>@TextService.GetText((int) Enums.Texts.BankaHavalesiText, lang)</h5>
+                        </div>
+
+                        <div class="form-block-5 w-form display-none" id="creditCardPayment"  >
+                            <h3 class="mb-5">@Localization.Get("Ödeme Bilgileri", "Payment Information", lang)</h3>
+                            <div class="row mb-0">
+                                <div class="col-md-12">
+                                    <input class="textfield field-col kart w-input" id="CardName" name="CardName" placeholder="@Localization.Get("Kart Üzerindeki Ad Soyad", "Name Surname", lang)" type="text" />
+                                </div>
+                                <div class="col-md-12">
+                                    <input class="textfield field-col kart w-input" id="CardNumber" name="CardNumber" placeholder="@Localization.Get("Kart No", "Card No", lang)" type="text" />
+                                </div>
+                            </div>
+                            <div class="row mb-0">
+                                <div class="col-md-4">
+                                    <select class="textfield w-select" data-val="true" id="Month" name="Month" >
+                                        <option value="">@Localization.Get("Ay", "Month", lang)</option>
+                                        <option value="1">01</option>
+                                        <option value="2">02</option>
+                                        <option value="3">03</option>
+                                        <option value="4">04</option>
+                                        <option value="5">05</option>
+                                        <option value="6">06</option>
+                                        <option value="7">07</option>
+                                        <option value="8">08</option>
+                                        <option value="9">09</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="textfield w-select" data-val="true" id="Year" name="Year" >
+                                        <option value="">@Localization.Get("Yıl", "Year", lang)</option>
+                                        @for (int i = DateTime.Now.Year; i <= DateTime.Now.Year + 15; i++)
+                                        {
+                                            <option value="@i">@i</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <input class="textfield w-input" id="CVC" maxlength="4" name="CVC" placeholder="CVC" type="text" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="button button-main button-satn button-submit submit-center w-button">@Localization.Get("Kaydet", "Save", lang)</button>
+                    </div>
+                </div>
+                
+                }
+            </div>
+        </div> 
+    </div>
+</div>
+
+@section Scripts{
+    
+    <script>
+        $('input[name="paymentType"]').on('change',
+            function() {
+                if ($(this).val() === 'false') {
+                    $('#bankPayment').css('display', 'block');
+                    $('#creditCardPayment').css('display', 'none');
+                }
+                if ($(this).val() === 'true') {
+                    $('#bankPayment').css('display', 'none');
+                    $('#creditCardPayment').css('display', 'block');
+                }
+            });
+    </script>
+}

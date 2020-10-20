@@ -1,0 +1,262 @@
+@model List<Banner>
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("Bannerlarım", "My Banners", lang);
+    Layout = "_Layout";
+}
+
+@section Style{
+    <style>
+        table tr {
+            height: 76px;
+            -webkit-transition: all .3s cubic-bezier(.47,0,.745,.715);
+            transition: all .3s cubic-bezier(.47,0,.745,.715);
+            padding-top: 17px;
+            padding-bottom: 17px;
+            padding-left: 10px;
+            cursor: pointer
+        }
+
+            table tr, table tr td {
+                height: 76px !important
+            }
+
+        table tbody tr {
+            border-top: 1px solid #ebebeb
+        }
+
+            table tbody tr:hover {
+                padding-right: 0;
+                padding-left: 10px;
+                box-shadow: 0 3px 42px -5px rgba(46,46,46,.26);
+                -webkit-transform: scale(1);
+                -ms-transform: scale(1);
+                transform: scale(1)
+            }
+
+        table tr td {
+            padding-top: 7px;
+            padding-bottom: 7px;
+            padding-left: 10px;
+            overflow: no-display
+        }
+
+        table tbody {
+            margin-top: 5px
+        }
+
+        .profil-value {
+            width: 100px;
+            float: right
+        }
+
+        .profil-value-large {
+            width: 200px;
+            float: right
+        }
+
+        .profil-key {
+            float: left;
+            width: 300px
+        }
+
+        .profil-key-large {
+            float: left;
+            width: 400px
+        }
+
+        .profil-scale {
+            padding-top: 10px;
+            padding-bottom: 30px
+        }
+
+        td {
+            vertical-align: middle !important;
+        }
+
+        .profile-box {
+            box-shadow: -1px 13px 24px -5px rgba(0, 0, 0, .13);
+        }
+
+        #statsTable tr {
+            height: unset !important;
+        }
+
+        #statsTable td {
+            padding: 2%;
+            height: unset !important;
+        }
+    </style>
+}
+
+<div class="section-1 sec-altsayfa sec-hesaplar">
+    <div class="w-container">
+
+        @{
+            await Html.RenderPartialAsync("~/Views/Partials/AccountSideMenu.cshtml", 7);
+        }
+
+        <div class="content w-clearfix">
+            <div class="div-block-20 div-ilan hesap w-clearfix">
+                <h4 class="h2 h4 h-kat h-kategori">@ViewBag.Title </h4>
+            </div>
+            <a href="@Constants.GetURL((int) Enums.Routing.BannerEkle, lang)" class="link-8" class="border-1-solid-f8f8f8 p-10 f-r m-t-10 background-color-e70c1e color-fff">
+                <i class="fa fa-plus fa-fw"></i> @Localization.Get("Banner Ekle", "Add Banner", lang)
+            </a>
+            <div id="question"></div>
+            <div class="product product-list urulerim bannerlar">
+                <div class="table-responsive">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <td>
+                                    <div class="new-price pro-text">No</div>
+                                </td>
+                                <td>
+                                    <div class="new-price pro-text">@Localization.Get("Başlık", "Title", lang)</div>
+                                </td>
+                                <td>
+                                    <div class="new-price pro-text">@Localization.Get("Tıklamalar", "Clicks", lang) </div>
+                                </td>
+                                <td>
+                                    <div class="new-price pro-text">@Localization.Get("Resim", "Image", lang) </div>
+                                </td>
+
+                                <td>
+                                    <div class="new-price pro-text">@Localization.Get("Bitiş Tarihi", "End Date", lang)</div>
+                                </td>
+                                <td>
+                                    <div class="new-price pro-text">@Localization.Get("Banner Tipi", "Banner Type", lang)</div>
+                                </td>
+                                <td>
+                                    <div class="new-price pro-text">@Localization.Get("Durum", "Status", lang)</div>
+                                </td>
+                                <td>
+                                    <div class="new-price pro-text">@Localization.Get("Seçenekler", "Options", lang)</div>
+                                </td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                foreach (var banner in Model.OrderByDescending(x => x.ID))
+                                {
+                                    <tr id="row_@banner.ID">
+                                        <td>@banner.ID</td>
+                                        <td class="width-200">@banner.Title</td>
+                                        <td>@banner.ClickCount</td>
+                                        <td>
+                                            <img src="@banner.ImageSource" class="image-9">
+                                        </td>
+
+                                        <td>@banner.EndDate </td>
+                                        <td>
+                                            @banner.TypeID
+                                        </td>
+                                        <td>
+                                            @if (banner.IsActive && banner.EndDate < DateTime.Now)
+                                            {
+                                                <span class="color-red" id="status_@banner.ID"> @Localization.Get("Süresi Dolmuş", "Timed Out", lang) </span>
+                                            }
+                                            else if (!banner.IsActive && banner.IsApproved)
+                                            {
+                                                <span class="color-red" id="status_@banner.ID"> @Localization.Get("Yayından Kaldırılmış", "Hidden", lang) </span>
+                                            }
+                                            else if (!banner.IsActive && banner.EndDate > DateTime.Now)
+                                            {
+                                                <span class="color-777742" id="status_@banner.ID"> @Localization.Get("Onay Bekliyor", "Pending Approval", lang) </span>
+                                            }
+                                            else if (banner.IsActive && banner.EndDate > DateTime.Now)
+                                            {
+                                                <span class="color-green" id="status_@banner.ID"> @Localization.Get("Yayında", "Published", lang) </span>
+                                            }
+                                            else if (!banner.IsActive)
+                                            {
+                                                <span class="color-red" id="status_@banner.ID"> @Localization.Get("Pasif", "Passive", lang) </span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a class="link-12" href="@Constants.GetURL(Enums.Routing.BannerDuzenle, lang)/@banner.ID">
+                                                <span class="cursor-pointer">@Localization.Get("Düzenle", "Edit", lang)</span>
+                                            </a>
+                                            <b>|</b>
+                                            <a class="link-12" href="/MyAccount/ExtendBannerTime/@banner.ID">
+                                                <span class="cursor-pointer">@Localization.Get("Süreyi Uzat", "Extend Time", lang)</span>
+                                            </a>
+                                            @if (banner.IsActive && banner.EndDate > DateTime.Now)
+                                            {
+                                                <b>|</b>
+                                                <a class="link-12" onclick="ask(@banner.ID, '#@banner.ID @banner.Title')" href="javascript:;" id="unpublish_@banner.ID">
+                                                    <span class="cursor-pointer">@Localization.Get("Yayından Kaldır", "Unpublish", lang)</span>
+                                                </a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script>
+        function ask(id, name) {
+            $("html, body").animate({ scrollTop: 0 }, "slow");
+            var q = ' @Localization.Get("Yayından kaldırmak istediğinize emin misiniz?", "Are you sure you want to unpublish?", lang) ';
+            var n = new Noty({
+                container: '#question',
+                text: name + ' </br>' + q,
+                buttons: [
+                    Noty.button('@Localization.Get("EVET", "YES", lang)',
+                        'btn btn-success',
+                        function() {
+                            unpublish(id);
+                            n.close();
+                        },
+                        { id: 'button1', 'data-status': 'ok' }),
+                    Noty.button('@Localization.Get("HAYIR", "NO", lang)',
+                        'btn btn-error',
+                        function() {
+                            n.close();
+                        })
+                ]
+            });
+            n.show();
+        }
+
+        function unpublish(id) {
+            $.ajax({
+                url: '/MyAccount/UnpublishBanner/',
+                data: { id },
+                type: 'POST',
+                dataType: 'json',
+                success: function(data) {
+                    var type = '';
+                    if (data.isSuccess) {
+                        type = 'success';
+                        $('#status_' + id).html('@Localization.Get("Yayından Kaldırıldı", "Hidden", lang)');
+                    } else {
+                        type = 'error';
+                    }
+                    new Noty({
+                        theme: 'sunset',
+                        type: type,
+                        text: data.message,
+                        progressBar: true,
+                        timeout: 4000
+                    }).show();
+                }
+            });
+        }
+    </script>
+
+}
+
+

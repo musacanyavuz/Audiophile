@@ -1,0 +1,175 @@
+@model Banner
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("Banner Düzenle", "Edit Banner", lang);
+    Layout = "_Layout";
+}
+
+@section style{
+<link rel="stylesheet" href="~/Content/css/cropper.css">
+    <style>
+        /* Limit image width to avoid overflow the container */
+        .crop-area {
+        }
+
+            .crop-area img {
+                max-width: 100%; /* This rule is very important, please do not ignore this! */
+                max-height: 300px;
+            }
+
+            .crop-area #canvas, #canvas2 {
+                height: 300px;
+                width: 300px;
+                background-color: #ffffff;
+                cursor: default;
+                border: 1px solid black;
+            }
+    </style>
+}
+
+
+<div class="section-1 sec-altsayfa sec-hesaplar">
+    <div class="w-container">
+
+        @{Html.RenderPartial("~/Views/Partials/AccountSideMenu.cshtml", 9);}
+
+        <div class="content w-clearfix">
+            <div class="div-block-20 div-ilan hesap w-clearfix">
+                <h4 class="h2 h4 h-kat h-kategori">@ViewBag.Title </h4>
+            </div>
+            <div id="question"></div>
+            <div class="product product-list urulerim bannerlar">
+                <div>
+                    @using (Html.BeginForm("EditBanner", "Account", FormMethod.Post, new { @class = "form-3", id = "form2", enctype = "multipart/form-data" }))
+                    {
+                        <input name="file64" id="file64" value="" hidden />
+                        <input name="fileType" id="fileType" value="1" hidden />
+
+                        <div class="div-block-17 form-wrapper banner-form w-clearfix">
+                            <div class="row">
+                                <div class="col-md-4 col-12">
+                                    <p>@Localization.Get("Mevcut Görsel", "Banner Image", lang)</p>
+                                    <img src="@Model.ImageSource" class="width-100-70" />
+                                </div>
+                                <div class="col-md-8 col-12">
+                                    <p>@Localization.Get("Yeni Görsel", "New Image", lang)</p>
+                                    @if (Model.ImageSource != null && !Model.ImageSource.Contains(".gif"))
+                                    {
+                                        //jpg
+                                        <input name="fileType" id="fileType" value="1" hidden />
+                                        <div class="crop-area">
+                                            <input type="file" id="fileInput" accept="image/*" />
+                                            <br /><br />
+                                            <input type="button" class="btn btn-primary" id="btnCrop" value="@Localization.Get("Kırp", "Crop", lang)" />
+                                            <input type="button" class="btn btn-default" id="btnRestore" value="@Localization.Get("Geri al", "Restore", lang)" />
+
+                                            <div class="row">
+                                                <div class="col-md-6 col-12" id="crop-container">
+                                                    <canvas id="canvas">
+                                                        @Localization.Get("Tarayıcınız HTML5 desteklemiyor, lütfen güncelleyin veya farklı bir tarayıcı kullanın."
+                                                            , "Your browser does not support the HTML5 canvas element.", lang)
+                                                    </canvas>
+                                                </div>
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6 col-12">
+                                                    <div id="result"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        // gif banner
+                                        <input name="fileType" id="fileType" value="2" hidden />
+                                        <input type="file" name="gifFile" />
+                                        <br><br>
+                                    }
+                                </div>
+                            </div>
+
+
+                            <h3 class="heading-2 form-text">@Localization.Get("Logo Bilgileri", "Logo Information", lang)*</h3>
+                            <div class="form-block-5 w-form">
+
+                                <label class="field-label">@Localization.Get("Başlık", "Title", lang) *</label>
+                                <input type="text" class="textfield w-input" maxlength="100" name="title" value="@Model.Title" required>
+
+                                <label class="field-label">URL *</label>
+                                <input type="text" class="textfield w-input" maxlength="250" name="url" value="@Model.Url" required>
+
+                                <input type="submit" value="@Localization.Get("Kaydet", "Save", lang)" class="button button-main button-satn button-submit w-button">
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/Content/script/cropper.js"></script>
+    <script src="~/Content/script/jquerycropper.js"></script>
+
+    <script>
+
+        $('#fileInput').on('change',
+            function() {
+                var canvas = $("#canvas"),
+                    context = canvas.get(0).getContext("2d"),
+                    $result = $('#result');
+
+                if (this.files && this.files[0]) {
+                    if (this.files[0].type.match(/^image\//)) {
+                        var reader = new FileReader();
+                        reader.onload = function(evt) {
+                            var img = new Image();
+                            img.onload = function() {
+                                context.canvas.height = img.height;
+                                context.canvas.width = img.width;
+                                context.drawImage(img, 0, 0);
+                                var aspect = 1 / 1;
+                                @if(Model.TypeID == Enums.BannerType.Banner)
+                                {
+                                    <text> aspect = 1200 / 200; </text>
+                                }
+                                else if(Model.TypeID == Enums.BannerType.Slider)
+                                {
+                                    <text> aspect = 1200 / 340; </text>
+                                }
+
+                                var cropper = canvas.cropper({
+                                    aspectRatio: aspect,
+                                    dragMode: 'move'
+                                });
+                                $('#btnCrop').click(function() {
+                                    // Get a string base 64 data url
+                                    var croppedImageDataURL = canvas.cropper('getCroppedCanvas').toDataURL("image/png");
+                                    $result.html($('<img>').attr('src', croppedImageDataURL));
+                                    $('#crop-container').css('display', 'none');
+                                    $('#file64').val(croppedImageDataURL);
+                                });
+                                $('#btnRestore').click(function() {
+                                    canvas.cropper('reset');
+                                    $result.empty();
+                                    $('#crop-container').css('display', 'block');
+                                });
+                            };
+                            img.src = evt.target.result;
+                        };
+                        reader.readAsDataURL(this.files[0]);
+                    } else {
+                        alert("Invalid file type! Please select an image file.");
+                    }
+                } else {
+                    alert('No file(s) selected.');
+                }
+            });
+    </script>
+
+}

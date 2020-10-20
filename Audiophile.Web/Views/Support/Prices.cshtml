@@ -1,0 +1,87 @@
+@model string
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("Ücretler", "Fees", lang);
+    Layout = "_Layout";
+}
+@section style
+{
+    <style>
+        #doping-prices {
+            max-width: 850px;
+            table-layout: fixed;
+        }
+        #doping-prices td {
+            padding: 1.5rem;
+            text-align: center;
+        }
+        #doping-prices thead {
+            background-color: rgb(218, 19, 35);
+            text-align: center;
+            color: #fff;
+            font-size: x-large;
+        }
+    </style>
+}
+
+<div class="section-1 sec-altsayfa sec-hesaplar">
+    <div class="w-container">
+
+        @{Html.RenderPartial("SupportSideMenu", 5);}
+        
+        <div class="content w-clearfix">
+            <div class="div-block-20 div-ilan hesap w-clearfix">
+                <h4 class="h2 h4 h-kat h-kategori">@ViewBag.Title</h4>
+            </div>
+            <div class="product product-list urulerim bannerlar"> 
+                <div class="uruns hak box-sss"> 
+                    @Html.Raw(Model)
+                    
+                    <p>
+                        @if (ViewBag.Prices != null)
+                        {
+                            <table class="table table-striped" id="doping-prices">
+                                <thead>
+                                <tr>
+                                    <td>@Localization.Get("Tip","Type",lang)</td>
+                                    <td>@Localization.Get("Süre","Period",lang)</td>
+                                    <td>@Localization.Get("Fiyat","Price",lang)</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var item in (List<DopingType>) ViewBag.Prices)
+                                {
+                                    <tr>
+                                        <td class="text-left">@Localization.Get(item.TitleTr, item.TitleEn, lang)</td>
+                                        <td>@item.Day @Localization.Get("Gün","Days",lang)</td>
+                                        <td>@item.Price ₺</td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        }
+                    </p>
+                    
+                    <div id="prices" class="display-table m-t-50"></div>
+                </div>
+            </div>
+            <br/>
+            @{ Html.RenderPartial("~/Views/Partials/SupportForm.cshtml"); }
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $.ajax({
+            url: "/GetInstallmentPrices",
+            method: "POST",
+            data: { price: 100 },
+            success: function(msg) {
+                @*console.log(msg); *@
+                $('#prices').html(msg)
+            }
+        });
+    </script>
+}

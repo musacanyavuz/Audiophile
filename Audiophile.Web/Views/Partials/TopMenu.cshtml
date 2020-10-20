@@ -1,0 +1,389 @@
+@{
+    int lang = Constants.GetLang(Context.Session.GetString("lang"));
+    var translateUrl = ViewBag.TranslateUrl;
+    if (translateUrl == "/")
+    {
+        translateUrl = null;
+    }
+    var totalCount = 0;
+    if (ViewBag.PendingCargo != null && ViewBag.PendingCargo.ToString() != "")
+    {
+        totalCount = Convert.ToInt32(ViewBag.PendingCargo);
+    }
+    if (ViewBag.Buys != null && ViewBag.Buys.ToString() != "")
+    {
+        totalCount += Convert.ToInt32(ViewBag.Buys);
+    }
+    var salesCount = $"({totalCount})";
+}
+
+<nav class="top-menu navbar navbar-expand-lg navbar-light m-t-5 p-t-0 p-b-0">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01"
+            aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse  height-100-100" id="navbarTogglerDemo01">
+        <a class="navbar-brand" href="/">
+            <img src="~/Content/img/images/logo.gif" width="175" alt="Audiophile.org Elektronik Müzik Sistemleri Alım Satım Sitesi">
+        </a>
+        <form class="form-inline my-2 my-lg-0 mr-auto mt-2 mt-lg-0 m-l-100-5">
+            <input class="form-control border-radius-10 m-r-0" type="search" id="query" name="query" required>
+            <button class="btn color-white background-color-de1227 font-weight-100" type="button" onclick="search()"><i class="fa fa-search"></i> @Localization.Get("Ara", "Search", lang)</button>
+        </form>
+
+        <ul class="navbar-nav color-white">
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <li class="nav-item">
+                    <a class="nav-link" href='@Constants.GetURL(Enums.Routing.GirisYap, lang)'>@Localization.Get("Ücretsiz İlan Ver", "Advertise Free", lang) </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href='@Constants.GetURL(Enums.Routing.UyeOl, lang)'>@Localization.Get("Üye Ol", "Register", lang) </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href='@Constants.GetURL(Enums.Routing.GirisYap, lang)'>@Localization.Get("Giriş Yap", "Login", lang) </a>
+                </li>
+            }
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    @Localization.Get("Satılıklar", "Categories", lang)
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href='@Localization.Get("/Kategori/amplifikatorler", "/Category/amplifiers", lang)'>
+                        <img src="/Upload/Categories/amplifer-w.png" alt="@Localization.Get("Amplifikatörler", "Amplifiers", lang)"> @Localization.Get("Amplifikatörler", "Amplifiers", lang)
+                    </a>
+                    <a class="dropdown-item" href='@Localization.Get("/Kategori/Hoparlorler", "/Category/Speakers", lang)'>
+                        <img src="/Upload/Categories/speakers-w.png" alt="@Localization.Get("Hoparlörler", "Speakers", lang)" /> @Localization.Get("Hoparlörler", "Speakers", lang)
+                    </a>
+                    <a class="dropdown-item" href='@Localization.Get("/Kategori/Kablolar", "/Category/Cables", lang)'>
+                        <img src="/Upload/Categories/cables-w.png" alt="@Localization.Get("Kablolar", "Cables", lang)" /> @Localization.Get("Kablolar", "Cables", lang)
+                    </a>
+                    <a class="dropdown-item" href='@Localization.Get("/Kategori/Dijital", "/Category/Digital", lang)'>
+                        <img src="/Upload/Categories/digital-w.png" alt="@Localization.Get("Dijital Aletler", "Digital Equipment", lang)" /> @Localization.Get("Dijital Aletler", "Digital Equipment", lang)
+                    </a>
+                    <a class="dropdown-item" href='@Localization.Get("/Kategori/Analog", "/Category/Analog", lang)'>
+                        <img src="/Upload/Categories/analog-w.png" alt="@Localization.Get("Analog Aletler", "Analog Equipment", lang)" /> @Localization.Get("Analog Aletler", "Analog Equipment", lang)
+                    </a>
+                    <a class="dropdown-item" href='@Localization.Get("/Kategori/Aksesuarlar", "/Category/Accessories", lang)'>
+                        <img src="/Upload/Categories/accessories-w.png" alt="@Localization.Get("Aksesuar, DIY", "Accessories", lang)" /> @Localization.Get("Aksesuar, DIY", "Accessories", lang)
+                    </a>
+                    <a class="dropdown-item" href='@Localization.Get("/Kategori/Profesyonel", "/Category/Professional", lang)'>
+                        <img src="/Upload/Categories/wanted-w.png" alt="@Localization.Get("Profesyonel Sistemler", "Professional", lang)" /> @Localization.Get("Profesyonel Sistemler", "Professional", lang)
+                    </a>
+                    <a class="dropdown-item" href='@Localization.Get("/Kategori/Digerleri", "/Category/Others", lang)'>
+                        <img src="/Upload/Categories/others-w.png" alt="@Localization.Get("Diğerleri", "Others", lang)" /> @Localization.Get("Diğerleri", "Others", lang)
+                    </a>
+                </div>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    Advertorial
+                </a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href='@Localization.Get("/Blog/Haberler-Kampanyalar", "/Blog/News-Campaigns", lang)'>
+                        <img src="/Upload/Categories/news-w.png" alt="@Localization.Get("Haber, Kampanyalar", "News, Campaings", lang)" /> @Localization.Get("Haber, Kampanyalar", "News, Campaings", lang)
+                    </a>
+                    <a class="dropdown-item" href='@Localization.Get("/Blog/Saticilar-Ithalatcilar", "/Blog/Sellers-Importers", lang)'>
+                        <img src="/Upload/Categories/sellers-w.png" alt="@Localization.Get("Satıcılar, İthalatçılar", "Sellers, Importers", lang)" /> @Localization.Get("Satıcılar, İthalatçılar", "Sellers, Importers", lang)
+                    </a>
+                    <a class="dropdown-item" href='@Localization.Get("/Blog/Odyofil-Sistemler", "/Blog/Audiophile-Systems", lang)'>
+                        <img src="/Upload/Categories/audiophile_systems-w.png" alt="@Localization.Get("Odyofil Sistemler", "Audiophile's Systems", lang)" /> @Localization.Get("Odyofil Sistemler", "Audiophile's Systems", lang)
+                    </a>
+                    <a class="dropdown-item" href='@Localization.Get("/Blog/Yazilar-Makaleler", "/Blog/Articles", lang)'>
+                        <img src="/Upload/Categories/articles-w.png" alt="@Localization.Get("Yazı, Makaleler", "Articles", lang)" /> @Localization.Get("Yazı, Makaleler", "Articles", lang)
+                    </a>
+                </div>
+            </li>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        @if (ViewBag.Notifications is List<Notification> tmp && tmp.Any())
+                        {
+                            <img id="notif_icon" src="/Content/img/images/notification.gif" alt="notification" height="20">
+                        }
+                        else
+                        {
+                            <img id="notif_icon" src="/Content/img/images/notification.png" alt="notification" height="20">
+                        }
+                    </a>
+                    <div class="dropdown-menu notify-drop">
+                        @if (ViewBag.Notifications != null)
+                        {
+                            if (ViewBag.Notifications is List<Notification> list)
+                            {
+                                <div class="notify-drop-title">
+                                    <div class="row">
+                                        <div class="col-12 margin_bottom">
+                                            <span id="BildirimSayisi">@Localization.Get("Bildirim Sayısı", "Notification Count", lang) (<b class="text_kirmizi" id="notif_count">@list.Count</b>)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="drop-content">
+                                    <ul class="notification-list">
+                                        @foreach (var notif in list)
+                                        {
+
+                                            <li class="notification-item" id="notif_@notif.ID">
+                                                <a href="@notif.Url" onclick="readNotif(@notif.ID, '@notif.Url')">
+                                                    <img class="user-photo" alt="User Photo" src="@(!string.IsNullOrEmpty(notif.Image) ? notif.Image : "/Content/img/images/notification.gif")" />
+
+                                                    <div class="user-content">
+                                                        <p class="user-info">@notif.Message</p>
+                                                        <p class="time"><small>@notif.CreatedDate.ToShortDateString()</small></p>
+                                                    </div>
+                                                </a>
+                                                <a onclick="readNotif(@notif.ID, '#')" class="notify-readed" title='@Localization.Get("Okundu olarak işaretle", "Mark as readed", lang)' href="javascript:;">
+                                                    <i class="fa fa-dot-circle-o "></i>
+                                                </a>
+                                            </li>
+
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        }
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href='@Constants.GetURL(Enums.Routing.IlanEkle, lang)'>@Localization.Get("İlan Ver", "Advertise", lang) &nbsp; <img src="~/Content/img/images/coins.png" alt="@Localization.Get("İlan Ver", "Advertise", lang)" class="img1" width="20"> </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        @User.FindFirst("Username")?.Value
+                        <img src="~/Content/img/images/user.png" alt="user" height="20">
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                        @if (User.Claims?.Single(x => x.Type == ClaimTypes.Role).Value == "Admin")
+                        {
+                            <a href="/AdminPanel" class="dropdown-item">*Admin Panel*</a>
+                        }
+                        <a href="@Constants.GetURL((int) Enums.Routing.UyelikBilgilerim, lang)" class="dropdown-item">@(Localization.Get("Üyelik Bilgilerim", "Personal Information", lang)) </a>
+                        <a href="@Constants.GetURL((int) Enums.Routing.AdresBilgierim, lang)" class="dropdown-item">@(Localization.Get("Adres Bilgilerim", "Postage Address", lang))</a>
+                        <a href="@Constants.GetURL((int) Enums.Routing.SifreDegistir, lang)" class="dropdown-item">@(Localization.Get("Şifre Değiştir", "Change Password", lang))</a>
+                        <a href="@Constants.GetURL((int) Enums.Routing.CariHesabim, lang)" class="dropdown-item">@(Localization.Get("Cari Hesabım", "Transactions", lang)) @salesCount</a>
+                        <a href="@Constants.GetURL((int) Enums.Routing.BegendigimIlanlar, lang)" class="dropdown-item">@(Localization.Get("Beğendiğim İlanlar", "My Likes", lang)) @ViewBag.LikesCount</a>
+                        <a href="@Constants.GetURL((int) Enums.Routing.IlanEkle, lang)" class="dropdown-item">@(Localization.Get("İlan Ekle", "Advertise", lang))</a>
+                        <a href="@Constants.GetURL((int) Enums.Routing.Ilanlarim, lang)" class="dropdown-item">@(Localization.Get("İlanlarım", "My Advertisements", lang)) @ViewBag.AdvertsCount </a>
+                        <a href="@Constants.GetURL((int) Enums.Routing.BannerEkle, lang)" class="dropdown-item">@(Localization.Get("Banner Ekle", "Add Banner", lang))</a>
+                        <a href="@Constants.GetURL((int) Enums.Routing.Bannerlarim, lang)" class="dropdown-item">@(Localization.Get("Bannerlarım", "My Banners", lang)) @ViewBag.BannersCount</a>
+                        <a href="@Constants.GetURL((int) Enums.Routing.BlogEkle, lang)" class="dropdown-item">@(Localization.Get("Haber veya Firma Ekle", "Add News or Company", lang))</a>
+                        <a href="@Constants.GetURL((int) Enums.Routing.HaberVeFirmalarim, lang)" class="dropdown-item">@(Localization.Get("Haber ve Firmalarım", "My News and Companies", lang)) @ViewBag.BlogPostsCount</a>
+                        <a href="@Constants.GetURL((int) Enums.Routing.BlogEkle, lang)" class="dropdown-item">@(Localization.Get("Sistem veya Makale Ekle", "Add System or Article", lang))</a>
+                        <a href="@Constants.GetURL((int) Enums.Routing.SistemVeMakalelerim, lang)" class="dropdown-item">@(Localization.Get("Sistem ve Makalelerim", "My Systems and Articles", lang)) @ViewBag.ArticlesCount</a>
+
+                        <div class="dropdown-divider"></div>
+                        <a href="@Constants.GetURL((int) Enums.Routing.CikisYap, lang)" onclick="logOut(event);" class="dropdown-item">@(Localization.Get("Çıkış Yap", "Sign Out", lang))</a>
+                    </div>
+                </li>
+            }
+            else
+            {
+                <li class="nav-item">
+                    @if (lang != 1)
+                    {
+                        @Html.ActionLink("Tr", "Turkce", "Home", translateUrl != null ? new { otherUrl = translateUrl } : null, new { @class = "nav-link" })
+                    }
+                    else
+                    {
+                        @Html.ActionLink("En", "English", "Home", translateUrl != null ? new { otherUrl = translateUrl } : null, new { @class = "nav-link" })
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+</nav>
+
+<div id="mobile-menu">
+    <ul>
+        <li>
+            <form class="form-inline my-2 my-lg-0 mr-auto mt-2 mt-lg-0 m-t-100-5">
+                <input class="form-control width-100-70 m-r-0 border-radius-10" type="text" name="query_mobile" placeholder="@Localization.Get("Ara", "Search", lang)" required>
+                &nbsp;&nbsp;
+                <button class="btn font-weight-100 background-color-de1227 color-white" type="button" onclick="search()"><i class="fa fa-search"></i> @Localization.Get("Ara", "Search", lang)</button>
+            </form>
+        </li>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <li class="text-center">
+                @Localization.Get("Hesabım", "My Account", lang)
+                <ul>
+                    <li><a href="@Constants.GetURL((int) Enums.Routing.UyelikBilgilerim, lang)" class="dropdown-item">@(Localization.Get("Üyelik Bilgilerim", "Personal Information", lang)) </a> </li>
+                    <li><a href="@Constants.GetURL((int) Enums.Routing.AdresBilgierim, lang)" class="dropdown-item">@(Localization.Get("Adres Bilgilerim", "Postage Address", lang))</a> </li>
+                    <li><a href="@Constants.GetURL((int) Enums.Routing.SifreDegistir, lang)" class="dropdown-item">@(Localization.Get("Şifre Değiştir", "Change Password", lang))</a> </li>
+                    <li><a href="@Constants.GetURL((int) Enums.Routing.CariHesabim, lang)" class="dropdown-item">@(Localization.Get("Cari Hesabım", "Transactions", lang)) @salesCount</a> </li>
+                    <li><a href="@Constants.GetURL((int) Enums.Routing.BegendigimIlanlar, lang)" class="dropdown-item">@(Localization.Get("Beğendiğim İlanlar", "My Likes", lang)) @ViewBag.LikesCount</a> </li>
+                    <li><a href="@Constants.GetURL((int) Enums.Routing.IlanEkle, lang)" class="dropdown-item">@(Localization.Get("İlan Ekle", "Advertise", lang))</a> </li>
+                    <li><a href="@Constants.GetURL((int) Enums.Routing.Ilanlarim, lang)" class="dropdown-item">@(Localization.Get("İlanlarım", "My Advertisements", lang))  @ViewBag.AdvertsCount</a> </li>
+                    <li><a href="@Constants.GetURL((int) Enums.Routing.BannerEkle, lang)" class="dropdown-item">@(Localization.Get("Banner Ekle", "Add Banner", lang))</a> </li>
+                    <li><a href="@Constants.GetURL((int) Enums.Routing.Bannerlarim, lang)" class="dropdown-item">@(Localization.Get("Bannerlarım", "My Banners", lang))  @ViewBag.BannersCount</a> </li>
+                    <li><a href="@Constants.GetURL((int) Enums.Routing.BlogEkle, lang)" class="dropdown-item">@(Localization.Get("Haber veya Firma Ekle", "Add News or Company", lang))</a> </li>
+                    <li><a href="@Constants.GetURL((int) Enums.Routing.HaberVeFirmalarim, lang)" class="dropdown-item">@(Localization.Get("Haber ve Firmalarım", "My News and Companies", lang)) @ViewBag.BlogPostsCount</a> </li>
+                    <li><a href="@Constants.GetURL((int) Enums.Routing.BlogEkle, lang)" class="dropdown-item">@(Localization.Get("Sistem veya Makale Ekle", "Add System or Article", lang))</a> </li>
+                    <li><a href="@Constants.GetURL((int) Enums.Routing.SistemVeMakalelerim, lang)" class="dropdown-item">@(Localization.Get("Sistem ve Makalelerim", "My Systems and Articles", lang))</a> @ViewBag.ArticlesCount </li>
+                    <li><a href="@Constants.GetURL((int) Enums.Routing.CikisYap, lang)" onclick="logOut(event);" class="dropdown-item">@(Localization.Get("Çıkış Yap", "Sign Out", lang))</a></li>
+                </ul>
+            </li>
+        }
+    </ul>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="menu-grid-list">
+            <a href="@Constants.GetURL(Enums.Routing.IlanEkle, lang)" class="link-block w-clearfix w-inline-block text-center" style="width: 46%;">
+                <div><i class="fa fa-plus-square"></i> @Localization.Get("İlan Ver", "Advertise", lang)</div>
+            </a>
+            <a href="@Constants.GetURL(Enums.Routing.UyelikBilgilerim, lang)" class="link-block w-clearfix w-inline-block text-center" style="width: auto;">
+                <div><i class="fa fa-user"></i> @Localization.Get("Profilim", "My Profile", lang)</div>
+            </a>
+            <a class="nav-link dropdown-toggle" href="#" role="button" style="background: red; width: 10%; text-align: center;" data-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+                @if (ViewBag.Notifications is List<Notification> tmp && tmp.Any())
+                {
+                    <img id="notif_icon" src="/Content/img/images/notification.gif" height="20">
+                }
+                else
+                {
+                    <img id="notif_icon" src="/Content/img/images/notification.png" height="20">
+                }
+
+            </a>
+            <div class="dropdown-menu notify-drop">
+                @if (ViewBag.Notifications != null)
+                {
+                    if (ViewBag.Notifications is List<Notification> list)
+                    {
+                        <div class="notify-drop-title">
+                            <div class="row">
+                                <div class="col-12 margin_bottom">
+                                    <span id="BildirimSayisi">@Localization.Get("Bildirim Sayısı", "Notification Count", lang) (<b class="text_kirmizi" id="notif_count">@list.Count</b>)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="drop-content">
+                            <ul class="notification-list">
+                                @foreach (var notif in list)
+                                {
+
+                                    <li class="notification-item" id="notif_@notif.ID">
+                                        <a href="@notif.Url" onclick="readNotif(@notif.ID, '@notif.Url')">
+                                            <img class="user-photo" alt="User Photo" src="@(!string.IsNullOrEmpty(notif.Image) ? notif.Image : "/Content/img/images/notification.gif")" />
+
+                                            <div class="user-content">
+                                                <p class="user-info">@notif.Message</p>
+                                                <p class="time"><small>@notif.CreatedDate.ToShortDateString()</small></p>
+                                            </div>
+                                        </a>
+                                        <a onclick="readNotif(@notif.ID, '#')" class="notify-readed" title='@Localization.Get("Okundu olarak işaretle", "Mark as readed", lang)' href="javascript:;">
+                                            <i class="fa fa-dot-circle-o "></i>
+                                        </a>
+                                    </li>
+
+                                }
+                            </ul>
+                        </div>
+                    }
+                }
+            </div>
+
+
+        </div>
+    }
+    else
+    {
+        <div class="menu-grid-list logoff">
+            <a href="@Constants.GetURL(Enums.Routing.UyeOl, lang)" class="link-block w-clearfix w-inline-block text-center">
+                <div><i class="fa fa-user-plus"></i> @Localization.Get("Kayıt Ol", "Sign Up", lang)</div>
+            </a>
+            <a href="@Constants.GetURL(Enums.Routing.GirisYap, lang)" class="link-block w-clearfix w-inline-block text-center">
+                <div><i class="fa fa-user"></i> @Localization.Get("Giriş Yap", "Sign In", lang)</div>
+            </a>
+            @{
+
+            }
+            @if (lang != 1)
+            {
+                @Html.ActionLink("Türkçe", "Turkce", "Home", translateUrl != null ? new { otherUrl = translateUrl } : null, new { @class = "link-block w-clearfix w-inline-block text-center" })
+            }
+            else
+            {
+                @Html.ActionLink("English", "English", "Home", translateUrl != null ? new { otherUrl = translateUrl } : null, new { @class = "link-block w-clearfix w-inline-block text-center" })
+            }
+        </div>
+    }
+
+    <div class="menu-grid-list">
+        <div class="kategoriler">@Localization.Get("KATEGORİLER", "CATEGORIES", lang)</div>
+
+        <a href='@Localization.Get("/Kategori/amplifikatorler","/Category/amplifiers",lang)'>
+            <img src="/Upload/Categories/amplifer.png" alt="@Localization.Get("Amplifikatörler","Amplifiers",lang)"> @Localization.Get("Amplifikatörler", "Amplifiers", lang)
+        </a>
+        <a href='@Localization.Get("/Kategori/Hoparlorler","/Category/Speakers",lang)'>
+            <img src="/Upload/Categories/speakers.png" alt="@Localization.Get("Hoparlörler","Speakers",lang)" /> @Localization.Get("Hoparlörler", "Speakers", lang)
+        </a>
+        <a href='@Localization.Get("/Kategori/Kablolar","/Category/Cables",lang)'>
+            <img src="/Upload/Categories/cables.png" alt="@Localization.Get("Kablolar","Cables",lang)" /> @Localization.Get("Kablolar", "Cables", lang)
+        </a>
+        <a href='@Localization.Get("/Kategori/Dijital","/Category/Digital",lang)'>
+            <img src="/Upload/Categories/digital.png" alt="@Localization.Get("Dijital Aletler","Digital Equipment",lang)" /> @Localization.Get("Dijital Aletler", "Digital Equipment", lang)
+        </a>
+        <a href='@Localization.Get("/Kategori/Analog","/Category/Analog",lang)'>
+            <img src="/Upload/Categories/analog.png" alt="@Localization.Get("Analog Aletler","Analog Equipment",lang)" /> @Localization.Get("Analog Aletler", "Analog Equipment", lang)
+        </a>
+        <a href='@Localization.Get("/Kategori/Aksesuarlar","/Category/Accessories",lang)'>
+            <img src="/Upload/Categories/accessories.png" alt="@Localization.Get("Aksesuar, DIY","Accessories",lang)" /> @Localization.Get("Aksesuar, DIY", "Accessories", lang)
+        </a>
+        <a href='@Localization.Get("/Kategori/Profesyonel","/Category/Professional",lang)'>
+            <img src="/Upload/Categories/wanted.png" alt="@Localization.Get("Profesyonel Sistemler","Professional",lang)" /> @Localization.Get("Profesyonel Sistemler", "Professional", lang)
+        </a>
+        <a href='@Localization.Get("/Kategori/Digerleri","/Category/Others",lang)'>
+            <img src="/Upload/Categories/others.png" alt="@Localization.Get("Diğerleri","Others",lang)" /> @Localization.Get("Diğerleri", "Others", lang)
+        </a>
+    </div>
+
+    <div class="menu-grid-list">
+        <div class="kategoriler">ADVERTORIAL</div>
+        <a href='@Localization.Get("/Blog/Haberler-Kampanyalar","/Blog/News-Campaigns",lang)'>
+            <img src="/Upload/Categories/news.png" alt="@Localization.Get("Haber, Kampanyalar","News, Campaings",lang)" /> @Localization.Get("Haber, Kampanyalar", "News, Campaings", lang)
+        </a>
+        <a href='@Localization.Get("/Blog/Saticilar-Ithalatcilar","/Blog/Sellers-Importers",lang)'>
+            <img src="/Upload/Categories/sellers.png" alt="@Localization.Get("Satıcılar, İthalatçılar","Sellers, Importers",lang)" /> @Localization.Get("Satıcılar, İthalatçılar", "Sellers, Importers", lang)
+        </a>
+        <a href='@Localization.Get("/Blog/Odyofil-Sistemler","/Blog/Audiophile-Systems",lang)'>
+            <img src="/Upload/Categories/audiophile_systems.png" alt="@Localization.Get("Odyofil Sistemler","Audiophile's Systems",lang)" /> @Localization.Get("Odyofil Sistemler", "Audiophile's Systems", lang)
+        </a>
+        <a href='@Localization.Get("/Blog/Yazilar-Makaleler","/Blog/Articles",lang)'>
+            <img src="/Upload/Categories/articles.png" alt="@Localization.Get("Yazı, Makaleler","Articles",lang)" /> @Localization.Get("Yazı, Makaleler", "Articles", lang)
+        </a>
+    </div>
+    <div class="menu-grid-list">
+        <div class="kategoriler">@Localization.Get("DESTEK", "SUPPORT", lang)</div>
+        <a href="@Constants.GetURL((int) Enums.Routing.Hakkimizda, lang)">
+            @Html.Raw(Localization.Get("Hakkımızda", "About Us", lang))
+        </a>
+
+        <a href="@Constants.GetURL((int) Enums.Routing.Videolar, lang)">
+            @Localization.Get("Videolar", "Videos", lang)
+        </a>
+        <a href="@Constants.GetURL((int) Enums.Routing.Yardim, lang)">
+            @Html.Raw(Localization.Get("Yardım", "Help", lang))
+        </a>
+        <a href="@Constants.GetURL((int) Enums.Routing.KullanimKosullari, lang)">
+            @Html.Raw(Localization.Get("Kullanım Koşulları", "Terms Of Use", lang))
+        </a>
+        <a href="@Constants.GetURL((int) Enums.Routing.GuvenliOdemeGittiBu, lang)">
+            @Html.Raw(Localization.Get("Güvenli Ödeme Gitti Bu", "Secure Payments", lang))
+        </a>
+        <a href="@Constants.GetURL((int) Enums.Routing.Ucretler, lang)">
+            @Html.Raw(Localization.Get("Ücretler", "Fees", lang))
+        </a>
+        <a href="@Constants.GetURL((int) Enums.Routing.Iletisim, lang)">
+            @Html.Raw(Localization.Get("İletişim", "Contact Us", lang))
+        </a>
+    </div>
+
+</div>

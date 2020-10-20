@@ -1,0 +1,262 @@
+@model BlogIndexViewModel
+
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Model.Title;
+    Layout = "_Layout";
+}
+@section MetaTag{
+    @if (Model.BlogPosts != null && Model.BlogPosts.Any())
+    {
+        <meta property="og:image" content="https://www.audiophile.org@(Model.BlogPosts[0].CoverImage)" />
+
+    }
+}
+
+@section style {
+    <style>
+        .blog-row {
+            width: 90%;
+            box-shadow: 0 0 25px -7px rgba(0, 0, 0, .44);
+            transition: all .4s ease;
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+            .blog-row a {
+                width: 100%;
+                display: inherit;
+            }
+
+            .blog-row h3, p {
+                color: black;
+            }
+
+            .blog-row .post-date {
+                color: #a4a4a4;
+            }
+
+        .content {
+            width: 75% !important;
+        }
+
+        @@media screen and (max-width: 40em) {
+            .content {
+                width: 100%;
+            }
+
+            .blog-row {
+                margin: 0 auto;
+                margin-top: 10px;
+            }
+
+            .div-block-20 {
+                margin-top: 0;
+            }
+        }
+    </style>
+}
+
+@{
+    await Html.RenderPartialAsync("~/Views/Partials/Submenu.cshtml", Model.AdvertCategories);
+}
+
+
+<div class="div-block-20">
+    <div class="w-container">
+        <h4 class="h-kat h-kategori h2 h4">
+            <strong>@Model.Title @Localization.Get(" kategorisine ait (" + Model.PostCount + " kayıt bulundu)", " (" + Model.PostCount + " Items)", lang)</strong>
+        </h4>
+        <p class="paragraph-3">
+
+            <br>
+            <a class="mail" href="@Constants.GetURL((int) Enums.Routing.BlogEkle, lang)">
+                @Localization.Get("Yeni Blog Bir Giriş Yap", "Add a New Entry", lang)
+            </a>
+        </p>
+    </div>
+</div>
+
+
+<div class="sec-altsayfa section-1" id="blog-altsayfa">
+    <div class="w-container">
+
+        @{
+            int id = int.Parse(ViewBag.CategoryID.ToString());
+            await Html.RenderPartialAsync("Sidebar", id);
+        }
+
+        <div class="w-clearfix">
+
+            <div class="div-block-36">
+                <div class="products" id="posts">
+                    @{
+                        int index = 0;
+                        foreach (var item in Model.BlogPosts)
+                        {
+                            <div class="row blog-row">
+                                <div class="col-md-4">
+                                    <a href="/Blog/@Constants.GetBlogCategorySlug(item.CategoryID, lang).Replace(" ", "")/@Localization.Slug(item.Title)/@item.ID">
+                                        <img alt="@item.Title" src="@(!string.IsNullOrEmpty(item.Thumbnail) ? item.Thumbnail : "/Content/img/no-image.jpg")" onerror="this.src = '/Content/img/no-image.jpg';" />
+                                    </a>
+                                </div>
+                                <div class="col-md-8">
+                                    <b>@(item.User?.UserName)</b> <small class="post-date">@item.CreatedDate.ToString("g") </small>
+                                    <a href="/Blog/@Constants.GetBlogCategorySlug(item.CategoryID, lang)/@Localization.Slug(item.Title)/@item.ID">
+                                        <h3 style="word-break: break-word;">@item.Title</h3>
+                                    </a>
+                                    <p>
+                                        @item.ShortContent
+                                        <a href="/Blog/@Constants.GetBlogCategorySlug(item.CategoryID, lang)/@Localization.Slug(item.Title)/@item.ID">
+                                            @Localization.Get("Devamını oku", "Read more", lang)
+                                        </a>
+                                    </p>
+                                </div>
+                            </div>
+
+                            index++;
+
+                            @if (index % 3 == 0)
+                            {
+                                <div class="row blog-row">
+                                    <ins class="adsbygoogle"
+                                         style="display: block;width: 100%"
+                                         data-ad-client="ca-pub-9703328830778745"
+                                         data-ad-slot="9567262438"
+                                         data-ad-format="auto"
+                                         data-full-width-responsive="true">
+                                    </ins>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+                <a id="btnLoadMore" onclick="getPosts()" class="button button-main button-satn button-ilan button-sub w-button f-n m-t-40">@Localization.Get("Daha Fazla...", "Load More...", lang)</a>
+            </div>
+
+
+        </div>
+
+    </div>
+</div>
+
+
+
+<div id="preview" class="display-none">
+    <div class="row blog-row">
+        <div class="col-md-4">
+            <img @@thumbnail />
+        </div>
+        <div class="col-md-8">
+            <small class="post-date">@@date</small>
+            <h3 style="word-break: break-word;">@@title</h3>
+            <p>
+                @@content
+                <a href="/Blog/@@catName/@@slug/@@id">
+                    @Localization.Get("Devamını oku", "Read more", lang)
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script>
+    @if (Model.BlogPosts != null && Model.BlogPosts.Any())
+    {
+        <text>
+            var minId = @Model.BlogPosts.Min(x => x.ID);
+
+            function getPosts() {
+                $("#btnLoadMore")
+                    .html(
+                        '<i class="fa fa-spin fa-spinner m-r-10" ></i> @(Localization.Get("Yükleniyor", "Loading", lang))...')
+                    .addClass("disabled");
+                var categoryId = @(Model.BlogPosts.First().CategoryID);
+                var dopingFilter = false;
+
+
+                $.ajax({
+                    url: '/Blog/GetPosts/',
+                    data: { id: minId, categoryId, dopingFilter },
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data == null || data.data == null || data.data.length === 0) {
+                            $('#btnLoadMore').remove();
+                            return;
+                        }
+                        @*console.log(data.data);*@
+                        var arr = data.data;
+                        $.each(arr,
+                            function(index, value) {
+                                @*console.log(value);*@
+                                var _html = $('#preview').html();
+                                _html = _html.replace(/@@id/g, '' + value.id);
+                                if (value.thumbnail == null) {
+                                    value.thumbnail = "/Content/img/no-image.jpg";
+                                    _html = _html.replace(/@@thumbnail/g, 'src="' + value.thumbnail + '"');
+                                } else {
+                                    _html = _html.replace(/@@thumbnail/g, 'src="' + value.thumbnail + '"');
+                                }
+                                _html = _html.replace(/@@title/g, value.title.replace('/\/',' '));
+                                if (value.categoryID == 4)
+                                    _html = _html.replace(/@@catName/g, '@(Localization.Get("Yazilar-Makaleler", "Articles", lang))');
+                                else if (value.categoryID == 3)
+                                    _html = _html.replace(/@@catName/g, '@(Localization.Get("Odyofil-Sistemler", "Audiophile-Systems", lang))');
+                                else if (value.categoryID == 2)
+                                    _html = _html.replace(/@@catName/g,  '@(Localization.Get("Saticilar-Ithalatcilar", "Sellers-Importers", lang))');
+                                else if (value.categoryID == 1)
+                                    _html = _html.replace(/@@catName/g,  '@(Localization.Get("Haberler-Kampanyalar", "News-Campaigns", lang))');
+                                _html = _html.replace(/@@content/g, value.shortContent);
+                                _html = _html.replace(/@@slug/g, value.title.replace(/\\/g, "-").replace(/'/g, "-").replace(/ /g, "-"));
+                                _html = _html.replace(/@@date/g, moment().format('DD.MM.YYYY', value.createdDate));
+                                _html = _html.replace(/display:none/g, '');
+                                if (value.yellowFrameDoping > 0) {
+                                    _html = _html.replace(/@@itemclass/g, 'onemli-urun');
+                                }
+                                @*console.log(_html);*@
+                                $("#posts").append(_html).fadeIn('slow');
+                            });
+                        minId =
+                            arr[arr.length - 1].id; /* son gelen id alınıyor, en küçük id, bir sonraki tıklamada bu id'den küçükler gelecek */
+                    },
+                    complete: function() {
+                        $("#btnLoadMore").html('@Localization.Get("Daha Fazla...", "Load More...", lang)')
+                            .removeClass("disabled");
+                    }
+                });
+            }
+        </text>
+    }
+
+            var _throttleTimer = null;
+            var _throttleDelay = 100;
+            var $window = $(window);
+            var $document = $(document);
+
+            $document.ready(function () {
+
+                $window
+                    .off('scroll', ScrollHandler)
+                    .on('scroll', ScrollHandler);
+
+            });
+
+            function ScrollHandler(e) {
+                clearTimeout(_throttleTimer);
+                _throttleTimer = setTimeout(function () {
+                    //do work
+                    if ($window.scrollTop() + $window.height() > $document.height() - 100) {
+                        $('#btnLoadMore').click();
+                    }
+                }, _throttleDelay);
+            }
+
+    </script>
+}
+
+

@@ -1,0 +1,15 @@
+
+
+@{
+    ViewBag.Title = "Sayfa Bulunamadı";
+    Layout = "_Layout";
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+}
+
+<div class="text-center p-t-150 min-height-500" >
+    
+    <img src="/Content/img/404.png" />
+    <br/><br/>
+    <h2>@Localization.Get("Aradığınız Sayfa Bulunamadı", "Page Not Found", lang)</h2>
+    <br/><br/><br/><br/>
+</div>
