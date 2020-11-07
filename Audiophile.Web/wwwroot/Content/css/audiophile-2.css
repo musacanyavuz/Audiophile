@@ -5798,7 +5798,7 @@ html.w-mod-js [data-ix=new-interaction-2] {
     }
 
     .side-bar {
-        display: block;
+        display: none;
     }
 
         .side-bar.side-bar-menu {
