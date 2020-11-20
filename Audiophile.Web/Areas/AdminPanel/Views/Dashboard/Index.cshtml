@@ -37,7 +37,7 @@
                                     <th>ID</th>
                                     <th>İşlem Tipi</th>
                                     <th>Kullanıcı</th>
-                                    <th>Satıcı</th>                                  
+                                    <th>Satıcı</th>
                                     <th>Ücret</th>
                                     <th>Durum</th>
                                     <th>Online Ödeme</th>
@@ -50,101 +50,103 @@
                             <tbody>
                                 @if (Model.PaymentRequests != null)
                                 {
-                                    foreach (var pr in Model.PaymentRequests.Where(p => p.Type != Enums.PaymentType.Ilan).ToList())
+                                    foreach (var pr in Model.PaymentRequests.Where(p => p.Type != Enums.PaymentType.Ilan && p.Type != Enums.PaymentType.IlanEkleme).ToList())
                                     {
                                         if (!pr.SecurePayment || (pr.SecurePayment && pr.PaymentId != null))
                                         {
-                                <tr id="payment_@pr.ID">
-                                    <td> @pr.ID </td>
-                                    <td> @pr.Type</td>
-                                    <td>
-                                        <a href="javascript:;"> @(pr.Buyer?.Name) </a>
-                                    </td>
-                                    <td>
-                                        @if (pr.Seller == null)
-                                        {
-                                            <text>Audiophile.org</text>
-                                        }
-                                        else
-                                        {
-                                            <a href="javascript:;">@pr.Seller.Name</a>
-                                        }
-                                    </td>                                    
-                                    <td> @pr.Price TL </td>
-                                    <td> @pr.Status </td>
-                                    <td>
-                                        @if (pr.SecurePayment)
-                                        {
-                                            <text>
-                                                <div  data-toggle="m-popover" data-original-title="Iyzico Satış Bilgileri" data-content="Payment ID:<b>@pr.PaymentId</b> <br/>Payment Transaction ID:<b>@pr.PaymentTransactionID</b>" data-html="true" class="btn btn-brand m-btn m-btn--icon m-btn--icon-only popover">
-                                                    <i class="la la-info-circle"></i>
-                                                </div>
-                                            </text>
+                                            <tr id="payment_@pr.ID">
+                                                <td> @pr.ID </td>
+                                                <td> @pr.Type</td>
+                                                <td>
+                                                    <a href="javascript:;"> @(pr.Buyer?.Name) </a>
+                                                </td>
+                                                <td>
+                                                    @if (pr.Seller == null)
+                                                    {
+                                                        <text>Audiophile.org</text>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="javascript:;">@pr.Seller.Name</a>
+                                                    }
+                                                </td>
+                                                <td> @pr.Price TL </td>
+                                                <td> @pr.Status </td>
+                                                <td>
+                                                    @if (pr.SecurePayment)
+                                                    {
+                                                        <text>
+                                                            <div data-toggle="m-popover" data-original-title="Iyzico Satış Bilgileri" data-content="Payment ID:<b>@pr.PaymentId</b> <br/>Payment Transaction ID:<b>@pr.PaymentTransactionID</b>" data-html="true" class="btn btn-brand m-btn m-btn--icon m-btn--icon-only popover">
+                                                                <i class="la la-info-circle"></i>
+                                                            </div>
+                                                        </text>
 
 
-                                        }
-                                        else
-                                        {
-                                            <text>-</text>
+                                                    }
+                                                    else
+                                                    {
+                                                        <text>-</text>
 
 
-                                        }
-                                    </td>
-                                    <td>@pr.CreatedDate.ToString("g")</td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-info popover" data-toggle="m-popover" data-content="@pr.Description" data-original-title="@pr.Type">Açıklama</button>
-                                    </td>
-                                    <td>
-                                        @if (pr.Type == Enums.PaymentType.BlogGirisi || pr.Type == Enums.PaymentType.BlogSureUzatma)
-                                        {
-                                            <a href="/AdminPanel/BlogPosts/Details/@pr.ForeignModelID" data-toggle="m-popover" data-content="Yazıya Git" class="btn btn-brand m-btn m-btn--icon m-btn--icon-only" target="_blank">
-                                                <i class="la la-info-circle"></i>
-                                            </a>
-                                        }
-                                        else if (pr.Type == Enums.PaymentType.LogoBanner || pr.Type == Enums.PaymentType.BannerSureUzatma)
-                                        {
-                                            <a href="/AdminPanel/Banners/Details/@pr.ForeignModelID" data-toggle="m-popover" data-content="Bannerı Göster" class="btn btn-brand m-btn m-btn--icon m-btn--icon-only" target="_blank">
-                                                <i class="la la-info-circle"></i>
-                                            </a>
-                                        }
-                                        else if (pr.Type == Enums.PaymentType.IlanDoping)
-                                        {
-                                            <a href="/AdminPanel/Adverts/Details/@pr.AdvertID" data-toggle="m-popover" data-content="İlan Detayları" class="btn btn-brand m-btn m-btn--icon m-btn--icon-only" target="_blank">
-                                                <i class="la la-info-circle"></i>
-                                            </a>
-                                        }
-                                    </td>
-                                    <td style="display: inline-flex;">
-                                        @if (pr.Type == Enums.PaymentType.BlogGirisi || pr.Type == Enums.PaymentType.BlogSureUzatma)
-                                        {
-                                            <div class="btn-group btn-group-sm">
-                                                <button onclick="acceptBlogPostPayment(@pr.ID)" class="btn btn-outline-success" data-toggle="m-popover" data-content="Ödemeyi doğrula ve yazıyı yayınla" data-placement="top">Onayla</button>
+                                                    }
+                                                </td>
+                                                <td>@pr.CreatedDate.ToString("g")</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-info popover" data-toggle="m-popover" data-content="@pr.Description" data-original-title="@pr.Type">Açıklama</button>
+                                                </td>
+                                                <td>
+                                                    @if (pr.Type == Enums.PaymentType.BlogGirisi || pr.Type == Enums.PaymentType.BlogSureUzatma)
+                                                    {
+                                                        <a href="/AdminPanel/BlogPosts/Details/@pr.ForeignModelID" data-toggle="m-popover" data-content="Yazıya Git" class="btn btn-brand m-btn m-btn--icon m-btn--icon-only" target="_blank">
+                                                            <i class="la la-info-circle"></i>
+                                                        </a>
+                                                    }
+                                                    else if (pr.Type == Enums.PaymentType.LogoBanner || pr.Type == Enums.PaymentType.BannerSureUzatma)
+                                                    {
+                                                        <a href="/AdminPanel/Banners/Details/@pr.ForeignModelID" data-toggle="m-popover" data-content="Bannerı Göster" class="btn btn-brand m-btn m-btn--icon m-btn--icon-only" target="_blank">
+                                                            <i class="la la-info-circle"></i>
+                                                        </a>
+                                                    }
+                                                    else if (pr.Type == Enums.PaymentType.IlanDoping || pr.Type == Enums.PaymentType.IlanEkleme)
+                                                    {
+                                                        <a href="/AdminPanel/Adverts/Details/@pr.AdvertID" data-toggle="m-popover" data-content="İlan Detayları" class="btn btn-brand m-btn m-btn--icon m-btn--icon-only" target="_blank">
+                                                            <i class="la la-info-circle"></i>
+                                                        </a>
+                                                    }
+                                                </td>
+                                                <td style="display: inline-flex;">
+                                                    @if (pr.Type == Enums.PaymentType.BlogGirisi || pr.Type == Enums.PaymentType.BlogSureUzatma)
+                                                    {
+                                                        <div class="btn-group btn-group-sm">
+                                                            <button onclick="acceptBlogPostPayment(@pr.ID)" class="btn btn-outline-success" data-toggle="m-popover" data-content="Ödemeyi doğrula ve yazıyı yayınla" data-placement="top">Onayla</button>
 
-                                                <button onclick="rejectBlogPostPayment(@pr.ID)" class="btn btn-outline-danger" data-toggle="m-popover" data-content="Ödemeyi iptal et ve yazıyı onaylama" data-placement="top">Reddet</button>
-                                            </div>
-                                        }
-                                        else if (pr.Type == Enums.PaymentType.LogoBanner || pr.Type == Enums.PaymentType.BannerSureUzatma || pr.Type == Enums.PaymentType.GifBanner || pr.Type == Enums.PaymentType.SliderBanner)
-                                        {
-                                            <div class="btn-group btn-group-sm">
-                                                <button onclick="acceptBannerPayment(@pr.ID)" class="btn btn-outline-success" data-toggle="m-popover" data-content="Ödemeyi doğrula ve bannerı yayınla" data-placement="top">Onayla</button>
+                                                            <button onclick="rejectBlogPostPayment(@pr.ID)" class="btn btn-outline-danger" data-toggle="m-popover" data-content="Ödemeyi iptal et ve yazıyı onaylama" data-placement="top">Reddet</button>
+                                                        </div>
+                                                    }
+                                                    else if (pr.Type == Enums.PaymentType.LogoBanner || pr.Type == Enums.PaymentType.BannerSureUzatma || pr.Type == Enums.PaymentType.GifBanner || pr.Type == Enums.PaymentType.SliderBanner)
+                                                    {
+                                                        <div class="btn-group btn-group-sm">
+                                                            <button onclick="acceptBannerPayment(@pr.ID)" class="btn btn-outline-success" data-toggle="m-popover" data-content="Ödemeyi doğrula ve bannerı yayınla" data-placement="top">Onayla</button>
 
-                                                <button onclick="rejectBannerPayment(@pr.ID)" class="btn btn-outline-danger" data-toggle="m-popover" data-content="Ödemeyi iptal et ve bannerı onaylama" data-placement="top">Reddet</button>
-                                            </div>
-                                        }
-                                        else if (pr.Type == Enums.PaymentType.IlanDoping)
-                                        {
-                                            <div class="btn-group btn-group-sm">
-                                                <button onclick="acceptDopingPayment(@pr.ID)" class="btn btn-outline-success" data-toggle="m-popover" data-content="Ödemeyi onayla ve dopingleri aktifleştir" data-placement="top">Onayla</button>
+                                                            <button onclick="rejectBannerPayment(@pr.ID)" class="btn btn-outline-danger" data-toggle="m-popover" data-content="Ödemeyi iptal et ve bannerı onaylama" data-placement="top">Reddet</button>
+                                                        </div>
+                                                    }
 
-                                                <button onclick="rejectDopingPayment(@pr.ID)" class="btn btn-outline-danger" data-toggle="m-popover" data-content="Ödemeyi ve dopingleri iptal et" data-placement="top">İptal</button>
-                                            </div>
-                                        }
-                                        &nbsp;
-                                        <button onclick="deletePaymentRequest(@pr.ID)" class="btn btn-danger m-btn m-btn--icon btn-sm m-btn--icon-only m-btn--pill">
-                                            <i class="la la-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                                    else if (pr.Type == Enums.PaymentType.IlanDoping)
+                                                    {
+                                                        <div class="btn-group btn-group-sm">
+                                                            <button onclick="acceptDopingPayment(@pr.ID)" class="btn btn-outline-success" data-toggle="m-popover" data-content="Ödemeyi onayla ve dopingleri aktifleştir" data-placement="top">Onayla</button>
+
+                                                            <button onclick="rejectDopingPayment(@pr.ID)" class="btn btn-outline-danger" data-toggle="m-popover" data-content="Ödemeyi ve dopingleri iptal et" data-placement="top">İptal</button>
+                                                        </div>
+                                                    }
+                                                    
+                                                    &nbsp;
+                                                    <button onclick="deletePaymentRequest(@pr.ID)" class="btn btn-danger m-btn m-btn--icon btn-sm m-btn--icon-only m-btn--pill">
+                                                        <i class="la la-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
                                         }
 
                                     }
@@ -180,7 +182,7 @@
                                     <th>Görsel</th>
                                     <th>Kullanıcı</th>
                                     <th>Başlık</th>
-                                    <th>Kategori</th>                                  
+                                    <th>Kategori</th>
                                     <th>Satış Fiyatı</th>
                                     <th>Giriş T.</th>
                                     <th>Güncelleme T.</th>
@@ -191,30 +193,30 @@
                             <tbody>
                                 @foreach (var pr in Model.AdvertPublishRequests)
                                 {
-                                <tr id="ad_@pr.ID">
-                                    <td>
-                                        <a href="/AdminPanel/Adverts/Details/@pr.Advert.ID" target="_blank"> #@pr.Advert.ID </a>
-                                    </td>
-                                    <td>
-                                        <a href="@pr.Advert.Thumbnail" target="_blank">
-                                            <img src="@pr.Advert.Thumbnail" height="100" width="100" style="object-fit: cover" />
-                                        </a>
-                                    </td>
-                                    <td> @(pr.Advert.User?.Name) </td>
-                                    <td> @(pr.Advert.Title.Length > 50 ? pr.Advert.Title.Substring(0, 50) : pr.Advert.Title) </td>
-                                    <td> @(pr.Advert?.CategorySlug) </td>                                  
-                                    <td> @pr.Advert.Price  @Constants.GetMoney(pr.Advert.MoneyTypeID)</td>
-                                    <td> @(pr.Advert.CreatedDate.ToShortDateString()) </td>
-                                    <td> @(pr.Advert?.LastUpdateDate?.ToShortDateString()) </td>
-                                    <td> @(pr.Advert.UseSecurePayment ? "Evet " + pr.Advert.AvailableInstallments : "Hayır") </td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-outline-success" onclick="advertPublishMessage(@pr.ID,@pr.AdvertID, '@(pr.Advert?.Title?.Replace("'",""))')">Onayla</button>
+                                    <tr id="ad_@pr.ID">
+                                        <td>
+                                            <a href="/AdminPanel/Adverts/Details/@pr.Advert.ID" target="_blank"> #@pr.Advert.ID </a>
+                                        </td>
+                                        <td>
+                                            <a href="@pr.Advert.Thumbnail" target="_blank">
+                                                <img src="@pr.Advert.Thumbnail" height="100" width="100" style="object-fit: cover" />
+                                            </a>
+                                        </td>
+                                        <td> @(pr.Advert.User?.Name) </td>
+                                        <td> @(pr.Advert.Title.Length > 50 ? pr.Advert.Title.Substring(0, 50) : pr.Advert.Title) </td>
+                                        <td> @(pr.Advert?.CategorySlug) </td>
+                                        <td> @pr.Advert.Price  @Constants.GetMoney(pr.Advert.MoneyTypeID)</td>
+                                        <td> @(pr.Advert.CreatedDate.ToShortDateString()) </td>
+                                        <td> @(pr.Advert?.LastUpdateDate?.ToShortDateString()) </td>
+                                        <td> @(pr.Advert.UseSecurePayment ? "Evet " + pr.Advert.AvailableInstallments : "Hayır") </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-success" onclick="advertPublishMessage(@pr.ID,@pr.AdvertID, '@(pr.Advert?.Title?.Replace("'",""))')">Onayla</button>
 
-                                            <button class="btn btn-outline-danger" onclick="advertReject(@pr.ID, '@(pr.Advert?.Title?.Replace("'",""))', @(pr.Advert?.User?.LanguageID))">Reddet</button>
-                                        </div>
-                                    </td>
-                                </tr>
+                                                <button class="btn btn-outline-danger" onclick="advertReject(@pr.ID, '@(pr.Advert?.Title?.Replace("'",""))', @(pr.Advert?.User?.LanguageID))">Reddet</button>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 }
                             </tbody>
                         </table>
@@ -283,14 +285,14 @@
                                                 @if (pr.SecurePayment)
                                                 {
                                                     <text>
-                                                        <div  data-toggle="m-popover" data-original-title="Iyzico Satış Bilgileri"
-                                                           data-content="Payment ID:<b>@pr.PaymentId</b> <br/>Payment Transaction ID:<b>@pr.PaymentTransactionID</b>" 
-                                                           data-html="true" class="btn btn-brand m-btn m-btn--icon m-btn--icon-only popover">
+                                                        <div data-toggle="m-popover" data-original-title="Iyzico Satış Bilgileri"
+                                                             data-content="Payment ID:<b>@pr.PaymentId</b> <br/>Payment Transaction ID:<b>@pr.PaymentTransactionID</b>"
+                                                             data-html="true" class="btn btn-brand m-btn m-btn--icon m-btn--icon-only popover">
                                                             <i class="la la-info-circle"></i>
                                                         </div>
 
                                                     </text>
-                                                  
+
                                                 }
                                                 else
                                                 {
@@ -314,7 +316,7 @@
                                                         <button onclick="acceptRefund(@pr.ID)" class="btn btn-outline-success" data-toggle="m-popover" data-content="İade işlemini onayla">Onayla</button>
                                                     </div>
                                                 }
-                                                else
+                                                else if  (pr.Type == Enums.PaymentType.Ilan)
                                                 {
                                                     <div class="btn-group btn-group-sm">
                                                         <button onclick="acceptOnlineBuy(@pr.ID)" class="btn btn-outline-success" data-toggle="m-popover" data-content="Satışı doğrula ve ücreti satıcıya aktar">Tamamla</button>
@@ -322,6 +324,7 @@
                                                         <button onclick="rejectOnlineBuy(@pr.ID)" class="btn btn-outline-danger" data-toggle="m-popover" data-content="Satışı iptal et ve alıcı ücretini iade et">İptal</button>
                                                     </div>
                                                 }
+
                                                 &nbsp;
 
                                             </td>
@@ -388,11 +391,11 @@
             $("#m_table_2").DataTable({ order: [0, "desc"] });
             $("#m_table_1").DataTable({ order: [0, "desc"] });
 
-          
 
-        
-              
-       
+
+
+
+
 
 
         });

@@ -13,7 +13,10 @@ using Audiophile.Web.ViewModels;
 using Iyzipay.Model;
 using Iyzipay.Request;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using InstallmentPrice = Audiophile.Web.ViewModels.InstallmentPrice;
 
@@ -21,6 +24,14 @@ namespace Audiophile.Web.Controllers
 {
     public class AdvertsController : BaseController
     {
+        public IConfiguration Configuration { get; }
+        public IHostingEnvironment Env { get; }
+
+        public AdvertsController(IConfiguration configuration, IHostingEnvironment env)
+        {
+            Configuration = configuration;
+            Env = env;
+        }
         #region STEP_1_IlanEkle
         [Authorize]
         [Route("IlanEkle")]
@@ -31,17 +42,37 @@ namespace Audiophile.Web.Controllers
         {
             var lang = GetLang();
             using (var userService = new UserService())
+            using (var setService = new SystemSettingService())
             using (var service = new AdvertService())
             using (var categoryService = new AdvertCategoryService())
             using (var textService = new TextService())
             {
-                var user = userService.GetSecurePaymentDetail(GetLoginID());
+                int loginid = GetLoginID();
+                var settings = setService.GetSystemSettings();
+                var freeAdvertLimit = int.Parse(settings.Single(s => s.Name == Enums.SystemSettingName.FreeAdvertPublishLimit).Value);
+                var user = userService.GetSecurePaymentDetail(loginid);
+
+
+
+                var userEntity = userService.Get(GetLoginID());
+                bool IsPaymentStepActive = true;
+
+                IsPaymentStepActive = (service.GetUserAdverts(GetLoginID()).Count >= freeAdvertLimit) || userEntity.AdvertPaymentRequired;
+
+                if(Env.EnvironmentName == "Production")
+                {
+                    IsPaymentStepActive = false;
+                }
+
+                HttpContext.Session.SetString("IsPaymentStepActive", (IsPaymentStepActive).ToString());
+                
                 var model = new AddListingStep1ViewModel()
                 {
                     AdvertCategories = categoryService.GetAll(lang),
                     Advert = (id != null) ? service.GetMyAdvert(id.Value, GetLoginID()) : null,
                     CanUseSecurePayment = !string.IsNullOrEmpty(user?.IyzicoSubMerchantKey),
                     WarningAdverts = textService.GetText(Enums.Texts.WarningAdverts, lang)
+
                 };
                 if (id != null)
                 {
@@ -247,7 +278,7 @@ namespace Audiophile.Web.Controllers
                         }
                         mailing.SendMail2Admins(admins, mailSubject, message);
                     }
-                    
+
 
                 }
 
@@ -313,6 +344,7 @@ namespace Audiophile.Web.Controllers
                     return Redirect("/");
 
                 advert.Photos = service.GetPhotos(id);
+                TempData["nextStep"] = 3;
                 return View(advert);
             }
         }
@@ -433,7 +465,7 @@ namespace Audiophile.Web.Controllers
                         {
                             string randomFileName = GetLoginID().ToString() + "_" + (index + 1) + "_" + DateTime.Now.ToShortDateString().Replace(".", "") + DateTime.Now.ToShortTimeString().Replace(":", "");
                             var ext = Path.GetExtension(file.FileName);
-                            path = fileService.FileUpload(GetLoginID(), file, "/Upload/Sales/", randomFileName+ "" + ext);
+                            path = fileService.FileUpload(GetLoginID(), file, "/Upload/Sales/", randomFileName + "" + ext);
                             if (!string.IsNullOrWhiteSpace(path))
                             {
                                 //var fileName = GetLoginID().ToString() + "_" + (index + 1) + "_" + DateTime.Now.ToShortDateString().Replace(".", "") + DateTime.Now.ToShortTimeString().Replace(":", "");
@@ -671,7 +703,7 @@ namespace Audiophile.Web.Controllers
 
         #endregion
 
-        #region STEP_3_IlanDetaylari
+        #region STEP_3.1__IlanDetaylari
         [Authorize]
         [Route("IlanEkle/IlanDetaylari/{id}")]
         [Route("AddListing/AdDetails/{id}")]
@@ -733,9 +765,169 @@ namespace Audiophile.Web.Controllers
                 }
             }
             var route = new Localization().Get("/IlanEkle/IlaniOneCikar/", "/AddListing/FeaturedAd/", lang) + advert.ID;
+            //if( Convert.ToBoolean( HttpContext.Session.GetString("PaymentStepIsActive")) == true)
+            //   route = new Localization().Get("/IlanEkle/YeniIlanOdemesi/", "/AddListing/DoNewAdvertPaytment/", lang) + advert.ID;
             return Redirect(route);
         }
 
+        #endregion
+
+        #region //  STEP_3.2_YeniIlanOdemesi
+        //[Authorize]
+        //[Route("IlanEkle/YeniIlanOdemesi/{id}")]
+        //[Route("AddListing/DoNewAdvertPaytment/{id}")]
+        //public IActionResult DoNewAdvertPaytment(int id)
+        //{
+        //    var lang = GetLang();
+        //    using (var service = new AdvertService())
+        //    using (var textService = new TextService())
+        //    {
+        //        var advert = service.GetMyAdvert(id, GetLoginID());
+        //        var model = new DoNewAdvertPaytmentViewModel
+        //        {
+        //            Advert = advert,
+        //            WarningAdverts = textService.GetText(Enums.Texts.WarningAdverts, lang)
+        //        };
+        //        return View(model);
+        //    }
+        //}
+        /// <summary>
+        ///  Yeni ilan ekleme için ödeme alır.
+        /// </summary>     
+        //[Authorize]
+        //[HttpPost]
+        //[Route("IlanEkle/YeniIlanOdemesi/{id}")]
+        //[Route("AddListing/DoNewAdvertPaytment/{id}")]
+        //public JsonResult DoNewAdvertPaytment(int id, string cardName, string cardNumber, string month, string year, string cvc, bool securePayment)
+        //{
+        //    var lang = GetLang();
+
+        //    using (var userService = new UserService())
+        //    using (var prService = new PaymentRequestService())
+        //    using (var publicService = new PublicService())
+        //    using (var advertService = new AdvertService())
+        //    {
+        //        var advert = advertService.GetMyAdvert(id, GetLoginID());
+
+        //        #region Validations
+
+        //        if (advert == null)
+        //            return Json(new { isSuccess = false, url = "/" });
+        //        if (advert.UserID != GetLoginID())
+        //            return Json(new
+        //            {
+        //                isSuccess = false,
+        //                message = new Localization().Get("Erişim hatası.", "Access error.", lang)
+        //            });
+        //        if (securePayment && (string.IsNullOrEmpty(cardName) || string.IsNullOrEmpty(cardNumber) || string.IsNullOrEmpty(month) ||
+        //            string.IsNullOrEmpty(year) || string.IsNullOrEmpty(cvc)))
+        //        {
+        //            return Json(new
+        //            {
+        //                isSuccess = false,
+        //                message = new Localization().Get(
+        //                    "Kredi kartı bilgilerinizi doldurunuz.",
+        //                    "Please fill in your credit card information.", lang)
+        //            });
+        //        }
+
+
+
+        //        #endregion
+        //        var user = userService.Get(GetLoginID());
+        //        if (user.District == null || user.City == null)
+        //        {
+        //            return Json(new
+        //            {
+        //                isSuccess = false,
+        //                message = new Localization().Get("Lütfen Üyelik Bilgileriniz içindeki \"Şehir\" bilgisini güncelleyiniz ! <br />" +
+        //                                                 "Lütfen Üyelik Bilgileriniz içindeki \"İlçe\" bilgisini güncelleyiniz!", "Please update your \"City\" in your \"Personal Information\" page" +
+        //                                                                                                                          "Please update your \"District\" in your \"Personal Information\" page", lang)
+        //            });
+        //        }
+        //        var userAddress = userService.GetUserAddresses(GetLoginID())?.SingleOrDefault(x => x.IsDefault);
+
+
+
+
+        //        // 
+        //        int totalPrice = 1;
+        //        if (securePayment)
+        //        {
+        //            var pr = new PaymentRequest()
+        //            {
+        //                Price = totalPrice,
+        //                CreatedDate = DateTime.Now,
+        //                Type = Enums.PaymentType.IlanEkleme,
+        //                UserID = GetLoginID(),
+        //                AdvertID = id,
+        //                SecurePayment = true,
+        //                IpAddress = GetIpAddress(),
+        //                Description = user.Name + " adlı kullanıcı ilan ekleme a talebi oluşturdu. ",
+        //                Status = Enums.PaymentRequestStatus.Bekleniyor
+        //            };
+        //            var prInsert = prService.Insert(pr);
+        //            if (!prInsert)
+        //            {
+        //                return Json(new
+        //                {
+        //                    isSuccess = false,
+        //                    message = new Localization().Get(
+        //                        "Doping ödeme kaydınız oluşturulamadı. Lütfen iletişim bölümünden ulaşınız.",
+        //                        "Your doping payment record could not be created. Please contact us.", lang)
+        //                });
+        //            }
+
+        //            var payment = buildPaymentForNewAdvert(user, userAddress, GetIpAddress(), cvc, cardName, month, year,
+        //                cardNumber, pr.ID, totalPrice, "İlan Ekleme Girişi", "DoNewAdvertPaytment/Callback");
+
+        //            if (payment.Status == "success")
+        //            {
+        //                return Json(new { isSuccess = true, html = payment.HtmlContent });
+        //            }
+        //            else
+        //            {
+        //                var paymentRequest = prService.Delete(pr);
+        //                return Json(new { isSuccess = false, message = payment.ErrorMessage });
+        //            }
+        //        }
+        //        else
+        //        {
+
+        //            var pr = new PaymentRequest()
+        //            {
+        //                Price = totalPrice,
+        //                CreatedDate = DateTime.Now,
+        //                Type = Enums.PaymentType.IlanEkleme,
+        //                UserID = GetLoginID(),
+        //                AdvertID = id,
+        //                SecurePayment = false,
+        //                IpAddress = GetIpAddress(),
+        //                Description = user.Name + " adlı kullanıcı ilan ekleme a talebi oluşturdu. ",
+        //                Status = Enums.PaymentRequestStatus.Bekleniyor
+        //            };
+        //            var prInsert = prService.Insert(pr);
+        //            if (!prInsert)
+        //            {
+        //                return Json(new
+        //                {
+        //                    isSuccess = false,
+        //                    message = new Localization().Get(
+        //                        "Ilan ekleme kaydınız oluşturulamadı. Lütfen iletişim bölümünden ulaşınız.",
+        //                        "Your New Advert Record could not be created. Please contact us.", lang)
+        //                });
+        //            }
+
+        //        }
+
+
+
+
+        //        var route = new Localization().Get("/IlanEkle/IlaniOneCikar/", "/AddListing/FeaturedAd/", lang) + advert.ID;
+        //        return Json(new { isSuccess = true, url = route });
+        //    }
+        //    return null;
+        //}
         #endregion
 
         #region STEP_4_IlaniOneCikar
@@ -745,8 +937,11 @@ namespace Audiophile.Web.Controllers
         public IActionResult FeaturedAd(int id) //step4.
         {
             var lang = GetLang();
+
+
             using (var publicService = new PublicService())
             using (var advertService = new AdvertService())
+            using (var setService = new SystemSettingService())
             using (var textService = new TextService())
             {
                 var advert = advertService.GetAdvert(id);
@@ -757,9 +952,264 @@ namespace Audiophile.Web.Controllers
                     AdvertDopings = advertService.GetadvertDopings(id),
 
                 };
+                var settings = setService.GetSystemSettings();
+
+                if (HttpContext.Session.GetString("IsPaymentStepActive") != null && Convert.ToBoolean(HttpContext.Session.GetString("IsPaymentStepActive")))
+                {
+                    var advertPrice = int.Parse(settings.Single(s => s.Name == Enums.SystemSettingName.AdvertPublishPrice).Value);
+                    ViewBag.AdvertPrice = advertPrice;
+                }
+
                 return View(model);
             }
         }
+        #region // Doping Ekleme Yeni
+        /*
+        [Authorize]
+        [HttpPost]
+        [Route("AddListing/FeaturedAd/{id}")]
+        public JsonResult FeaturedAdNew(int id, int[] dopingTypeIds, bool securePayment, string cardName, string cardNumber, string month, string year, string cvc) //step4 save func.
+        {
+            var lang = GetLang();
+            bool paymentStepIsActive = HttpContext.Session.GetString("PaymentStepIsActive") != null && Convert.ToBoolean(HttpContext.Session.GetString("PaymentStepIsActive")) == true;
+            using (var userService = new UserService())
+            using (var prService = new PaymentRequestService())
+            using (var publicService = new PublicService())
+            using (var service = new AdvertService())
+            using (var sytemSettingService = new SystemSettingService())
+            {
+                var advert = service.GetMyAdvert(id, GetLoginID());
+                //AdvertPublishPrice
+                #region Validations
+
+                if (advert == null)
+                    return Json(new { isSuccess = false, url = "/" });
+                if (advert.UserID != GetLoginID())
+                    return Json(new
+                    {
+                        isSuccess = false,
+                        message = new Localization().Get("Erişim hatası.", "Access error.", lang)
+                    });
+                if (securePayment && (string.IsNullOrEmpty(cardName) || string.IsNullOrEmpty(cardNumber) || string.IsNullOrEmpty(month) ||
+                    string.IsNullOrEmpty(year) || string.IsNullOrEmpty(cvc)))
+                {
+                    return Json(new
+                    {
+                        isSuccess = false,
+                        message = new Localization().Get(
+                            "Kredi kartı bilgilerinizi doldurunuz.",
+                            "Please fill in your credit card information.", lang)
+                    });
+                }
+
+                if (dopingTypeIds == null || dopingTypeIds.Length == 0)
+                    return Json(new
+                    {
+                        isSuccess = false,
+                        message = new Localization().Get("Doping bulunamadı.", "Doping not found.", lang)
+                    });
+
+                #endregion
+                var user = userService.Get(GetLoginID());
+                if (user.District == null || user.City == null)
+                {
+                    return Json(new
+                    {
+                        isSuccess = false,
+                        message = new Localization().Get("Lütfen Üyelik Bilgileriniz içindeki \"Şehir\" bilgisini güncelleyiniz ! <br />" +
+                                                         "Lütfen Üyelik Bilgileriniz içindeki \"İlçe\" bilgisini güncelleyiniz!", "Please update your \"City\" in your \"Personal Information\" page" +
+                                                                                                                                  "Please update your \"District\" in your \"Personal Information\" page", lang)
+                    });
+                }
+                var userAddress = userService.GetUserAddresses(GetLoginID())?.SingleOrDefault(x => x.IsDefault);
+
+
+                var dopings = publicService.GetDopingTypes();
+                dopings = dopings.Where(x => dopingTypeIds.Contains(x.ID)).ToList();
+                var totalDopingsPrice = 0;
+                var dopingNames = "";
+                var advertDopings = new List<AdvertDoping>();
+                if (dopings.Count != 0 || paymentStepIsActive == true)
+                {
+                    foreach (var dopingType in dopings)
+                    {
+
+                        totalDopingsPrice += dopingType.Price;
+                        dopingNames += dopingType.Name + " " + dopingType.Day + " Gün - " + dopingType.Price + " TL |";
+                        var advertDoping = new AdvertDoping
+                        {
+                            AdvertID = id,
+                            TypeID = dopingType.ID,
+                            Price = dopingType.Price,
+                            IsActive = false,
+                            StartDate = DateTime.Now,
+                            EndDate = DateTime.Now.AddDays(dopingType.Day),
+                            IsPendingApproval = true
+                        };
+                        var insert = service.InsertAdvertDoping(advertDoping);
+                        advertDopings.Add(advertDoping);
+                        if (!insert)
+                        {
+                            return Json(new { isSuccess = false, message = new Localization().Get("Doping girişi yapılamadı. ", "Doping insert failed.", lang) + " #" + dopingType.Name });
+                        }
+                    }
+
+                    if (securePayment)
+                    {
+                        int prID = 0;
+
+                        #region İlan Ücreti Ödemesi
+
+                        int advertPublishPrice = 0; // Yeni ilan yayınlamak için ödenmesi gereken tutar.
+                        var settings = sytemSettingService.GetSystemSettings();
+                        advertPublishPrice = int.Parse(settings.Single(s => s.Name == Enums.SystemSettingName.AdvertPublishPrice).Value);
+                        var prForAdvert = new PaymentRequest()
+                        {
+                            Price = advertPublishPrice,
+                            CreatedDate = DateTime.Now,
+                            Type = Enums.PaymentType.IlanEkleme,
+                            UserID = GetLoginID(),
+                            AdvertID = id,
+                            SecurePayment = false,
+                            IpAddress = GetIpAddress(),
+                            Description = user.Name + " adlı kullanıcı ilan Yeni İlan satın alma talebi oluşturdu. ",
+                            Status = Enums.PaymentRequestStatus.Bekleniyor
+                        };
+                        
+                        var advertPaymentCompleted = prService.Insert(prForAdvert);
+                        if (!advertPaymentCompleted)
+                        {
+                            return Json(new
+                            {
+                                isSuccess = false,
+                                message = new Localization().Get(
+                                    "İlan ödeme kaydınız oluşturulamadı. Lütfen iletişim bölümünden ulaşınız.",
+                                    "Your Advert payment record could not be created. Please contact us.", lang)
+                            });
+                        }
+
+                        #endregion
+                        #region  Doping Ödemesi
+                        if(totalDopingsPrice > 0)
+                        {
+                            var prForDopping = new PaymentRequest()
+                            {
+                                Price = totalDopingsPrice,
+                                CreatedDate = DateTime.Now,
+                                Type = Enums.PaymentType.IlanDoping,
+                                UserID = GetLoginID(),
+                                AdvertID = id,
+                                SecurePayment = true,
+                                IpAddress = GetIpAddress(),
+                                Description = user.Name + " adlı kullanıcı ilan dopingi satın alma talebi oluşturdu. " + dopingNames,
+                                Status = Enums.PaymentRequestStatus.Bekleniyor
+                            };
+                            var prInsert = prService.Insert(prForDopping);
+                            if (!prInsert)
+                            {
+                                return Json(new
+                                {
+                                    isSuccess = false,
+                                    message = new Localization().Get(
+                                        "Doping ödeme kaydınız oluşturulamadı. Lütfen iletişim bölümünden ulaşınız.",
+                                        "Your doping payment record could not be created. Please contact us.", lang)
+                                });
+                            }
+                            UpdateDopingPaymentId(advertDopings, prForDopping.ID);
+                            if (prForDopping.ID > 0) prID = prForDopping.ID;
+                        }
+
+                        #endregion
+                       
+                        if (prForAdvert.ID > 0) prID = prForAdvert.ID;
+
+                        var paymentTotal = totalDopingsPrice + advertPublishPrice;
+                        string paymentName = advertPublishPrice > 0 ? " Yeni İlan Yaınlama Ödemesi  : " + advertPublishPrice + " TL" :"";
+                        if (totalDopingsPrice > 0)
+                            paymentName += " İlan Doping Alımı : " + totalDopingsPrice + " TL.";
+                      
+                        var payment = buildPaymentForNewAdvert(user, userAddress, GetIpAddress(), cvc, cardName, month, year,
+                            cardNumber, prID, paymentTotal, paymentName, "Doping/Callback");
+
+                        if (payment.Status == "success")
+                        {
+                            return Json(new { isSuccess = true, html = payment.HtmlContent });
+                        }
+                        else
+                        {
+                            var paymentRequest = prService.Delete(pr);
+                            return Json(new { isSuccess = false, message = payment.ErrorMessage });
+                        }
+                    }
+                    else
+                    {
+                        #region İlan Ücreti Ödemesi
+                        double advertPublishPrice = 0; // Yeni ilan yayınlamak için ödenmesi gereken tutar.
+                        var settings = sytemSettingService.GetSystemSettings();
+                        advertPublishPrice = int.Parse(settings.Single(s => s.Name == Enums.SystemSettingName.AdvertPublishPrice).Value);
+                        var prForAdvert = new PaymentRequest()
+                        {
+                            Price = advertPublishPrice,
+                            CreatedDate = DateTime.Now,
+                            Type = Enums.PaymentType.IlanEkleme,
+                            UserID = GetLoginID(),
+                            AdvertID = id,
+                            SecurePayment = false,
+                            IpAddress = GetIpAddress(),
+                            Description = user.Name + " adlı kullanıcı ilan Yeni İlan satın alma talebi oluşturdu. ",
+                            Status = Enums.PaymentRequestStatus.Bekleniyor
+                        };
+                        var advertPaymentCompleted = prService.Insert(prForAdvert);
+                        if (!advertPaymentCompleted)
+                        {
+                            return Json(new
+                            {
+                                isSuccess = false,
+                                message = new Localization().Get(
+                                    "İlan ödeme kaydınız oluşturulamadı. Lütfen iletişim bölümünden ulaşınız.",
+                                    "Your Advert payment record could not be created. Please contact us.", lang)
+                            });
+                        }
+                        #endregion
+
+                        #region Doping Ödemesi
+                        var pr = new PaymentRequest()
+                        {
+                            Price = totalDopingsPrice,
+                            CreatedDate = DateTime.Now,
+                            Type = Enums.PaymentType.IlanDoping,
+                            UserID = GetLoginID(),
+                            AdvertID = id,
+                            SecurePayment = false,
+                            IpAddress = GetIpAddress(),
+                            Description = user.Name + " adlı kullanıcı ilan dopingi satın alma talebi oluşturdu. " + dopingNames,
+                            Status = Enums.PaymentRequestStatus.Bekleniyor
+                        };
+                        var prInsert = prService.Insert(pr);
+                        if (!prInsert)
+                        {
+                            return Json(new
+                            {
+                                isSuccess = false,
+                                message = new Localization().Get(
+                                    "Doping ödeme kaydınız oluşturulamadı. Lütfen iletişim bölümünden ulaşınız.",
+                                    "Your doping payment record could not be created. Please contact us.", lang)
+                            });
+                        }
+                        UpdateDopingPaymentId(advertDopings, pr.ID);
+                        #endregion
+
+                    }
+
+                }
+
+
+                var route = new Localization().Get("/IlanEkle/Sonuc/", "/AddListing/Summary/", lang) + advert.ID;
+                return Json(new { isSuccess = true, url = route });
+            }
+        }
+        */
+        #endregion
         [Authorize]
         [HttpPost]
         [Route("AddListing/FeaturedAd/{id}")]
@@ -994,7 +1444,7 @@ namespace Audiophile.Web.Controllers
                 }
                 else
                 {
-                    ViewBag.TranslateUrl = "/Ilan/" +  Common.Localization.Slug(advert.Title) + "/" + advert.ID;
+                    ViewBag.TranslateUrl = "/Ilan/" + Common.Localization.Slug(advert.Title) + "/" + advert.ID;
                 }
                 service.UpdateViewCount(id);
                 return View(model);
@@ -1158,8 +1608,157 @@ namespace Audiophile.Web.Controllers
         #endregion
 
 
+        #region İlan Ekleme için Ödeme
 
+        private ThreedsInitialize buildPaymentForNewAdvert(User user, UserAddress userAddress, string ip, string cvc, string fullname,
+           string month, string year, string number, int paymentRequestId, int price, string paymentName, string callback)
+        {
+            Address address;
+            string addressLine;
+            if (userAddress == null)
+            {
+                addressLine = user?.District?.Name + " " + user?.City?.Name;
+                address = new Address
+                {
+                    City = user?.City?.Name ?? "Istanbul",
+                    Country = user?.Country?.Name ?? "Turkey",
+                    ContactName = user?.Name,
+                    Description = addressLine
+                };
+            }
+            else
+            {
+                addressLine = userAddress.Address;
+                address = new Address
+                {
+                    City = userAddress.City?.Name ?? userAddress.CityText,
+                    Country = userAddress.Country?.Name ?? "Turkey",
+                    ContactName = user.Name,
+                    Description = userAddress.Address
+                };
+            }
 
+            user.Name = user.Name.Trim();
+            var name = user.Name;
+            var surName = "Audiophile.org";
+            if (user.Name.Contains(" "))
+            {
+                name = user.Name.Substring(0, user.Name.LastIndexOf(' ') + 1);
+                surName = user.Name.Substring(user.Name.LastIndexOf(' ') + 1);
+            }
+
+            var buyer = new Buyer
+            {
+                Id = user.ID.ToString(),
+                Name = name,
+                Surname = surName,
+                City = address.City,
+                Country = address.Country,
+                Email = user.Email,
+                GsmNumber = string.IsNullOrEmpty(user.MobilePhone) ? null : user.MobilePhone.Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", ""),
+                // todo  : ? 
+                IdentityNumber = "40459550113",
+                Ip = ip,
+                RegistrationAddress = addressLine
+            };
+            var card = new PaymentCard
+            {
+                Cvc = cvc,
+                CardHolderName = fullname,
+                ExpireMonth = month,
+                ExpireYear = year,
+                CardNumber = number,
+                RegisterCard = 0
+            };
+
+            return IyzicoService.PayNewAdbvert(paymentRequestId, price, card,
+                buyer, address, address, paymentRequestId,
+                paymentName, callback);
+        }
+
+        [Route("DoNewAdvertPaytment/Callback")]
+        public IActionResult DoNewAdvertPaytment(Iyzico3dCallback callback)
+        {
+            var lang = GetLang();
+            var profileUrl = Constants.GetURL(Enums.Routing.ProfilSayfam, lang);
+
+            if (callback == null || callback.ConversationId == 0)
+            {
+                Notification = new UiMessage(NotyType.error,
+                    new Localization().Get("3D Güvenlik hatası", "3D Secure Payment Error", lang),
+                    10000);
+                return Redirect(profileUrl);
+            }
+
+            using (var prService = new PaymentRequestService())
+            {
+                var prId = Convert.ToInt32(callback.ConversationId);
+                var pr = prService.Get(prId);
+                if (pr == null)
+                {
+                    Notification = new UiMessage(NotyType.success, new Localization().Get(
+                            "Ödeme kaydı bulunamadı. Lütfen site yönetimi ile iletişime geçin."
+                            , "Payment record not found.. Please contact the site administration.", lang),
+                        10000);
+                    return Redirect(profileUrl);
+                }
+                if (string.IsNullOrEmpty(callback.PaymentId) || callback.PaymentId == "0")
+                {
+                    prService.Delete(pr);
+                    Notification = new UiMessage(NotyType.error,
+                        new Localization().Get("3D Güvenlik hatası", "3D Secure Payment Error", lang),
+                        10000);
+                    return Redirect(profileUrl);
+                }
+                var route = new Localization().Get("/IlanEkle/Sonuc/", "/AddListing/Summary/", lang) + pr.AdvertID;
+                var request = new CreateThreedsPaymentRequest
+                {
+                    Locale = Locale.TR.ToString(),
+                    ConversationId = callback.ConversationId.ToString(),
+                    PaymentId = callback.PaymentId,
+                    ConversationData = callback.ConversationData
+                };
+                var threedsPayment = ThreedsPayment.Create(request, IyzicoService.GetOptions());
+                if (threedsPayment.Status == "success")
+                {
+                    pr.IsSuccess = true;
+                    pr.Status = Enums.PaymentRequestStatus.OnlineOdemeYapildi;
+                    pr.ResponseDate = DateTime.Now;
+                    pr.PaymentId = threedsPayment.PaymentId;
+                    pr.PaymentTransactionID = threedsPayment.PaymentItems.First().PaymentTransactionId;
+                    var update = prService.Update(pr);
+                    if (!update)
+                    {
+                        Notification = new UiMessage(NotyType.success, new Localization().Get(
+                                "Ödeme işlemi tamamlandı fakat sisteme kayıt edilemedi. Lütfen site yönetimi ile iletişime geçin."
+                                , "Payment completed but could not be saved in the system. Please contact the site administration.", lang),
+                            10000);
+                        return Redirect(profileUrl);
+                    }
+                    else
+                    {
+
+                        //dopingService.ActivateAllPendingDopings(pr.AdvertID);
+                        //dopingler otomatik aktifleşmeyecek, admin panelinden aktifleştirilecek.
+                        Notification = new UiMessage(NotyType.success, new Localization().Get(
+                             "İlan alım işleminiz tamamlandı."
+                             , "Your Advert purchase process is completed.", lang),
+                         10000);
+                        return Redirect(route);
+                    }
+                }
+                else
+                {
+                    prService.Delete(pr);
+                    Notification = new UiMessage(NotyType.success, new Localization().Get(
+                            "İlan alım işlemi başarısız. "
+                            , "Advert purchase process is failed. ", lang) + threedsPayment.ErrorMessage,
+                        10000);
+                    return Redirect(route);
+                }
+            }
+        }
+        #endregion
         [Route("GetInstallmentPrices")]
         public PartialViewResult GetInstallmentPrices(double price)
         {

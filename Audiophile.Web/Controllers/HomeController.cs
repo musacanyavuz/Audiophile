@@ -143,9 +143,10 @@ namespace Audiophile.Web.Controllers
                             new List<string> { item.CategoryName } : new List<string> { "Audiphile" }
                     });
                 }
-                var rss = feed.Serialize();
+                var srOpt = new SerializeOption { Encoding= Encoding.UTF8 };
+                var rss = feed.Serialize(srOpt);
                     
-                return Content(rss, "application/rss+xml", Encoding.GetEncoding("utf-16"));
+                return Content(rss, "application/rss+xml", Encoding.UTF8);
             }
         }
 
@@ -185,9 +186,10 @@ namespace Audiophile.Web.Controllers
                             new List<string> { item.CategoryName } : new List<string> { "Audiphile" }
                     });
                 }
-                var rss = feed.Serialize();
+                var srOpt = new SerializeOption { Encoding = Encoding.UTF8 };
+                var rss = feed.Serialize(srOpt);
 
-                return Content(rss, "application/rss+xml", Encoding.GetEncoding("utf-16"));
+                return Content(rss, "application/rss+xml", Encoding.UTF8);
             }
         }
         #endregion

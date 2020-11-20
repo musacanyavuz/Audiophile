@@ -222,7 +222,8 @@
             BlogSureUzatma,
             BannerSureUzatma,
             BlogGirisi,
-            GifBanner
+            GifBanner,
+            IlanEkleme
         }
 
         public enum SystemSettingName
@@ -233,7 +234,9 @@
             OtomatikOdemeOnayi,
             YoneticiMailleri,
             AutoTransferDays,
-            IletisimFormuMail
+            IletisimFormuMail,
+            FreeAdvertPublishLimit,
+            AdvertPublishPrice
         }
 
         public enum HomePageItemType

@@ -49,6 +49,8 @@ namespace Audiophile.Models
 
         public short OAuth_Provider { get; set; }
 
+        public bool AdvertPaymentRequired { get; set; }
+
         [NotMapped]
         public OauthProviders OauthProviders
         {

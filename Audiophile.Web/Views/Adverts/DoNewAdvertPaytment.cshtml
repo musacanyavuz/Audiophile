@@ -1,0 +1,317 @@
+﻿@model DoNewAdvertPaytmentViewModel
+@{
+    var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    ViewBag.Title = Localization.Get("İlan Ödemesi", "Advert Payment", lang);
+    Layout = "_Layout";
+}
+@section style{
+    <link rel="stylesheet" href="~/Content/css/dropzone.min.css">
+    <style>
+
+        .custom-radio .custom-control-input:checked ~ .custom-control-label::before, .custom-control-input:checked ~ .custom-control-label::before {
+            background-color: #e70c1e !important;
+        }
+
+
+        .dz-image-preview {
+            display: table-cell;
+            text-align: center;
+        }
+
+        #sortable {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+            #sortable li {
+                margin: 3px 3px 3px 0;
+                padding: 1px;
+                float: left;
+                text-align: center;
+                cursor: grab;
+            }
+
+        .crop-area #canvas, #canvas2 {
+            height: 300px;
+            width: 300px;
+            background-color: #ffffff;
+            cursor: default;
+            border: 1px solid black;
+        }
+
+        .div-block-17.form-wrapper.form-hesaplar.urun-ekle {
+            background-color: white;
+        }
+
+        .div--marka {
+            width: 100%;
+            margin-bottom: 71px;
+            padding: 0px;
+            border: 1px #e4e4e4;
+            background-color: white;
+        }
+
+        @@media screen and (min-width: 1200px) {
+
+            .w-container {
+                max-width: 906px !important;
+            }
+
+            .register-form {
+                width: 80%;
+                margin: auto;
+            }
+
+                .register-form .w-checkbox-input, .register-form .w-radio-input,
+                .checkbox-field-2 {
+                    float: none !important;
+                }
+        }
+
+        .sec-altsayfa.sec-hesaplar.section-1 {
+            background-color: #fff !important;
+        }
+
+        .div-block-20.div-ilan.hesap {
+            background-color: white !important;
+        }
+
+        @@media screen and (max-width: 992px) {
+            .h2.h4.h-kat {
+                margin-bottom: 0px;
+            }
+
+            .div-block-20.div-ilan.hesap {
+                padding-top: 25px;
+                padding-bottom: 0px;
+            }
+
+            .radio-button {
+                margin-right: 5px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="~/Content/css/dropzone.min.css">
+    <link rel="stylesheet" href="~/Content/css/cropper.css">
+}
+<div class="sec-altsayfa sec-hesaplar section-1">
+    <div class="w-container">
+        <div class="w-clearfix">
+            <div class="div-block-20 div-ilan hesap urun-ekle w-clearfix">
+                <h4 class="h2 h4 h-kat h-kategori">@ViewBag.Title</h4>
+            </div>
+
+            @{
+                await Html.RenderPartialAsync("~/Views/Partials/AddListingSteps.cshtml", 3);
+            }
+        <div class="div-block-17 form-wrapper form-hesaplar urun-ekle w-clearfix">
+
+
+            @using (Html.BeginForm("DoNewAdvertPaytment", "Adverts", FormMethod.Post, new { @class = "w-clearfix", id = "main-form", validate = "novalidate" }))
+            {
+                <div class="col-12">
+                    <h5>@Localization.Get("Ödeme Seçenekleri", "Payment Methods", lang)</h5>
+                    <div class="div-block-33 nerede1 p-t-13 p-b-13 f-l width-100-50">
+                        <label class="text-center m-auto">
+                            <input class="w-checkbox-input" type="radio" name="paymentType" value="bank">
+                            @Localization.Get("Banka Havalesi", "Wire Transfer", lang)
+                        </label>
+                    </div>
+                    <div class="div-block-33 nerede1 p-t-13 p-b-13 f-l width-100-50">
+                        <label class="text-center m-auto">
+                            <input class="w-checkbox-input" type="radio" name="paymentType" value="creditCard">
+                            @Localization.Get("Kredi Kartı", "Credit Card", lang)
+                        </label>
+                    </div>
+
+                    <div class="form-block-5 w-form display-none" id="bankPayment">
+                        <h5> @TextService.GetText((int)Enums.Texts.BankaHavalesiText, lang)</h5>
+                    </div>
+                    <div id="creditCardPayment" class="display-none">
+                        <h5> @Localization.Get("Ödeme Bilgileri", "Credit Card Information", lang) </h5>
+                        <p><i>@Localization.Get("Bu bilgiler site yönetimimiz tarafından hiçbir şekilde görünmemekte, kaydedilmemekte, direkt olarak bankamıza gönderilmektedir.", "This information is neither visible nor recorded to us and directly sent to our bank by the system.", lang)</i></p>
+                        <div class="row mb-0">
+                            <div class="col-md-12">
+                                <input class="textfield field-col kart w-input" id="cardName" placeholder="@Localization.Get("Kart Üzerindeki Ad Soyad", "Name Surname", lang)" type="text">
+                            </div>
+                            <div class="col-md-12">
+                                <input class="textfield field-col kart w-input" id="cardNumber" placeholder="@Localization.Get("Kart No", "Card No", lang)" type="text">
+                            </div>
+                        </div>
+                        <div class="row mb-0">
+                            <div class="col-md-4">
+                                <select class="textfield w-select" id="month" name="Month">
+                                    <option value="">@Localization.Get("Ay", "Month", lang)</option>
+                                    <option value="1">01</option>
+                                    <option value="2">02</option>
+                                    <option value="3">03</option>
+                                    <option value="4">04</option>
+                                    <option value="5">05</option>
+                                    <option value="6">06</option>
+                                    <option value="7">07</option>
+                                    <option value="8">08</option>
+                                    <option value="9">09</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <select class="textfield w-select" id="year" name="Year">
+                                    <option value="">@Localization.Get("Yıl", "Year", lang)</option>
+                                    @for (int i = DateTime.Now.Year; i <= DateTime.Now.Year + 15; i++)
+                                    {
+                                        <option value="@i">@i</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <input class="textfield w-input" maxlength="4" id="cvc" placeholder="CVC" type="text" value="">
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                @*<button type="button" id="save" class="button button-main button-satn button-submit submit-center w-button">@Localization.Get("Kaydet", "Save", lang)</button>*@
+                <button type="button" onclick="save()" class="button button-main button-satn button-submit submit-center w-button">Kaydet ve Devam Et</button>
+                <div id="alertArea"> </div>
+            }
+
+        </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+</div>
+<div id="preview" class="preview display-none">
+
+    <div>
+        <div class="dz-preview dz-file-preview">
+            <input type="radio" name="main-image" class="m-100-1 f-l" />
+            <img data-dz-thumbnail />
+            <div class="dz-progress">
+                <span class="dz-upload" data-dz-uploadprogress></span>
+            </div>
+            @*<button onclick="editPhoto()" class="m-t-5 m-b--10" >Düzenle</button>*@
+
+            <div class="dz-success-mark">
+                <span>✔</span>
+            </div>
+            <div class="dz-error-mark">
+                <span>✘</span>
+            </div>
+            <div class="dz-error-message">
+                <span data-dz-errormessage></span>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/Content/script/cropper.js"></script>
+    <script src="~/Content/script/jquerycropper.js"></script>
+    <script src="~/Content/script/jquery-ui.min.js"></script>
+    <script src="/Content/plugins/dropzone/dropzone.js"></script>
+    <script src="~/Content/plugins/canvas-to-blob/canvas-to-blob.min.js"></script>
+
+
+    <script>
+
+        function save() {
+
+            debugger;
+            var postModel = {
+                securePayment: false,               
+            };
+            if ($('input[name="paymentType"]:checked').val() === "creditCard") {
+                var cardName = $('#cardName').val();
+                var cardNumber = $('#cardNumber').val();
+                var month = $('#month').val();
+                var year = $('#year').val();
+                var cvc = $('#cvc').val();
+
+                if (cardName == "" || cardNumber == "" || month == "" || year == "" || cvc == "") {
+                    var message = '@Html.Raw(Localization.Get("Kredi kartı ile ödeme yapmak için lütfen kredi kartı bilgileriniz doldurunuz.","Please fill in your credit card details to pay by credit card.",lang))';
+                    notify("error", message);
+                    return;
+                }
+                postModel = {                   
+                    cardName,
+                    cardNumber,
+                    month,
+                    year,
+                    cvc,
+                    securePayment: true
+                };
+            }
+            notify("info", '@Localization.Get("Lütfen Bekleyiniz", "Please Wait", lang)');
+
+            $.ajax({
+                url: '/AddListing/DoNewAdvertPaytment/' + @Model.Advert.ID,
+                type: 'POST',
+                data: postModel,
+                success: function (data) {
+                    debugger;
+                    if (data.isSuccess && data.url != null) {
+                        window.location = data.url;
+                    }
+                    else if (data.url != null) {
+                        window.location = data.url;
+                    }
+                    else if (data.isSuccess && data.html != null) {
+                        document.write(data.html);
+                        $("form[name='returnform']").submit();
+                    }
+                    else {
+                        notify("error", data.message);
+                    }
+                }
+            });
+        }
+        $(function () {
+
+            var $radios = $('input:radio[name=paymentType]');
+            if ($radios.is(':checked') === false) {
+                $radios.filter('[value=bank]').click();
+            }
+            $('.save').click(function () {
+                 if ($('input[name="paymentType"]:checked').val() == null ) {
+                notyError('@Localization.Get("Lütfen ödeme türü seçiniz.","Please select a payment method.",lang)');
+                return;
+            }
+            if ($('input[name="paymentType"]:checked').val()=='true' &&
+                ($('#CardName').val()==="" || $('#CardNumber').val()==="" || $('#CVC').val()==="") ) {
+                notyError('@Localization.Get("Lütfen kredi kartı bilgilerinizi doldurun.","Please fill in your credit card information.",lang)');
+                return;
+            }
+            })
+        });
+
+        $('input[name="paymentType"]').on('change',
+            function () {
+                if ($(this).val() === 'bank') {
+                    $('#bankPayment').css('display', 'block');
+                    $('#creditCardPayment').css('display', 'none');
+                }
+                if ($(this).val() === 'creditCard') {
+                    $('#bankPayment').css('display', 'none');
+                    $('#creditCardPayment').css('display', 'block');
+                }
+            });
+
+        function notyError(message) {
+            new Noty({
+                theme: 'sunset',
+                type: 'error',
+                text: message,
+                progressBar: true,
+                timeout: 4000
+            }).show();
+        }
+    </script>
+
+
+
+}

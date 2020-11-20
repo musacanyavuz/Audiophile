@@ -2,6 +2,7 @@
 @model FeaturedAdStep3ViewModel
 @{
     var lang = Constants.GetLang(Context.Session.GetString("lang"));
+    var isPaymentStepActive = Convert.ToBoolean(Context.Session.GetString("IsPaymentStepActive"));
     ViewBag.Title = Localization.Get("İlanı Öne Çıkar", "Product Display Enhancements", lang);
     Layout = "_Layout";
     var updateAdvert = Model.DopingTypes.FirstOrDefault(p => p.ID == (int)Enums.Dopings.IlanTarihiGuncelle);
@@ -84,7 +85,8 @@
             </div>
 
             @{
-                await Html.RenderPartialAsync("~/Views/Partials/AddListingSteps.cshtml", 3);
+
+                await Html.RenderPartialAsync("~/Views/Partials/AddListingSteps.cshtml",3);
             }
 
             <div class="div-block-17 form-wrapper form-hesaplar urun-ekle w-clearfix">
@@ -286,13 +288,14 @@
                             </div>
 
                             <div class="row">
+                               
                                 <div class="col-12">
-                                    <h5>@Localization.Get("Seçilen Dopingler", "Selected Dopings", lang)</h5>
+                                    <h5>@Localization.Get("Seçilen İşlemler", "Selected Items", lang)</h5>
 
                                     <table class="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <th>Doping</th>
+                                                <th>İşlem</th>
                                                 <th>@Localization.Get("Birim Fiyat", "Price", lang)</th>
                                                 <th>@Localization.Get("Süre", "Time", lang)</th>
                                                 <th>@Localization.Get("Bitiş Tarihi", "End Date", lang)</th>
@@ -421,13 +424,13 @@
                     month,year,cvc, securePayment: true
                 };
             }
-            notify("info", '@Localization.Get("Lütfen Bekleyiniz", "Please Wait", lang)');
-
+            notify("info", '@Localization.Get("Lütfen Bekleyiniz", "Please Wait", lang)');          
             $.ajax({
                 url: '/AddListing/FeaturedAd/' + @Model.Advert.ID,
                 type: 'POST',
                 data: postModel,
-                success: function(data) {
+                success: function (data) {
+                    debugger;
                     if (data.isSuccess && data.url != null) {
                         window.location = data.url;
                     }
@@ -450,14 +453,29 @@
             if (lbl !== null) {
                 labelOptimizer(lbl);
             }
-
+           
             var homepage = $('#homepage').val();
             var category = $('#category').val();
             var label = getLabelDoping();
             var highlight = $('#highlight').val();
             const advertDate = $("#advertDate").val();
             var sum = 0;
+            var adprice = 0;
+            debugger;
+            @if (ViewBag.AdvertPrice != null)
+            {
+                <text>
+            adprice = @ViewBag.AdvertPrice
+                 </text>
+            }
+
+           
             $('#invoice').html('');
+
+            if (adprice > 0) {
+                sum = sum + adprice;
+                generalrow(adprice,'@Localization.Get("İlan Fiyatı", "Advert Price", lang)');
+            }
 
             var hPrice = getPrice(homepage);
             if (hPrice > 0) {
@@ -498,6 +516,19 @@
             //var sum = getPrice(homepage) + getPrice(category) + getPrice(label) + getPrice(highlight);
         }
 
+           function generalrow( price, type) {
+            $('#invoice').append('<tr> <td>' +
+                type +
+                '</td> ' +
+                ' <td>' +
+                price +
+                ' TL</td>  <td>' +
+                     '-' +
+                '</td>' +
+                ' <td> - ' +
+
+                '</td> </tr>');
+        }
         function row(id, price, type) {
             var day = getDay(id);
             var date = new Date();
@@ -596,11 +627,12 @@
             return 0;
         }
         $(function () {
-            
+
             var $radios = $('input:radio[name=paymentType]');
             if ($radios.is(':checked') === false) {
                 $radios.filter('[value=bank]').click();
             }
+            calc();
         });
 
         $('input[name="paymentType"]').on('change',

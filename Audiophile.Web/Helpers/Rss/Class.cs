@@ -42,7 +42,7 @@ namespace Audiophile.Web.Helpers.Rss
         {
             var defaultOption = new SerializeOption()
             {
-                Encoding = Encoding.Unicode,
+                Encoding = Encoding.UTF8,
             };
             return Serialize(defaultOption, isFeedNew);
         }
@@ -169,7 +169,7 @@ namespace Audiophile.Web.Helpers.Rss
     }
     public class SerializeOption
     {
-        public Encoding Encoding { get; set; } = Encoding.Unicode;
+        public Encoding Encoding { get; set; } = Encoding.UTF8;
     }
     internal class RssStringWriter : StringWriter
     {

@@ -54,6 +54,7 @@ namespace Audiophile.Web.Controllers
             }
             using (var service = new UserService())
             {
+               // var pass = Encryptor.DecryptData("");
                 password = Encryptor.EncryptData(password);
                 var user = service.Get(username, password);
                 if (user == null)

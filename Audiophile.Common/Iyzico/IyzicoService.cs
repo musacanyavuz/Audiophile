@@ -175,7 +175,7 @@ namespace Audiophile.Common.Iyzico
 
 
         public static ThreedsInitialize PayBanner(int requestId, int price, PaymentCard paymentCard, Buyer buyer, Address shippingAddress,
-            Address billingAddress, int dopingId, string dopingName, string callback)
+           Address billingAddress, int dopingId, string dopingName, string callback)
         {//banner ödemeleri, doping ödemeleri, blog ödemeleri bu fonksiyon ile yapılıyor
             CreatePaymentRequest request = new CreatePaymentRequest();
             request.Locale = Locale.TR.ToString();
@@ -196,6 +196,94 @@ namespace Audiophile.Common.Iyzico
             var firstBasketItem = new BasketItem
             {
                 Id = dopingId.ToString(),
+                Name = dopingName,
+                Category1 = dopingName,
+                ItemType = BasketItemType.VIRTUAL.ToString(),
+                Price = price.ToString(),
+                //SubMerchantKey = "hlvmB2LSjkZALCL/Zfb9qfJhX9o=",
+                //SubMerchantPrice = subMerchantPrice.ToString("F2").Replace(",",".")
+            };
+            basketItems.Add(firstBasketItem);
+            request.BasketItems = basketItems;
+
+            var threedsInitialize = ThreedsInitialize.Create(request, IyzicoService.GetOptions());
+            return threedsInitialize;
+        }
+        /// <summary>
+        ///  Biren Fazla Doping
+        /// </summary>
+        /// <param name="requestIds"></param>
+        /// <param name="price"></param>
+        /// <param name="paymentCard"></param>
+        /// <param name="buyer"></param>
+        /// <param name="shippingAddress"></param>
+        /// <param name="billingAddress"></param>
+        /// <param name="dopingIds"></param>
+        /// <param name="dopingName"></param>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        public static ThreedsInitialize PayBanner(int[] requestIds, int price, PaymentCard paymentCard, Buyer buyer, Address shippingAddress,
+         Address billingAddress, int[] dopingIds, string paymentName, string callback)
+        {//banner ödemeleri, doping ödemeleri, blog ödemeleri bu fonksiyon ile yapılıyor
+            CreatePaymentRequest request = new CreatePaymentRequest();
+            request.Locale = Locale.TR.ToString();
+            request.ConversationId = string.Join("", requestIds);
+            request.Price = price.ToString();
+            request.PaidPrice = price.ToString();
+            request.Currency = Currency.TRY.ToString();
+            request.Installment = 1;
+            request.PaymentChannel = PaymentChannel.WEB.ToString();
+            request.PaymentGroup = PaymentGroup.SUBSCRIPTION.ToString();
+            request.CallbackUrl = SiteUrl + callback;
+            request.PaymentCard = paymentCard;
+            request.Buyer = buyer;
+            request.ShippingAddress = shippingAddress;
+            request.BillingAddress = billingAddress;
+
+            var basketItems = new List<BasketItem>();
+            foreach (var currentDopid in dopingIds)
+            {
+                var basketItem = new BasketItem
+                {
+                    Id = currentDopid.ToString(),
+                    Name = paymentName +"-"+ currentDopid,
+                    Category1 = paymentName + "-" + currentDopid,
+                    ItemType = BasketItemType.VIRTUAL.ToString(),
+                    Price = price.ToString(),
+                    //SubMerchantKey = "hlvmB2LSjkZALCL/Zfb9qfJhX9o=",
+                    //SubMerchantPrice = subMerchantPrice.ToString("F2").Replace(",",".")
+                };
+                basketItems.Add(basketItem);
+            }
+
+
+            request.BasketItems = basketItems;
+
+            var threedsInitialize = ThreedsInitialize.Create(request, IyzicoService.GetOptions());
+            return threedsInitialize;
+        }
+        public static ThreedsInitialize PayNewAdbvert(int requestId, int price, PaymentCard paymentCard, Buyer buyer, Address shippingAddress,
+           Address billingAddress, int advertId, string dopingName, string callback)
+        {// Yeni ilan eklerken gerekiyorsa ödeme buradan alınıyor.
+            CreatePaymentRequest request = new CreatePaymentRequest();
+            request.Locale = Locale.TR.ToString();
+            request.ConversationId = requestId.ToString();
+            request.Price = price.ToString();
+            request.PaidPrice = price.ToString();
+            request.Currency = Currency.TRY.ToString();
+            request.Installment = 1;
+            request.PaymentChannel = PaymentChannel.WEB.ToString();
+            request.PaymentGroup = PaymentGroup.SUBSCRIPTION.ToString();
+            request.CallbackUrl = SiteUrl + callback;
+            request.PaymentCard = paymentCard;
+            request.Buyer = buyer;
+            request.ShippingAddress = shippingAddress;
+            request.BillingAddress = billingAddress;
+
+            var basketItems = new List<BasketItem>();
+            var firstBasketItem = new BasketItem
+            {
+                Id = advertId.ToString(),
                 Name = dopingName,
                 Category1 = dopingName,
                 ItemType = BasketItemType.VIRTUAL.ToString(),
