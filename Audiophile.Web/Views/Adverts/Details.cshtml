@@ -9,7 +9,7 @@
     var lang = Constants.GetLang(Context.Session.GetString("lang"));
     ViewBag.Title = Model.Advert.Title;
     Layout = "_Layout";
-    ViewBag.SeoDescription = (Model.Advert.Content?.Length >= 500 ? Model.Advert.Content.Substring(0, 500) : Model.Advert.Content);
+    ViewBag.SeoDescription = (Model.Advert.Title?.Length >= 500 ? Model.Advert.Content.Substring(0, 500) : Model.Advert.Title);
     ViewBag.SeoKeywords = Model.Advert.Title;
 }
 @section MetaTag{

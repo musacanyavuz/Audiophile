@@ -107,6 +107,7 @@ namespace Audiophile.Web.Controllers
                     {
                         var count = list.Count(x => x.Status == Enums.PaymentRequestStatus.OnlineOdemeYapildi ||
                                                     x.Status == Enums.PaymentRequestStatus.KargoyaVerildi ||
+                                                    x.Status == Enums.PaymentRequestStatus.Bekleniyor ||
                                                     x.Status == Enums.PaymentRequestStatus.TeslimEdildi);
                         if (count > 0)
                         {
@@ -118,6 +119,7 @@ namespace Audiophile.Web.Controllers
                     {
                         var count = buys.Count(p => p.Status == Enums.PaymentRequestStatus.KargoyaVerildi || 
                                                     p.Status == Enums.PaymentRequestStatus.OnlineOdemeYapildi ||
+                                                    p.Status == Enums.PaymentRequestStatus.Bekleniyor ||
                                                     p.Status == Enums.PaymentRequestStatus.TeslimEdildi
                                                     );
                         if (count > 0)
