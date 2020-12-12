@@ -391,17 +391,27 @@
 
         function save() {
             var homepage = $('#homepage').val();
+            var newAdvert = 0;
+            @if(ViewBag.AdvertPrice != null && ((int)ViewBag.AdvertPrice) > 0)
+            {
+                <text>
+            newAdvert = @Model.DopingTypes.Where(x => x.Group == Enums.DopingGroup.YeniIlanEkleme).FirstOrDefault().ID ;
+                </text>
+                 
+            }
+
             var category = $('#category').val();
             const advertDate = $("#advertDate").val();
             var label = getLabelDoping();
             var highlight = $('#highlight').val();
 
-            if (homepage == 0 && category == 0 && label == 0 && highlight == 0) {
+            if (homepage == 0 && category == 0 && label == 0 && highlight == 0 && newAdvert == 0) {
                 var route = '@(Localization.Get("/IlanEkle/Sonuc/", "/AddListing/Summary/", lang)+Model.Advert.ID)';
                 window.location = route;
                 return;
             }
-            var dopingTypeIds = [homepage, category, label, highlight,advertDate];
+            
+            var dopingTypeIds = [homepage, category, label, highlight, advertDate, newAdvert];
             var postModel = {
                 securePayment: false,
                 dopingTypeIds
@@ -424,7 +434,7 @@
                     month,year,cvc, securePayment: true
                 };
             }
-            notify("info", '@Localization.Get("Lütfen Bekleyiniz", "Please Wait", lang)');          
+            notify("info", '@Localization.Get("Lütfen Bekleyiniz", "Please Wait", lang)');
             $.ajax({
                 url: '/AddListing/FeaturedAd/' + @Model.Advert.ID,
                 type: 'POST',
@@ -453,7 +463,7 @@
             if (lbl !== null) {
                 labelOptimizer(lbl);
             }
-           
+
             var homepage = $('#homepage').val();
             var category = $('#category').val();
             var label = getLabelDoping();
@@ -461,15 +471,15 @@
             const advertDate = $("#advertDate").val();
             var sum = 0;
             var adprice = 0;
-            debugger;
-            @if (ViewBag.AdvertPrice != null)
+
+            @if (ViewBag.AdvertPrice != null && ((int)ViewBag.AdvertPrice) > 0)
             {
                 <text>
             adprice = @ViewBag.AdvertPrice
                  </text>
             }
 
-           
+
             $('#invoice').html('');
 
             if (adprice > 0) {

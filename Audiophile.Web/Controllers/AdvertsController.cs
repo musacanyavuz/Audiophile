@@ -49,7 +49,7 @@ namespace Audiophile.Web.Controllers
             {
                 int loginid = GetLoginID();
                 var settings = setService.GetSystemSettings();
-                var freeAdvertLimit = int.Parse(settings.Single(s => s.Name == Enums.SystemSettingName.FreeAdvertPublishLimit).Value);
+                int freeAdvertLimit = int.Parse(settings.Single(s => s.Name == Enums.SystemSettingName.FreeAdvertPublishLimit).Value);
                 var user = userService.GetSecurePaymentDetail(loginid);
 
 
@@ -57,11 +57,16 @@ namespace Audiophile.Web.Controllers
                 var userEntity = userService.Get(GetLoginID());
                 bool IsPaymentStepActive = true;
 
-                IsPaymentStepActive = (service.GetUserAdverts(GetLoginID()).Count >= freeAdvertLimit) || userEntity.AdvertPaymentRequired;
+                int bannerCount = userService.GetBannersCount(loginid);
+                IsPaymentStepActive = (service.GetUserAdverts(GetLoginID()).Count >= freeAdvertLimit); // Müşterini max ilan sayısını aşmış ise yeni lan ekeleme ücretli olacak.
 
-                if(Env.EnvironmentName == "Production")
+                if (Env.EnvironmentName == "Production")
                 {
                     IsPaymentStepActive = false;
+                }
+                if (GetLoginID() == 2)
+                {
+                    IsPaymentStepActive = true;
                 }
 
                 HttpContext.Session.SetString("IsPaymentStepActive", (IsPaymentStepActive).ToString());
@@ -198,6 +203,11 @@ namespace Audiophile.Web.Controllers
                             TempData.Put("UiMessage", new UiMessage { Class = "danger", Message = new Localization().Get("İlan oluşturulamadı.", "Ad create failed.", lang) });
                             return RedirectToAction("AddListing");
                         }
+                    }
+                   
+                    if (advert.UseSecurePayment)
+                    {
+                        HttpContext.Session.SetString("IsPaymentStepActive", false.ToString()); //
                     }
 
                     try
@@ -941,7 +951,7 @@ namespace Audiophile.Web.Controllers
 
             using (var publicService = new PublicService())
             using (var advertService = new AdvertService())
-            using (var setService = new SystemSettingService())
+            using (var setService = new SystemSettingService())         
             using (var textService = new TextService())
             {
                 var advert = advertService.GetAdvert(id);
@@ -954,9 +964,9 @@ namespace Audiophile.Web.Controllers
                 };
                 var settings = setService.GetSystemSettings();
 
-                if (HttpContext.Session.GetString("IsPaymentStepActive") != null && Convert.ToBoolean(HttpContext.Session.GetString("IsPaymentStepActive")))
+                if (HttpContext.Session.GetString("IsPaymentStepActive") != null && Convert.ToBoolean(HttpContext.Session.GetString("IsPaymentStepActive")) == true)
                 {
-                    var advertPrice = int.Parse(settings.Single(s => s.Name == Enums.SystemSettingName.AdvertPublishPrice).Value);
+                    var advertPrice =Convert.ToInt32(settings.Where(x=>x.Name == Enums.SystemSettingName.AdvertPublishPrice).FirstOrDefault().Value);                  
                     ViewBag.AdvertPrice = advertPrice;
                 }
 
@@ -1301,6 +1311,8 @@ namespace Audiophile.Web.Controllers
 
                     if (securePayment)
                     {
+                        //if (GetLoginID() == 2)
+                        //    totalPrice = 1;
                         var pr = new PaymentRequest()
                         {
                             Price = totalPrice,

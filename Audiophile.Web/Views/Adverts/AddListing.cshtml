@@ -408,6 +408,8 @@
     <script src="~/Content/plugins/tinymce/tinymce.js"></script>
     <script>
         var selectedPhotos = [];
+        var addedPhotosCount = 0;
+        var uploadedFileCount = 0;
         Dropzone.prototype.defaultOptions.dictRemoveFile = '@Localization.Get("Resmi Kaldır", "Remove File", lang)';
 
         Dropzone.options.myDropzone = {
@@ -545,6 +547,9 @@
             },
             previewTemplate: $('#preview').html(),
             init: function () {
+                 var bntText = '@Localization.Get("Kaydet ve Devam Et", "Save and Continue", lang)';
+                var bntTextWait = '  <i class="fa fa-spinner fa-spin fa-1x fa-fw"></i>@Localization.Get("Resimler Yükleniyor...", "'Images are uploading...", lang)'.replace('&#xFC;', 'ü');
+
                 var myDropzone = this;
                 this.on("sendingmultiple",
                     function(data, xhr, formData) {
@@ -555,13 +560,15 @@
 
                         if (file.size > 5242880) {
                             @*console.log("Dikkat 10 mb büyük!"); *@
-                            alert("DİKKAT 5 MB DAN BÜYÜK RESİM YÜKLEYEMEZSİNİZ.");
+                            //alert("DİKKAT 5 MB DAN BÜYÜK RESİM YÜKLEYEMEZSİNİZ.");
+                            notify("error", "DİKKAT 5 MB DAN BÜYÜK RESİM YÜKLEYEMEZSİNİZ.");
                             var id = parseInt($(file.previewElement).attr("id"));
                             @*console.log("remove it: " + id); *@
                             $(file.previewElement).remove();
                             removeFromSelectedPhotos(id);
                         } else {
-                            @* console.log("Uyumlu."); *@
+                            addedPhotosCount++;
+                            $("#save").html(bntTextWait).attr('disabled', 'disabled');
                         }
                         $(file.previewElement).find('input').val(file.name);
                     });
@@ -571,12 +578,15 @@
                         @*console.log("remove it: " + id); *@
                         $(file.previewElement).remove();
                         removeFromSelectedPhotos(id);
+                        addedPhotosCount--;
+                        uploadedFileCount--;
                     });
                 this.on("success",
                     function(file, response) {
                         @*console.log("success file", file);
                         //console.log("success response", response); *@
                         if (response.isSuccess === true) {
+                            uploadedFileCount++;
                             @*console.log("add: " + response.id); *@
                             addToSelectedPhotos(response.id);
                             $(file.previewElement).find(".dz-progress").remove();
@@ -585,6 +595,11 @@
                         } else {
                             myDropzone.removeFile(file);
                             notify("error", response.message);
+                        }
+                        if (addedPhotosCount < uploadedFileCount) {
+                            // $("#save").html(bntTextWait).attr('disabled', 'disabled');
+                        } else if (uploadedFileCount >= addedPhotosCount) {
+                            $("#save").text(bntText).removeAttr('disabled');
                         }
                     });
                 this.on("maxfilesexceeded", function (file) {
@@ -622,14 +637,14 @@
 
         $('#main-form').on("submit",
             function(e) {
-                @* console.log("submitting"); *@             
+                @* console.log("submitting"); *@
                 var tinymceContent = tinymce.activeEditor.getContent({ format: 'text' });
                 if (tinymceContent.trim() === '') {
                     e.preventDefault();
                     notify("error", '@Localization.Get("İlan Açıklaması boş olamaz.", "Advert content can not be emty.", lang)');
                     return false;
                 }
-               
+
                 if ($('.dz-file-preview:visible').length === 0 && $('.old-image').length === 0) {
                     @*console.log("stop submit");*@
                     e.preventDefault();

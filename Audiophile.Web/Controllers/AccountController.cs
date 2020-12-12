@@ -1947,6 +1947,8 @@ namespace Audiophile.Web.Controllers
                             Notification = new UiMessage(NotyType.error, init.ErrorMessage);
                             return Redirect(route);
                         }
+                       // user.AdvertPaymentRequired = true;
+                        userService.Update(user);
                         return View("Blank", init.HtmlContent);
                     }
                     else if (insertRequest)

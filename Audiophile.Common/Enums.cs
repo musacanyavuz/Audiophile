@@ -42,7 +42,8 @@
             SiyahEtiket,
             KirmiziEtiket,
             IlanTarihiGuncelle,
-            KategoriGorunum
+            KategoriGorunum,
+            YeniIlanEkleme
         }
 
         public enum ShipmentType
