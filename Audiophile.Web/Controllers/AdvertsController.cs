@@ -51,23 +51,25 @@ namespace Audiophile.Web.Controllers
                 var settings = setService.GetSystemSettings();
                 int freeAdvertLimit = int.Parse(settings.Single(s => s.Name == Enums.SystemSettingName.FreeAdvertPublishLimit).Value);
                 var user = userService.GetSecurePaymentDetail(loginid);
-
+                decimal advertPrice = 0;
 
 
                 var userEntity = userService.Get(GetLoginID());
-                bool IsPaymentStepActive = true;
+                bool IsPaymentStepActive = false;
 
                 int bannerCount = userService.GetBannersCount(loginid);
                 IsPaymentStepActive = (service.GetUserAdverts(GetLoginID()).Count >= freeAdvertLimit); // Müşterini max ilan sayısını aşmış ise yeni lan ekeleme ücretli olacak.
-
-                if (Env.EnvironmentName == "Production")
-                {
-                    IsPaymentStepActive = false;
-                }
-                if (GetLoginID() == 2)
-                {
-                    IsPaymentStepActive = true;
-                }
+               
+                //if (Env.EnvironmentName == "Production")
+                //{
+                //    IsPaymentStepActive = false;
+                //}
+                //if (GetLoginID() == 2)
+                //{
+                //    IsPaymentStepActive = true;
+                //}
+                if (IsPaymentStepActive)
+                    advertPrice = Convert.ToDecimal(settings.SingleOrDefault(x => x.Name == Enums.SystemSettingName.AdvertPublishPrice).Value);
 
                 HttpContext.Session.SetString("IsPaymentStepActive", (IsPaymentStepActive).ToString());
                 
@@ -76,7 +78,10 @@ namespace Audiophile.Web.Controllers
                     AdvertCategories = categoryService.GetAll(lang),
                     Advert = (id != null) ? service.GetMyAdvert(id.Value, GetLoginID()) : null,
                     CanUseSecurePayment = !string.IsNullOrEmpty(user?.IyzicoSubMerchantKey),
-                    WarningAdverts = textService.GetText(Enums.Texts.WarningAdverts, lang)
+                    WarningAdverts = textService.GetText(Enums.Texts.WarningAdverts, lang),
+                    FreeAdvertLimit = freeAdvertLimit,
+                    AdvertPrice = advertPrice,
+                    IsPaymentStepActive = IsPaymentStepActive
 
                 };
                 if (id != null)

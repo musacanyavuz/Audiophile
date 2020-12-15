@@ -112,268 +112,297 @@
 
                 @using (Html.BeginForm("AddListing", "Adverts", FormMethod.Post, new { @class = "w-clearfix", id = "main-form", validate = "novalidate" }))
                 {
-            <div class="form-block-5 w-form">
-                <label class="field-label">@Localization.Get("Başlık", "Title", lang) </label>
-                <input class="textfield w-input text-transform-capitalize" maxlength="70" name="Title" type="text" value="@(Model.Advert?.Title)" required onkeydown="letterControl(this,event)">
+                    <div class="form-block-5 w-form">
+                        <label class="field-label">@Localization.Get("Başlık", "Title", lang) </label>
+                        <input class="textfield w-input text-transform-capitalize" maxlength="70" name="Title" type="text" value="@(Model.Advert?.Title)" required onkeydown="letterControl(this,event)">
 
-                <label class="field-label">@Localization.Get("İlan Açıklaması", "Description", lang) </label>
-                <textarea class="textfield w-input richText" maxlength="5000" name="Content"  rows="5">@(Model.Advert?.Content)</textarea>
-                @*@Html.TextAreaFor(model => model.Advert.Content, 25, 25, new { @class = "form-control" })*@
+                        <label class="field-label">@Localization.Get("İlan Açıklaması", "Description", lang) </label>
+                        <textarea class="textfield w-input richText" maxlength="5000" name="Content" rows="5">@(Model.Advert?.Content)</textarea>
+                        @*@Html.TextAreaFor(model => model.Advert.Content, 25, 25, new { @class = "form-control" })*@
 
 
-                <div class="row mb-0">
-                    <div class="col-md-4">
-                        <label class="field-label">@Localization.Get("Para Cinsi", "Currency", lang)</label>
-                        <select class="dropdown-4 select-urun urun-ozellik-select w-dropdown textfield valid" name="MoneyTypeID" id="moneyType" required>
-                            <option value="">@Localization.Get("Seçiniz", "Choose", lang)</option>
-                            <option value="@((int)Enums.MoneyType.tl)">TL</option>
-                            <option value="@((int)Enums.MoneyType.usd)">USD</option>
-                            <option value="@((int)Enums.MoneyType.euro)">EUR</option>
-                            <option value="@((int)Enums.MoneyType.gbp)">GBP</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="field-label">@Localization.Get("Yenisinin Satış Fiyatı", "Price When New", lang) </label>
-                        <input class="textfield w-input" min="0" name="NewProductPrice" id="newPrice" type="number" value="@(Model.Advert?.NewProductPrice)">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="field-label">@Localization.Get("Satış Fiyatınız", "Your Sales Price", lang) </label>
-                        <input class="textfield w-input mb-0" min="0" name="Price" id="price" type="number" required value="@(Model.Advert?.Price)">
-                        <label class="text-danger priceMessage" style="display:none">@Localization.Get("Yenisinin satış fiyatından büyük olamaz bu yüzden yenisinin fiyatı atandı", "Cannot be greater than the sale price of the new one so the price of the new one is assigned", lang)  </label>
-                    </div>
-                </div>
-
-                <div class="div--marka w-clearfix">
-                    <div class="p-b-5">
-                        <label class="field-label">@Localization.Get("İlan Özellikleri", "Product Features", lang)</label>
-                    </div>
-                    <hr><br>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label class="field-label">@Localization.Get("Marka", "Brand", lang) </label>
-                            <input class="textfield w-input" maxlength="100" name="Brand" type="text" required value="@(Model.Advert?.Brand)">
+                        <div class="row mb-0">
+                            <div class="col-md-4">
+                                <label class="field-label">@Localization.Get("Para Cinsi", "Currency", lang)</label>
+                                <select class="dropdown-4 select-urun urun-ozellik-select w-dropdown textfield valid" name="MoneyTypeID" id="moneyType" required>
+                                    <option value="">@Localization.Get("Seçiniz", "Choose", lang)</option>
+                                    <option value="@((int)Enums.MoneyType.tl)">TL</option>
+                                    <option value="@((int)Enums.MoneyType.usd)">USD</option>
+                                    <option value="@((int)Enums.MoneyType.euro)">EUR</option>
+                                    <option value="@((int)Enums.MoneyType.gbp)">GBP</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="field-label">@Localization.Get("Yenisinin Satış Fiyatı", "Price When New", lang) </label>
+                                <input class="textfield w-input" min="0" name="NewProductPrice" id="newPrice" type="number" value="@(Model.Advert?.NewProductPrice)">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="field-label">@Localization.Get("Satış Fiyatınız", "Your Sales Price", lang) </label>
+                                <input class="textfield w-input mb-0" min="0" name="Price" id="price" type="number" required value="@(Model.Advert?.Price)">
+                                <label class="text-danger priceMessage" style="display:none">@Localization.Get("Yenisinin satış fiyatından büyük olamaz bu yüzden yenisinin fiyatı atandı", "Cannot be greater than the sale price of the new one so the price of the new one is assigned", lang)  </label>
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <label class="field-label">@Localization.Get("Model", "Model", lang) </label>
-                            <input class="textfield w-input" maxlength="100" name="Model" type="text" required value="@(Model.Advert?.Model)">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="field-label">@Localization.Get("Durumu", "Status", lang)</label>
-                            <select class="dropdown-4 select-urun urun-ozellik-select w-dropdown textfield valid" name="ProductStatus" id="productStatus" required>
-                                <option value="">@Localization.Get("Seçiniz", "Choose", lang)</option>
-                                <option>1/5</option>
-                                <option>2/5</option>
-                                <option>3/5</option>
-                                <option>4/5</option>
-                                <option>@Localization.Get("Yeni", "New", lang)</option>
-                            </select>
-                        </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-4">
-                            <label class="field-label">@Localization.Get("Kategori", "Category", lang)</label>
-                            <select id="categories" onchange="fillSubcategories(this.value)" class="dropdown-4 select-urun urun-ozellik-select w-dropdown textfield valid" required>
-                                <option value="">@Localization.Get("Seçiniz", "Choose", lang)</option>
-                                @foreach (var category in Model.AdvertCategories)
-                                {
-                                    <option value="@category.ID">@category.Name</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="field-label">@Localization.Get("Alt Kategori", "Subcategory", lang)</label>
-                            <select class="dropdown-4 select-urun urun-ozellik-select w-dropdown textfield valid" name="CategoryID" id="subcategories" required>
-                                <option value="">@Localization.Get("Seçiniz", "Choose", lang)</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="field-label">@Localization.Get("Miktar", "Amount", lang) </label>
-                            <input class="textfield w-input" min="0" name="StockAmount" type="number" value="@(Model.Advert?.StockAmount)" required>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="div--marka w-clearfix">
-                    <div class="p-b-5">
-                        <label class="field-label">@Localization.Get("İlan Fotoğrafları", "Product Photos", lang)</label>
-                        <input type="hidden" name="SelectedPhotos" id="selectedPhotos" value="" />
-                    </div>
-                    <hr><br>
-                    @if (Model.Advert?.Photos != null && Model.Advert.Photos.Any())
-                    {
-                        <div class="row">
-                            @*<label onclick="saveOrder()" class="button w-button m-r-10 float-left m-b-10">@Localization.Get("Sıralamayı Kaydet", "Save Photos Order", lang)</label>*@
-                            <ul id="sortable">
-                                @foreach (var photo in Model.Advert.Photos.OrderBy(p => p.OrderNumber))
-                                {
-                                    <li class="ui-state-default" id="q_@photo.ID">
-                                        <div class="card width-rem-10">
-                                            <img class="card-img-top old-image" src="@photo.Source" />
-                                            <div class="card-body" style="cursor:default">
-                                                <h5 class="card-title">@photo.CreatedDate.ToString("g")</h5>
-                                                <div class="custom-control custom-radio">
-                                                    <input onclick="updateMainImage(@photo.ID)" @(Model.Advert.Thumbnail == photo.Thumbnail ? "checked" : " ") type="radio" class="custom-control-input" name="mainImage" value="@photo.ID" id="inputM_@photo.ID">
-                                                    <label class="custom-control-label" style="padding-top: 2px;" for="inputM_@photo.ID">@Localization.Get("Ana fotoğraf", "Main photo", lang)</label>
-                                                </div>
-                                                <a href="#" onclick="ask(@photo.ID, '')" style="width: 72px !important;" class="button w-button button-sil m-t-10 display-inline-grid">@Localization.Get("Sil", "Delete", lang)</a>
-                                            </div>
-                                        </div>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                    }
-
-
-                    <h5>@Localization.Get("İşaretlediğiniz görsel ana fotoğraf olarak kullanılacak.", "Marked picture will be used as main picture", lang)</h5>
-                    <small>*@Localization.Get("Max. Dosya Boyutu: 5mb. Max. 10 dosya.", "Max. File Size: 5mb. Max. 10 file.", lang) </small>
-                    &nbsp;<small style="color:red">*@Localization.Get("Sadece JPG-JPEG-BMP-PNG-GIF formatında resim yükleyebilirsiniz", "Only JPG-JPEG-BMP-PNG-GIF image  extensions are allowed.", lang) </small>
-                    <div>
-                        <form action="/Adverts/UploadPhoto" enctype="multipart/form-data" method="POST">
-                            <div class="dropzone" id="myDropzone">
-                                <div class="dz-message" data-dz-message>
-                                    <span>
-                                        @Localization.Get("Fotoğraf eklemek için buraya tıklayınız veya fotoğrafları sürükleyiniz.", "Click here to add photos or drag photos", lang)
-                                    </span>
+                        <div class="div--marka w-clearfix">
+                            <div class="p-b-5">
+                                <label class="field-label">@Localization.Get("İlan Özellikleri", "Product Features", lang)</label>
+                            </div>
+                            <hr><br>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="field-label">@Localization.Get("Marka", "Brand", lang) </label>
+                                    <input class="textfield w-input" maxlength="100" name="Brand" type="text" required value="@(Model.Advert?.Brand)">
                                 </div>
-                            </div> <br />
-                        </form>
-                    </div>
-                </div>
+                                <div class="col-md-4">
+                                    <label class="field-label">@Localization.Get("Model", "Model", lang) </label>
+                                    <input class="textfield w-input" maxlength="100" name="Model" type="text" required value="@(Model.Advert?.Model)">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="field-label">@Localization.Get("Durumu", "Status", lang)</label>
+                                    <select class="dropdown-4 select-urun urun-ozellik-select w-dropdown textfield valid" name="ProductStatus" id="productStatus" required>
+                                        <option value="">@Localization.Get("Seçiniz", "Choose", lang)</option>
+                                        <option>1/5</option>
+                                        <option>2/5</option>
+                                        <option>3/5</option>
+                                        <option>4/5</option>
+                                        <option>@Localization.Get("Yeni", "New", lang)</option>
+                                    </select>
+                                </div>
+                            </div>
 
-
-                <div class="div--marka w-clearfix">
-                    <div class="p-b-5">
-                        <label class="field-label">@Localization.Get("Ödeme Seçenekleri", "Accepted Payment Method", lang)</label>
-                    </div>
-                    <hr><br>
-                    <p>
-                        @Localization.Get("Kullanıcılar bu ürünü ne şekilde satın alabilirler?", "How users can buy this product?", lang)
-                    </p>
-                    <div class="row mb-0">
-                        <div class="col-xs-12 col-sm-12 col-md-4 custom-control custom-radio radio-button-field-3 r3 w-checkbox radio-33">
-                            <input type="radio" class="custom-control-input" required name="PaymentMethodID" id="pay_@((int)Enums.PaymentMethods.BankaHavalesiIlePesin)" value="@((int)Enums.PaymentMethods.BankaHavalesiIlePesin)">
-                            <label class="custom-control-label field-label-4" for="pay_@((int)Enums.PaymentMethods.BankaHavalesiIlePesin)">@Localization.Get("Banka Havalesi İle Peşin Ödeme", "Wire Transfer", lang)</label>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="field-label">@Localization.Get("Kategori", "Category", lang)</label>
+                                    <select id="categories" onchange="fillSubcategories(this.value)" class="dropdown-4 select-urun urun-ozellik-select w-dropdown textfield valid" required>
+                                        <option value="">@Localization.Get("Seçiniz", "Choose", lang)</option>
+                                        @foreach (var category in Model.AdvertCategories)
+                                        {
+                                            <option value="@category.ID">@category.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="field-label">@Localization.Get("Alt Kategori", "Subcategory", lang)</label>
+                                    <select class="dropdown-4 select-urun urun-ozellik-select w-dropdown textfield valid" name="CategoryID" id="subcategories" required>
+                                        <option value="">@Localization.Get("Seçiniz", "Choose", lang)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="field-label">@Localization.Get("Miktar", "Amount", lang) </label>
+                                    <input class="textfield w-input" min="0" name="StockAmount" type="number" value="@(Model.Advert?.StockAmount)" required>
+                                </div>
+                            </div>
                         </div>
-                        <div class="custom-control custom-radio col-xs-12 col-sm-12 col-md-4 radio-button-field-3 r3 w-checkbox radio-33">
-                            <input type="radio" class="custom-control-input" required name="PaymentMethodID" id="pay_@((int)Enums.PaymentMethods.BankaHavalesiIleTeslimattanSonra)" value="@((int)Enums.PaymentMethods.BankaHavalesiIleTeslimattanSonra)">
-                            <label class="custom-control-label field-label-4" for="pay_@((int)Enums.PaymentMethods.BankaHavalesiIleTeslimattanSonra)">@Localization.Get("Banka Havalesi İle Teslimattan Sonra", "Wire Transfer After Delivery", lang)</label>
-                        </div>
-                        <div class="custom-control custom-radio col-xs-12 col-sm-12 col-md-4 radio-button-field-3 r3 w-checkbox radio-33">
-                            <input type="radio" class="custom-control-input" required name="PaymentMethodID" id="pay_@((int)Enums.PaymentMethods.EldenOdeme)" value="@((int)Enums.PaymentMethods.EldenOdeme)">
-                            <label class="custom-control-label field-label-4" for="pay_@((int)Enums.PaymentMethods.EldenOdeme)"> @Localization.Get("Elden Ödeme", "Cash in Advange", lang)</label>
-                        </div>
-                    </div>
 
-                    <div class="custom-control custom-radio row radio-button-field-3 r3 r2 rson w-checkbox m-r-0 m-l-0">
-                        <input type="radio" class="custom-control-input" required name="PaymentMethodID" id="pay_@((int) Enums.PaymentMethods.KrediKartiIle)" value="@((int) Enums.PaymentMethods.KrediKartiIle)">
-                        <label class="custom-control-label field-label-4" for="pay_@((int) Enums.PaymentMethods.KrediKartiIle)"> @Localization.Get("GittiBu ile Kredi Kartına Taksitle Satın", "Audiophile Secure Payment With Credit Card", lang)</label>
-                    </div>
-
-                    @{
-                        var installment = Localization.Get("Taksit", "Settlem", lang);
-                    }
-
-                    <div class="row justify-content-center display-none" id="installments">
-                        <div class="col-md-4 align-self-center text-center">
-                            @if (!Model.CanUseSecurePayment)
+                        <div class="div--marka w-clearfix">
+                            <div class="p-b-5">
+                                <label class="field-label">@Localization.Get("İlan Fotoğrafları", "Product Photos", lang)</label>
+                                <input type="hidden" name="SelectedPhotos" id="selectedPhotos" value="" />
+                            </div>
+                            <hr><br>
+                            @if (Model.Advert?.Photos != null && Model.Advert.Photos.Any())
                             {
-                                <br />
-                                @Localization.Get("Güvenli ödeme ile satış yapabilmek için “Güvenli Ödeme Bilgileri” nizi girmeniz yasal bir mecburiyettir.", "To sell with secure payment, it is a legal obligation to fill out your Secure Payment Information.", lang)
-                                <a target="_blank" href="@Constants.GetURL((int) Enums.Routing.UyelikBilgilerim, lang)"> @Localization.Get("Bilgilerimi Güncelle", "Update My Seller Informations", lang) </a>
+                                <div class="row">
+                                    @*<label onclick="saveOrder()" class="button w-button m-r-10 float-left m-b-10">@Localization.Get("Sıralamayı Kaydet", "Save Photos Order", lang)</label>*@
+                                    <ul id="sortable">
+                                        @foreach (var photo in Model.Advert.Photos.OrderBy(p => p.OrderNumber))
+                                        {
+                                            <li class="ui-state-default" id="q_@photo.ID">
+                                                <div class="card width-rem-10">
+                                                    <img class="card-img-top old-image" src="@photo.Source" />
+                                                    <div class="card-body" style="cursor:default">
+                                                        <h5 class="card-title">@photo.CreatedDate.ToString("g")</h5>
+                                                        <div class="custom-control custom-radio">
+                                                            <input onclick="updateMainImage(@photo.ID)" @(Model.Advert.Thumbnail == photo.Thumbnail ? "checked" : " ") type="radio" class="custom-control-input" name="mainImage" value="@photo.ID" id="inputM_@photo.ID">
+                                                            <label class="custom-control-label" style="padding-top: 2px;" for="inputM_@photo.ID">@Localization.Get("Ana fotoğraf", "Main photo", lang)</label>
+                                                        </div>
+                                                        <a href="#" onclick="ask(@photo.ID, '')" style="width: 72px !important;" class="button w-button button-sil m-t-10 display-inline-grid">@Localization.Get("Sil", "Delete", lang)</a>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
                             }
-                            else
+
+
+                            <h5>@Localization.Get("İşaretlediğiniz görsel ana fotoğraf olarak kullanılacak.", "Marked picture will be used as main picture", lang)</h5>
+                            <small>*@Localization.Get("Max. Dosya Boyutu: 5mb. Max. 10 dosya.", "Max. File Size: 5mb. Max. 10 file.", lang) </small>
+                            &nbsp;<small style="color:red">*@Localization.Get("Sadece JPG-JPEG-BMP-PNG-GIF formatında resim yükleyebilirsiniz", "Only JPG-JPEG-BMP-PNG-GIF image  extensions are allowed.", lang) </small>
+                            <div>
+                                <form action="/Adverts/UploadPhoto" enctype="multipart/form-data" method="POST">
+                                    <div class="dropzone" id="myDropzone">
+                                        <div class="dz-message" data-dz-message>
+                                            <span>
+                                                @Localization.Get("Fotoğraf eklemek için buraya tıklayınız veya fotoğrafları sürükleyiniz.", "Click here to add photos or drag photos", lang)
+                                            </span>
+                                        </div>
+                                    </div> <br />
+                                </form>
+                            </div>
+                        </div>
+
+
+                        <div class="div--marka w-clearfix">
+                            <div class="p-b-5">
+                                <label class="field-label">@Localization.Get("Ödeme Seçenekleri", "Accepted Payment Method", lang)</label>
+                            </div>
+                            <hr><br>
+                            <p>
+                                @Localization.Get("Kullanıcılar bu ürünü ne şekilde satın alabilirler?", "How users can buy this product?", lang)
+                            </p>
+                            @if (Model.IsPaymentStepActive)
                             {
-                                <h5>
-                                    @Localization.Get("Alıcılar hangi taksit seçeneklerini kullanabilir?", "How many months you credit your buyer?", lang)
-                                    <br>
-                                    @Localization.Get("Boş bırakırsanız tüm taksitler kullanılır", "If you leave empty, all options will be valid", lang)
-                                </h5>
+                                
+                                if (lang == 1)
+                                {
+                                    <div id="NeedForPay" class="alert alert-warning" role="alert">
+                                        Ücretsiz ilan  limiti olan @Model.FreeAdvertLimit adet ilanı tamamladınız. Yeni ilan giriş tutarı olan @Model.AdvertPrice TL. ödeme adımında alınacaktır . Ancak ödeme türünü <b>'Güvenli Ödeme Gittibu ile Satın'</b> olarak seçmeniz durumunda ilanınız <u><b>ücretsiz</b></u> olarak yayınlanır ve ek ücret talep etmeksizin ana sayfada gösterilir.
+                                    </div>
+                                }
+                                else
+                                {
+                        <div id="NeedForPay" class="alert alert-warning" role="alert">
+                            You filled @Model.FreeAdvertLimit  limit.
+                            Advertisement fee is TL @Model.AdvertPrice. However; by choosing the payment type as <b>'Audiophile Secure Payment Gittibu'</b> will enable you to advertise  <u><b>free </b></u>. Your ad will be visible in main page as well.
+                        </div>
+                                }
+                            }
 
-                                <table class="table table-bordered">
-                                    @if (Model.Advert?.AvailableInstallments != null)
+
+
+
+
+                            <div class="row mb-0">
+                                <div class="col-xs-12 col-sm-12 col-md-4 custom-control custom-radio radio-button-field-3 r3 w-checkbox radio-33">
+                                    <input type="radio" class="custom-control-input" required name="PaymentMethodID" id="pay_@((int)Enums.PaymentMethods.BankaHavalesiIlePesin)" value="@((int)Enums.PaymentMethods.BankaHavalesiIlePesin)">
+                                    <label class="custom-control-label field-label-4" for="pay_@((int)Enums.PaymentMethods.BankaHavalesiIlePesin)">@Localization.Get("Banka Havalesi İle Peşin Ödeme", "Wire Transfer", lang)</label>
+                                </div>
+                                <div class="custom-control custom-radio col-xs-12 col-sm-12 col-md-4 radio-button-field-3 r3 w-checkbox radio-33">
+                                    <input type="radio" class="custom-control-input" required name="PaymentMethodID" id="pay_@((int)Enums.PaymentMethods.BankaHavalesiIleTeslimattanSonra)" value="@((int)Enums.PaymentMethods.BankaHavalesiIleTeslimattanSonra)">
+                                    <label class="custom-control-label field-label-4" for="pay_@((int)Enums.PaymentMethods.BankaHavalesiIleTeslimattanSonra)">@Localization.Get("Banka Havalesi İle Teslimattan Sonra", "Wire Transfer After Delivery", lang)</label>
+                                </div>
+                                <div class="custom-control custom-radio col-xs-12 col-sm-12 col-md-4 radio-button-field-3 r3 w-checkbox radio-33">
+                                    <input type="radio" class="custom-control-input" required name="PaymentMethodID" id="pay_@((int)Enums.PaymentMethods.EldenOdeme)" value="@((int)Enums.PaymentMethods.EldenOdeme)">
+                                    <label class="custom-control-label field-label-4" for="pay_@((int)Enums.PaymentMethods.EldenOdeme)"> @Localization.Get("Elden Ödeme", "Cash in Advange", lang)</label>
+                                </div>
+                            </div>
+
+                            <div class="custom-control custom-radio row radio-button-field-3 r3 r2 rson w-checkbox m-r-0 m-l-0 gittibupay">
+
+                                <input type="radio" class="custom-control-input" required name="PaymentMethodID" id="pay_@((int) Enums.PaymentMethods.KrediKartiIle)" value="@((int) Enums.PaymentMethods.KrediKartiIle)">
+                                <label class="custom-control-label field-label-4" for="pay_@((int) Enums.PaymentMethods.KrediKartiIle)">
+                                    @Localization.Get("Güvenli Ödeme Gittibu ile Satın", "Audiophile Secure Payment with Gittibu", lang)<br />
+                                    <span style="color:red; font-weight:400">@Localization.Get("  ( Ücretsiz Ana Sayfa Dopingi Hediye )", "( Free Main Page Doping )", lang)</span>
+                                </label>
+
+
+                            </div>
+
+
+                            @{
+                                var installment = Localization.Get("Taksit", "Settlem", lang);
+                            }
+
+                            <div class="row justify-content-center display-none" id="installments">
+                                <div class="col-md-4 align-self-center text-center">
+                                    @if (!Model.CanUseSecurePayment)
                                     {
-                                        <tr>
-                                            <td><input class="installment" id="ins1" @(Model.Advert?.AvailableInstallments.Contains("1") == true ? "checked" : "") type="checkbox" value="1" /> </td>
-                                            <td class="text-left">@Localization.Get("Tek Çekim", "One Mount", lang)</td>
-                                        </tr>
-
-                                        <tr>
-                                            <td><input class="installment" id="ins2" @(Model.Advert?.AvailableInstallments.Contains("2") == true ? "checked" : "") type="checkbox" value="2" /> </td>
-                                            <td class="text-left">2 @installment</td>
-                                        </tr>
-                                        <tr>
-                                            <td><input class="installment" id="ins3" @(Model.Advert?.AvailableInstallments.Contains("3") == true ? "checked" : "") type="checkbox" value="3" /> </td>
-                                            <td class="text-left">3 @installment</td>
-                                        </tr>
-                                        <tr>
-                                            <td><input class="installment" id="ins6" @(Model.Advert?.AvailableInstallments.Contains("6") == true ? "checked" : "") type="checkbox" value="6" /> </td>
-                                            <td class="text-left">6 @installment</td>
-                                        </tr>
-                                        <tr>
-                                            <td><input class="installment" id="ins9" @(Model.Advert?.AvailableInstallments.Contains("9") == true ? "checked" : "") type="checkbox" value="9" /> </td>
-                                            <td class="text-left">9 @installment</td>
-                                        </tr>
-                                        <tr>
-                                            <td><input class="installment" id="ins12" @(Model.Advert?.AvailableInstallments.Contains("12") == true ? "checked" : "") type="checkbox" value="12" /> </td>
-                                            <td class="text-left">12 @installment</td>
-                                        </tr>
+                                        <br />
+                                        @Localization.Get("Güvenli ödeme ile satış yapabilmek için “Güvenli Ödeme Bilgileri” nizi girmeniz yasal bir mecburiyettir.", "To sell with secure payment, it is a legal obligation to fill out your Secure Payment Information.", lang)
+                                        <a target="_blank" href="@Constants.GetURL((int) Enums.Routing.UyelikBilgilerim, lang)"> @Localization.Get("Bilgilerimi Güncelle", "Update My Seller Informations", lang) </a>
                                     }
                                     else
                                     {
-                                        <tr>
-                                            <td><input class="installment" id="ins1" type="checkbox" value="1" /> </td>
-                                            <td class="text-left">@Localization.Get("Tek Çekim", "One Mount", lang)</td>
-                                        </tr>
+                                        <h5>
+                                            @Localization.Get("Alıcılar hangi taksit seçeneklerini kullanabilir?", "How many months you credit your buyer?", lang)
+                                            <br>
+                                            @Localization.Get("Boş bırakırsanız tüm taksitler kullanılır", "If you leave empty, all options will be valid", lang)
+                                        </h5>
 
-                                        <tr>
-                                            <td><input class="installment" id="ins2" type="checkbox" value="2" /> </td>
-                                            <td class="text-left">2 @installment</td>
-                                        </tr>
-                                        <tr>
-                                            <td><input class="installment" id="ins3" type="checkbox" value="3" /> </td>
-                                            <td class="text-left">3 @installment</td>
-                                        </tr>
-                                        <tr>
-                                            <td><input class="installment" id="ins6" type="checkbox" value="6" /> </td>
-                                            <td class="text-left">6 @installment</td>
-                                        </tr>
-                                        <tr>
-                                            <td><input class="installment" id="ins9" type="checkbox" value="9" /> </td>
-                                            <td class="text-left">9 @installment</td>
-                                        </tr>
-                                        <tr>
-                                            <td><input class="installment" id="ins12" type="checkbox" value="12" /> </td>
-                                            <td class="text-left">12 @installment</td>
-                                        </tr>
+                                        <table class="table table-bordered">
+                                            @if (Model.Advert?.AvailableInstallments != null)
+                                            {
+                                                <tr>
+                                                    <td><input class="installment" id="ins1" @(Model.Advert?.AvailableInstallments.Contains("1") == true ? "checked" : "") type="checkbox" value="1" /> </td>
+                                                    <td class="text-left">@Localization.Get("Tek Çekim", "One Mount", lang)</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td><input class="installment" id="ins2" @(Model.Advert?.AvailableInstallments.Contains("2") == true ? "checked" : "") type="checkbox" value="2" /> </td>
+                                                    <td class="text-left">2 @installment</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input class="installment" id="ins3" @(Model.Advert?.AvailableInstallments.Contains("3") == true ? "checked" : "") type="checkbox" value="3" /> </td>
+                                                    <td class="text-left">3 @installment</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input class="installment" id="ins6" @(Model.Advert?.AvailableInstallments.Contains("6") == true ? "checked" : "") type="checkbox" value="6" /> </td>
+                                                    <td class="text-left">6 @installment</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input class="installment" id="ins9" @(Model.Advert?.AvailableInstallments.Contains("9") == true ? "checked" : "") type="checkbox" value="9" /> </td>
+                                                    <td class="text-left">9 @installment</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input class="installment" id="ins12" @(Model.Advert?.AvailableInstallments.Contains("12") == true ? "checked" : "") type="checkbox" value="12" /> </td>
+                                                    <td class="text-left">12 @installment</td>
+                                                </tr>
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td><input class="installment" id="ins1" type="checkbox" value="1" /> </td>
+                                                    <td class="text-left">@Localization.Get("Tek Çekim", "One Mount", lang)</td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td><input class="installment" id="ins2" type="checkbox" value="2" /> </td>
+                                                    <td class="text-left">2 @installment</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input class="installment" id="ins3" type="checkbox" value="3" /> </td>
+                                                    <td class="text-left">3 @installment</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input class="installment" id="ins6" type="checkbox" value="6" /> </td>
+                                                    <td class="text-left">6 @installment</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input class="installment" id="ins9" type="checkbox" value="9" /> </td>
+                                                    <td class="text-left">9 @installment</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input class="installment" id="ins12" type="checkbox" value="12" /> </td>
+                                                    <td class="text-left">12 @installment</td>
+                                                </tr>
+                                            }
+
+                                        </table>
                                     }
+                                </div>
+                            </div>
 
-                                </table>
-                            }
+                            <div id="installmentsChoices">
+
+                            </div>
+                            <div id="prices">
+
+                            </div>
+
+                        </div>
+
+                        <button type="submit" @Html.Raw(Model.Advert != null ? "" : "disabled=\"disabled\"") id="save" class="button button-main button-satn button-submit submit-center w-button">@Localization.Get("Kaydet ve Devam Et", "Save and Continue", lang)</button>
+                        <div class="warning-advert">
+                            @Html.Raw(Model.WarningAdverts)
                         </div>
                     </div>
-
-                    <div id="installmentsChoices">
-
-                    </div>
-                    <div id="prices">
-
-                    </div>
-
-                </div>
-
-                <button type="submit" @Html.Raw(Model.Advert != null ? "" : "disabled=\"disabled\"") id="save" class="button button-main button-satn button-submit submit-center w-button">@Localization.Get("Kaydet ve Devam Et", "Save and Continue", lang)</button>
-                <div class="warning-advert">
-                    @Html.Raw(Model.WarningAdverts)
-                </div>
-            </div>
                 }
 
             </div>
         </div>
     </div>
-
+ 
     <!-- Modal -->
 </div>
 <div id="preview" class="preview display-none">
@@ -409,7 +438,7 @@
     <script>
         var selectedPhotos = [];
         var addedPhotosCount = 0;
-        var uploadedFileCount = 0;
+        var uploadedFileCount = 0;       
         Dropzone.prototype.defaultOptions.dictRemoveFile = '@Localization.Get("Resmi Kaldır", "Remove File", lang)';
 
         Dropzone.options.myDropzone = {
@@ -674,6 +703,8 @@
                     //ed.execCommand('mceImage');
                 }
             });
+           
+           
        })
     </script>
     <script>
@@ -780,16 +811,24 @@
     <script>
         $('input[name="PaymentMethodID"]').on('change',
             function() {
-                if (parseInt($('input[name="PaymentMethodID"]:checked').val()) ===
-                    @((int) Enums.PaymentMethods.KrediKartiIle)) {
+                if (parseInt($('input[name="PaymentMethodID"]:checked').val()) === @((int) Enums.PaymentMethods.KrediKartiIle))
+                {
                     $('#installments').css('display', 'flex');
-                    notify('info',
-                        '@Localization.Get("Kredi kartı ile ödeme için para tipi TL olmalıdır.", "For credit card payment, the type of money must be TL.", lang)');
+                    notify('info','@Localization.Get("Kredi kartı ile ödeme için para tipi TL olmalıdır.", "For credit card payment, the type of money must be TL.", lang)');
                     getPrices();
                 } else {
                     $('#installments').css('display', 'none');
                     $('#prices').html('');
                     $('#save').css("display", "block");
+                    @if (Model.IsPaymentStepActive)
+                    {
+                        <text>
+                    Noty.closeAll('gittibupay');
+                    $("#NeedForPay").effect("shake", { times: 2 }, 500);
+                        </text>
+                    }
+                   
+                    
                 }
             });
     </script>

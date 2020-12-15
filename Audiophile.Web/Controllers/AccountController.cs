@@ -528,7 +528,7 @@ namespace Audiophile.Web.Controllers
                     }
                 }
 
-                if (u.Email.ToLower() != user.Email?.ToLower())
+                if (u.UserName.ToLower() != user.UserName?.ToLower())
                 {
                     var usernameIsAvailable = service.UsernameIsUsable(user.UserName, userId);
                     if (!usernameIsAvailable)
@@ -539,7 +539,7 @@ namespace Audiophile.Web.Controllers
                 }
 
                 user.Name = user.Name.Modify();
-                user.UserName = user.UserName.Modify();
+                user.UserName = user.UserName;
 
                 u.UserName = user.UserName;
                 u.Name = user.Name;
@@ -564,6 +564,8 @@ namespace Audiophile.Web.Controllers
                 }
 
                 Notification = new UiMessage(NotyType.success, "Bilgileriniz güncellendi.", "Your user information has been updated.", user.LanguageID);
+                HttpContext.Session.SetString("lang", user.LanguageID == 1 ? "tr":"en");
+               
                 if (user.ProfilePictureFile != null && user.ProfilePictureFile.Length > 0 && user.ProfilePictureFile.Length < 10000000)
                 {
                     try

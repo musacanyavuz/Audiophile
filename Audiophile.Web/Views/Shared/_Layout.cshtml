@@ -276,16 +276,25 @@
         });
     </script>
     <script>
-    function notify(type, message) {
-        new Noty({
+        function notify(type, message, layout, timeout, queue) {
+            if (timeout == null || timeout == undefined)
+                timeout = 4000;
+            if (layout == null || layout == undefined)
+                layout = 'topRight';
+            if (queue == null || queue == undefined)
+                queue = 'global';
+      return   new Noty({
             closeWith: ['click', 'button'],
             theme: 'sunset',
             type: type,
             text: message,
+            layout: layout,
             progressBar: true,
-            timeout: 4000
+            queue: queue,
+            timeout: timeout
         }).show();
-    }
+        }
+
 
     $(function() {
         $("input[type=checkbox]:not(.installment)").change(function() {
