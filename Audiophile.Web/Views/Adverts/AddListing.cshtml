@@ -253,7 +253,7 @@
                             </p>
                             @if (Model.IsPaymentStepActive)
                             {
-                                
+
                                 if (lang == 1)
                                 {
                                     <div id="NeedForPay" class="alert alert-warning" role="alert">
@@ -262,10 +262,10 @@
                                 }
                                 else
                                 {
-                        <div id="NeedForPay" class="alert alert-warning" role="alert">
-                            You filled @Model.FreeAdvertLimit  limit.
-                            Advertisement fee is TL @Model.AdvertPrice. However; by choosing the payment type as <b>'Audiophile Secure Payment Gittibu'</b> will enable you to advertise  <u><b>free </b></u>. Your ad will be visible in main page as well.
-                        </div>
+                                    <div id="NeedForPay" class="alert alert-warning" role="alert">
+                                        You filled @Model.FreeAdvertLimit  limit.
+                                        Advertisement fee is TL @Model.AdvertPrice. However; by choosing the payment type as <b>'Audiophile Secure Payment Gittibu'</b> will enable you to advertise  <u><b>free </b></u>. Your ad will be visible in main page as well.
+                                    </div>
                                 }
                             }
 
@@ -323,59 +323,91 @@
                                         <table class="table table-bordered">
                                             @if (Model.Advert?.AvailableInstallments != null)
                                             {
-                                                <tr>
-                                                    <td><input class="installment" id="ins1" @(Model.Advert?.AvailableInstallments.Contains("1") == true ? "checked" : "") type="checkbox" value="1" /> </td>
-                                                    <td class="text-left">@Localization.Get("Tek Çekim", "One Mount", lang)</td>
-                                                </tr>
+                                                foreach (var insItem in ViewBag.AvailableInstallments.Split(','))
+                                                {
+                                                    <tr>
+                                                        
+                                                        <td><input class="installment" id="@("ins" + @insItem)" type="checkbox" value="@insItem"  @(Model.Advert?.AvailableInstallments.Split(',').Any(x=>x == insItem) == true ? "checked" : "")/> </td>
+                                                        @if ( Convert.ToInt16(insItem) > 1)
+                                                        {
+                                                            <td class="text-left">@insItem  @installment</td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td class="text-left"> @Localization.Get("Tek Çekim", "One Mount", lang)</td>
 
-                                                <tr>
-                                                    <td><input class="installment" id="ins2" @(Model.Advert?.AvailableInstallments.Contains("2") == true ? "checked" : "") type="checkbox" value="2" /> </td>
-                                                    <td class="text-left">2 @installment</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><input class="installment" id="ins3" @(Model.Advert?.AvailableInstallments.Contains("3") == true ? "checked" : "") type="checkbox" value="3" /> </td>
-                                                    <td class="text-left">3 @installment</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><input class="installment" id="ins6" @(Model.Advert?.AvailableInstallments.Contains("6") == true ? "checked" : "") type="checkbox" value="6" /> </td>
-                                                    <td class="text-left">6 @installment</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><input class="installment" id="ins9" @(Model.Advert?.AvailableInstallments.Contains("9") == true ? "checked" : "") type="checkbox" value="9" /> </td>
-                                                    <td class="text-left">9 @installment</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><input class="installment" id="ins12" @(Model.Advert?.AvailableInstallments.Contains("12") == true ? "checked" : "") type="checkbox" value="12" /> </td>
-                                                    <td class="text-left">12 @installment</td>
-                                                </tr>
+                                                        }
+                                                    </tr>
+                                                }
+
+                                                @*<tr>
+                                                        <td><input class="installment" id="ins1" @(Model.Advert?.AvailableInstallments.Contains("1") == true ? "checked" : "") type="checkbox" value="1" /> </td>
+                                                        <td class="text-left">@Localization.Get("Tek Çekim", "One Mount", lang)</td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td><input class="installment" id="ins2" @(Model.Advert?.AvailableInstallments.Contains("2") == true ? "checked" : "") type="checkbox" value="2" /> </td>
+                                                        <td class="text-left">2 @installment</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input class="installment" id="ins3" @(Model.Advert?.AvailableInstallments.Contains("3") == true ? "checked" : "") type="checkbox" value="3" /> </td>
+                                                        <td class="text-left">3 @installment</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input class="installment" id="ins6" @(Model.Advert?.AvailableInstallments.Contains("6") == true ? "checked" : "") type="checkbox" value="6" /> </td>
+                                                        <td class="text-left">6 @installment</td>
+                                                    </tr>
+                                                     <tr>
+                                                            <td><input class="installment" id="ins9" @(Model.Advert?.AvailableInstallments.Contains("9") == true ? "checked" : "") type="checkbox" value="9" /> </td>
+                                                            <td class="text-left">9 @installment</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><input class="installment" id="ins12" @(Model.Advert?.AvailableInstallments.Contains("12") == true ? "checked" : "") type="checkbox" value="12" /> </td>
+                                                            <td class="text-left">12 @installment</td>
+                                                        </tr>*@
                                             }
                                             else
                                             {
-                                                <tr>
-                                                    <td><input class="installment" id="ins1" type="checkbox" value="1" /> </td>
-                                                    <td class="text-left">@Localization.Get("Tek Çekim", "One Mount", lang)</td>
-                                                </tr>
+                                                foreach (var insItem in ViewBag.AvailableInstallments.Split(','))
+                                                {
+                                        <tr>
+                                            <td><input class="installment" id="@("ins" + @insItem)" type="checkbox" value="@insItem" /> </td>
+                                            @if (Convert.ToInt16(insItem) > 1)
+                                            {
+                                                <td class="text-left">@insItem  @installment</td>
+                                            }
+                                            else
+                                            {
+                                                <td class="text-left"> @Localization.Get("Tek Çekim", "One Mount", lang)</td>
 
-                                                <tr>
-                                                    <td><input class="installment" id="ins2" type="checkbox" value="2" /> </td>
-                                                    <td class="text-left">2 @installment</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><input class="installment" id="ins3" type="checkbox" value="3" /> </td>
-                                                    <td class="text-left">3 @installment</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><input class="installment" id="ins6" type="checkbox" value="6" /> </td>
-                                                    <td class="text-left">6 @installment</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><input class="installment" id="ins9" type="checkbox" value="9" /> </td>
-                                                    <td class="text-left">9 @installment</td>
-                                                </tr>
-                                                <tr>
-                                                    <td><input class="installment" id="ins12" type="checkbox" value="12" /> </td>
-                                                    <td class="text-left">12 @installment</td>
-                                                </tr>
+                                            }
+                                        </tr>
+                                                }
+                                                @*<tr>
+                                                        <td><input class="installment" id="ins1" type="checkbox" value="1" /> </td>
+                                                        <td class="text-left">@Localization.Get("Tek Çekim", "One Mount", lang)</td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td><input class="installment" id="ins2" type="checkbox" value="2" /> </td>
+                                                        <td class="text-left">2 @installment</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input class="installment" id="ins3" type="checkbox" value="3" /> </td>
+                                                        <td class="text-left">3 @installment</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input class="installment" id="ins6" type="checkbox" value="6" /> </td>
+                                                        <td class="text-left">6 @installment</td>
+                                                    </tr>*@
+                                                @*<tr>
+                                                        <td><input class="installment" id="ins9" type="checkbox" value="9" /> </td>
+                                                        <td class="text-left">9 @installment</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><input class="installment" id="ins12" type="checkbox" value="12" /> </td>
+                                                        <td class="text-left">12 @installment</td>
+                                                    </tr>*@
                                             }
 
                                         </table>
@@ -402,7 +434,7 @@
             </div>
         </div>
     </div>
- 
+
     <!-- Modal -->
 </div>
 <div id="preview" class="preview display-none">
@@ -438,7 +470,7 @@
     <script>
         var selectedPhotos = [];
         var addedPhotosCount = 0;
-        var uploadedFileCount = 0;       
+        var uploadedFileCount = 0;
         Dropzone.prototype.defaultOptions.dictRemoveFile = '@Localization.Get("Resmi Kaldır", "Remove File", lang)';
 
         Dropzone.options.myDropzone = {
@@ -545,8 +577,8 @@
                         function() {
                             // Get the canvas with image data from Cropper.js
                             var canvas = cropper.getCroppedCanvas({
-                                maxWidth: 4096,
-                                maxHeight: 4096,
+                                maxWidth: 2048,
+                                maxHeight: 2048,
                                 fillColor: "#fff"
                             });
                             // Turn the canvas into a Blob (file object without a name)
@@ -562,9 +594,9 @@
                                     function(dataURL) {
 
                                         // Update the Dropzone file thumbnail
-                                        myDropZone.emit('thumbnail', file, dataURL);
+                                        myDropZone.emit('thumbnail', blob, dataURL);
                                         // Return the file to Dropzone
-                                       done(file);
+                                        done(blob);
                                     });
                             });
                             // Remove the editor from the view
@@ -703,8 +735,8 @@
                     //ed.execCommand('mceImage');
                 }
             });
-           
-           
+
+
        })
     </script>
     <script>
@@ -732,7 +764,7 @@
                             method: "POST",
                             data: { price }
                         });
-                        request.done(function(msg) {
+                        request.done(function (msg) {                           
                             $('#prices').html(msg);
                         });
                         request.catch(function() {
@@ -783,13 +815,14 @@
         }
     </script>
     <script>
-        const installments = [1, 2, 3, 6, 9, 12];
+        //const installments = [1, 2, 3, 6, 9, 12];
+        const installments = [@(ViewBag.AvailableInstallments)];       
 
         function installmentChange(installmentCount, isActive) {
-            @*console.log(installmentCount + ' taksit: ' + isActive);*@
-
-            if (isActive) {
+            @*console.log(installmentCount + ' taksit: ' + isActive);*@          
+            if (isActive) {                
                 installments.map(item => {
+                    
                     if (item <= parseInt(installmentCount)) {
                         $('#installmentsChoices').append(`<input type="hidden" name="AvailableInstallments" id="installment_${item}"  value="${item}" />`);
                         $(`#ins${item}`).prop("checked", true);
@@ -827,8 +860,8 @@
                     $("#NeedForPay").effect("shake", { times: 2 }, 500);
                         </text>
                     }
-                   
-                    
+
+
                 }
             });
     </script>
@@ -955,7 +988,7 @@
                 });
                 n.show();
             }
-            function updateMainImage(mainImageId) {                
+            function updateMainImage(mainImageId) {
                 if (mainImageId == null) {
                     notify("error",
                         '@Localization.Get("Mevcut fotoğraflar kısmından bir fotoğraf seçmeniz gerekiyor.",

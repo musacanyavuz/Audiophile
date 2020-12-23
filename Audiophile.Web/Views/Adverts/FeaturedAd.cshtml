@@ -395,7 +395,7 @@
             @if(ViewBag.AdvertPrice != null && ((int)ViewBag.AdvertPrice) > 0)
             {
                 <text>
-            newAdvert = @Model.DopingTypes.Where(x => x.Group == Enums.DopingGroup.YeniIlanEkleme).FirstOrDefault().ID ;
+            newAdvert =  @Model.DopingTypes.Where(x => x.Group == Enums.DopingGroup.YeniIlanEkleme).FirstOrDefault().ID ;
                 </text>
                  
             }
@@ -439,8 +439,7 @@
                 url: '/AddListing/FeaturedAd/' + @Model.Advert.ID,
                 type: 'POST',
                 data: postModel,
-                success: function (data) {
-                    debugger;
+                success: function (data) {                   
                     if (data.isSuccess && data.url != null) {
                         window.location = data.url;
                     }

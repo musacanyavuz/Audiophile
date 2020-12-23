@@ -221,7 +221,7 @@
 
         function save() {
 
-            debugger;
+           
             var postModel = {
                 securePayment: false,               
             };
@@ -252,8 +252,7 @@
                 url: '/AddListing/DoNewAdvertPaytment/' + @Model.Advert.ID,
                 type: 'POST',
                 data: postModel,
-                success: function (data) {
-                    debugger;
+                success: function (data) {                    
                     if (data.isSuccess && data.url != null) {
                         window.location = data.url;
                     }

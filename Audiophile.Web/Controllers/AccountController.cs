@@ -1277,7 +1277,7 @@ namespace Audiophile.Web.Controllers
                 var model = new CommercialAccountViewModel
                 {
                     Buys = sUser.GetBuys(GetLoginID()),
-                    Sales = sUser.GetSales(GetLoginID()),
+                    Sales = sUser.GetSales(GetLoginID()).ToList(),
                     Dopings = sDoping.GetDopingHistory(GetLoginID()),
                     Banners = banners?.Where(x => x.TypeID == Enums.BannerType.Banner).ToList(),
                     LogoBanners = banners?.Where(x => x.TypeID == Enums.BannerType.Logo).ToList(),

@@ -24,13 +24,19 @@ namespace Audiophile.Web.Controllers
 {
     public class AdvertsController : BaseController
     {
+        readonly string availableInstallments = "";
         public IConfiguration Configuration { get; }
         public IHostingEnvironment Env { get; }
-
+       
         public AdvertsController(IConfiguration configuration, IHostingEnvironment env)
         {
+           
             Configuration = configuration;
             Env = env;
+            using (var settingService = new SystemSettingService())
+            {
+                availableInstallments = settingService.GetSetting(Enums.SystemSettingName.AvailableInstallments).Value;
+            }
         }
         #region STEP_1_IlanEkle
         [Authorize]
@@ -40,10 +46,13 @@ namespace Audiophile.Web.Controllers
         [Route("MyAccount/EditListing/{id}")]
         public IActionResult AddListing(int? id) //step1.
         {
+            ViewBag.AvailableInstallments = availableInstallments;//.Split(',').Select(int.Parse).ToList();
             var lang = GetLang();
             using (var userService = new UserService())
             using (var setService = new SystemSettingService())
+            using (var dpoingService = new DopingService())
             using (var service = new AdvertService())
+
             using (var categoryService = new AdvertCategoryService())
             using (var textService = new TextService())
             {
@@ -58,8 +67,9 @@ namespace Audiophile.Web.Controllers
                 bool IsPaymentStepActive = false;
 
                 int bannerCount = userService.GetBannersCount(loginid);
-                IsPaymentStepActive = (service.GetUserAdverts(GetLoginID()).Count >= freeAdvertLimit); // Müşterini max ilan sayısını aşmış ise yeni lan ekeleme ücretli olacak.
-               
+
+                IsPaymentStepActive = ((id == null || id == 0) && service.GetUserAdverts(GetLoginID()).Count >= freeAdvertLimit); // Müşterini max ilan sayısını aşmış ise yeni lan ekeleme ücretli olacak.
+
                 //if (Env.EnvironmentName == "Production")
                 //{
                 //    IsPaymentStepActive = false;
@@ -69,10 +79,10 @@ namespace Audiophile.Web.Controllers
                 //    IsPaymentStepActive = true;
                 //}
                 if (IsPaymentStepActive)
-                    advertPrice = Convert.ToDecimal(settings.SingleOrDefault(x => x.Name == Enums.SystemSettingName.AdvertPublishPrice).Value);
+                    advertPrice = dpoingService.Get(26).Price;
 
                 HttpContext.Session.SetString("IsPaymentStepActive", (IsPaymentStepActive).ToString());
-                
+
                 var model = new AddListingStep1ViewModel()
                 {
                     AdvertCategories = categoryService.GetAll(lang),
@@ -136,7 +146,7 @@ namespace Audiophile.Web.Controllers
                             if (advert.PaymentMethodID == (int)Enums.PaymentMethods.KrediKartiIle
                                 && (AvailableInstallments == null || AvailableInstallments.Length == 0))
                             {
-                                _ad.AvailableInstallments = "1,2,3,6,9,12";
+                                _ad.AvailableInstallments = availableInstallments;
                             }
                             else if (advert.PaymentMethodID == (int)Enums.PaymentMethods.KrediKartiIle)
                             {
@@ -196,7 +206,7 @@ namespace Audiophile.Web.Controllers
                         }
                         if (advert.PaymentMethodID == (int)Enums.PaymentMethods.KrediKartiIle && (AvailableInstallments == null || AvailableInstallments.Length == 0))
                         {
-                            advert.AvailableInstallments = "1,2,3,6,9,12";
+                            advert.AvailableInstallments = availableInstallments;
                         }
                         else if (advert.PaymentMethodID == (int)Enums.PaymentMethods.KrediKartiIle)
                         {
@@ -209,7 +219,7 @@ namespace Audiophile.Web.Controllers
                             return RedirectToAction("AddListing");
                         }
                     }
-                   
+
                     if (advert.UseSecurePayment)
                     {
                         HttpContext.Session.SetString("IsPaymentStepActive", false.ToString()); //
@@ -956,7 +966,8 @@ namespace Audiophile.Web.Controllers
 
             using (var publicService = new PublicService())
             using (var advertService = new AdvertService())
-            using (var setService = new SystemSettingService())         
+            using (var dpoingService = new DopingService())
+            using (var setService = new SystemSettingService())
             using (var textService = new TextService())
             {
                 var advert = advertService.GetAdvert(id);
@@ -971,7 +982,7 @@ namespace Audiophile.Web.Controllers
 
                 if (HttpContext.Session.GetString("IsPaymentStepActive") != null && Convert.ToBoolean(HttpContext.Session.GetString("IsPaymentStepActive")) == true)
                 {
-                    var advertPrice =Convert.ToInt32(settings.Where(x=>x.Name == Enums.SystemSettingName.AdvertPublishPrice).FirstOrDefault().Value);                  
+                    var advertPrice = dpoingService.Get(26).Price;
                     ViewBag.AdvertPrice = advertPrice;
                 }
 
@@ -1787,12 +1798,9 @@ namespace Audiophile.Web.Controllers
             using (var service = new SystemSettingService())
             {
                 var settings = service.GetSystemSettings();
-                var audioPhileCommission = double.Parse(settings
-                    .Single(x => x.Name == Enums.SystemSettingName.AudiophileKomisyonuYuzde).Value);
-                var iyzicoCommission = double.Parse(settings
-                    .Single(x => x.Name == Enums.SystemSettingName.IyzicoKomisyonuYuzde).Value);
-                var iyzicoCommissionTL = double.Parse(settings
-                    .Single(x => x.Name == Enums.SystemSettingName.IyzicoKomisyonuTL).Value); //iyzico sabit TL komisyon
+                var audioPhileCommission = double.Parse(settings.Single(x => x.Name == Enums.SystemSettingName.AudiophileKomisyonuYuzde).Value);
+                var iyzicoCommission = double.Parse(settings.Single(x => x.Name == Enums.SystemSettingName.IyzicoKomisyonuYuzde).Value);
+                var iyzicoCommissionTL = double.Parse(settings.Single(x => x.Name == Enums.SystemSettingName.IyzicoKomisyonuTL).Value); //iyzico sabit TL komisyon
 
                 var list = new List<InstallmentPrice>();
                 foreach (var detail in result.Data.InstallmentDetails)

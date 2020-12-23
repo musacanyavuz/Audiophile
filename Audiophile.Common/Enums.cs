@@ -237,7 +237,8 @@
             AutoTransferDays,
             IletisimFormuMail,
             FreeAdvertPublishLimit,
-            AdvertPublishPrice
+            AdvertPublishPrice,
+            AvailableInstallments
         }
 
         public enum HomePageItemType

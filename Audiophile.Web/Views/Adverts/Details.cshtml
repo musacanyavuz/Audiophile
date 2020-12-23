@@ -128,9 +128,9 @@
                 <div class="tabs-menu-2 w-tab-menu pt-3">
                     @{ index = 1;}
                     @foreach (var photo in Model.Advert?.Photos)
-                    {
-                        <a data-w-tab="Tab @index" class="w--current t1 w-inline-block w-tab-link" title="@Model.Advert.Title">
-                            <img src="@photo.Thumbnail" alt="@Model.Advert.Title" onerror="this.src = '/Content/img/no-image-buyuk.jpg';" class="object-fit-cover">
+                    {                    
+                        <a   data-w-tab="Tab @index" class="w--current t1 w-inline-block w-tab-link" title="@Model.Advert.Title">
+                            <img  src="@photo.Thumbnail" alt="@Model.Advert.Title" onerror="this.src = '/Content/img/no-image-buyuk.jpg';" class="object-fit-cover">
                         </a>
                         index++;
                     }
