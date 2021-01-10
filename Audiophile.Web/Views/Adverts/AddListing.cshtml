@@ -485,7 +485,7 @@
             acceptedFiles: 'image/*',
             addRemoveLinks: true,
             transformFile: function(file, done) {
-
+               
                 if (file.size < 5242880) {
                     // Create Dropzone reference for use in confirm button click handler
                     var myDropZone = this;
@@ -618,7 +618,7 @@
                     });
                 this.on("addedfile",
                     function(file) {
-
+                      
                         if (file.size > 5242880) {
                             @*console.log("Dikkat 10 mb büyük!"); *@
                             //alert("DİKKAT 5 MB DAN BÜYÜK RESİM YÜKLEYEMEZSİNİZ.");

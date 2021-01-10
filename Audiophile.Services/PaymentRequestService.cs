@@ -85,20 +85,36 @@ namespace Audiophile.Services
 
         public List<PaymentRequest> GetWaitingPaymentRequests()
         {
+            var sql = $"select * from \"PaymentRequests\"\nLEFT OUTER JOIN \"Users\" as \"user\" on \"user\".\"ID\"=\"PaymentRequests\".\"UserID\"\n LEFT OUTER JOIN \"Users\" as \"seller\" on \"seller\".\"ID\"=\"PaymentRequests\".\"SellerID\"  " +
+                      //   "\n LEFT OUTER JOIN  \"Adverts\" as \"advert\" on \"advert\".\"ID\" = \"PaymentRequests\".\"AdvertID\" " +
+                         $"where " +
+                         $"\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.Bekleniyor + " or " +
+                         "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.OnlineOdemeYapildi + " or " +
+                         "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.AliciIptalEtti + " or " +
+                         "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.AliciIptalTalebiOlusturdu + " or " +
+                         "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.KargoyaVerildi + " or " +
+                         "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.TeslimEdildi + " or " +
+                         "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.SaticiIptalEtti + " or " +
+                         "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.Reddedildi + " or " +
+                         "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.AliciIptalTalebiOlusturdu + " " +
+                         $"order by \"PaymentRequests\".\"CreatedDate\" desc";
+
+            //using (var multi = GetConnection().QueryMultiple(sql))
+            //{
+            //    var payreqs = multi.Read<PaymentRequest, User, User,Advert, PaymentRequest>(
+            //          (request, user, seller, advert) =>
+            //          {
+            //              request.Advert = advert;
+            //              request.Buyer = user;
+            //              request.Seller = seller;
+            //              return request;
+            //          }, splitOn: "ID").ToList();
+            //    return payreqs;
+            //}
+
             try
             {
-                var sql = $"select * from \"PaymentRequests\"\nLEFT OUTER JOIN \"Users\" as \"user\" on \"user\".\"ID\"=\"PaymentRequests\".\"UserID\"\nLEFT OUTER JOIN \"Users\" as \"seller\" on \"seller\".\"ID\"=\"PaymentRequests\".\"SellerID\"\n" +
-                          $"where " +
-                          $"\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.Bekleniyor + " or " +
-                          "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.OnlineOdemeYapildi + " or " +
-                          "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.AliciIptalEtti + " or " +
-                          "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.AliciIptalTalebiOlusturdu + " or " +
-                          "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.KargoyaVerildi + " or " +
-                          "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.TeslimEdildi + " or " +
-                          "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.SaticiIptalEtti + " or " +
-                          "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.Reddedildi + " or " +
-                          "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.AliciIptalTalebiOlusturdu + " " +
-                          $"order by \"PaymentRequests\".\"CreatedDate\" desc";
+
 
                 var query = GetConnection().Query<PaymentRequest, User, User, PaymentRequest>
                 (sql, (request, user, seller) =>

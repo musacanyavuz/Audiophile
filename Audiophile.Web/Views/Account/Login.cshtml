@@ -73,6 +73,7 @@
                                 <fb:login-button size="large" scope="public_profile,email" onlogin="checkLoginState();">
                                     @Localization.Get("Facebook ile Giriş Yap", "Continue with Facebook", lang)
                                 </fb:login-button>
+                                <div id="fberror" style="color:red; display:none;"> @ViewBag.FacebookLoginError</div>
                             </div>
                             <div class="flex-column d-flex d-md-block mt-3">
                                 <a class="text-right order-2 mt-1 mt-md-0" href="@Constants.GetURL((int)Enums.Routing.UyeOl, lang)">@Localization.Get("Henüz Üye Değilmisiniz", "Register", lang)</a>
@@ -116,10 +117,27 @@
     }
 
     function testAPI() {
-        FB.api('/me', { fields: 'id,name,email,picture.width(180).height(180)' }, function (response) {
-            saveUserData(response);
-        });
-    }
+            var hasError = false;
+            FB.api('/me/permissions', function (response) {
+                var declined = [];
+                for (i = 0; i < response.data.length; i++) {
+                    if (response.data[i].status == 'declined') {
+                        declined.push(response.data[i].permission)
+                    }
+                }
+                if (declined.length > 0) {
+                    $('#fberror').show('slow');
+                    hasError = true;
+                } else {
+                    $('#fberror').hide();
+                }
+                if (!hasError)
+                    FB.api('/me', { fields: 'id,name,email,picture.width(180).height(180)' }, function (response) {
+                        saveUserData(response);
+                    });
+            });
+
+        }
 
 
     function saveUserData(userInfo) {

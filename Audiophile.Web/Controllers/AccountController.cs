@@ -30,13 +30,15 @@ namespace Audiophile.Web.Controllers
 {
     public class AccountController : BaseController
     {
+        string stTr = "Facebook ile giriş işlemi için e-posta erişim izni vermelisiniz ! ";
+        string stEn = "Email address is mandatory to complete login via facebook  !";
         #region Login
 
         [Route("GirisYap")]
         [Route("Login")]
         public IActionResult Login()
         {
-            GetLang();
+            ViewBag.FacebookLoginError = new Localization().Get(stTr, stEn, GetLang());           
             return View();
         }
 

@@ -152,7 +152,21 @@ namespace Audiophile.Web.Areas.AdminPanel.Controllers
                     }
                     catch (Exception e)
                     {
-                        // ignored
+                        using (var logService = new LogServices())
+                        {
+                            logService.Log(new Log
+                            {
+                                Function = "AdvertServie.DeletePublishRequests",
+                                CreatedDate = DateTime.Now,
+                                Message = e.Message,
+                                Detail = e.ToString(),
+                                IsError = true,
+                                Params = "advertId" + id.ToString()
+                            });
+                        }
+
+
+                       
                     }
                 }
                 service.DeletePublishRequests(id);

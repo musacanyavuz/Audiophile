@@ -38,9 +38,10 @@ namespace Audiophile.Models
         public bool BuyerApproval { get; set; }
         public DateTime? BuyerApprovalDate { get; set; }
         public string PaymentTransactionID { get; set; }
-        
+       
         public Advert Advert { get; set; }
         public User Seller { get; set; }
         public User Buyer { get; set; }
+        
     }
 }

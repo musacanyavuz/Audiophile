@@ -434,7 +434,7 @@ namespace Audiophile.Services
         {
             try
             {
-                var sql = "select * from \"PaymentRequests\"\n  left outer join \"Adverts\" on \"PaymentRequests\".\"AdvertID\"=\"Adverts\".\"ID\"\n                left outer join \"Users\" on \"PaymentRequests\".\"SellerID\" = \"Users\".\"ID\"\nwhere \"PaymentRequests\".\"Type\"=@type and \"IsSuccess\"=true\nand \"PaymentRequests\".\"UserID\" = @userId  order by \"PaymentRequests\" desc";
+                var sql = "select * from \"PaymentRequests\"\n  left outer join \"Adverts\" on \"PaymentRequests\".\"AdvertID\"=\"Adverts\".\"ID\"\n                left outer join \"Users\" on \"PaymentRequests\".\"SellerID\" = \"Users\".\"ID\"\nwhere \"PaymentRequests\".\"Type\"=@type and \"IsSuccess\"=true\nand \"PaymentRequests\".\"UserID\" = @userId  order by \"PaymentRequests\" asc";
 
                 var result = GetConnection().Query<PaymentRequest, Advert, User, PaymentRequest>(sql,
                     (request, advert, seller) =>
@@ -456,7 +456,7 @@ namespace Audiophile.Services
         {
             try
             {
-                var sql = "select * from \"PaymentRequests\"\n  left outer join \"Adverts\" on \"PaymentRequests\".\"AdvertID\"=\"Adverts\".\"ID\"                left outer join \"Users\" on \"PaymentRequests\".\"UserID\" = \"Users\".\"ID\" where \"PaymentRequests\".\"Type\"=@type and \"IsSuccess\"=true and \"PaymentRequests\".\"SellerID\" = @userId  order by \"PaymentRequests\" asc";
+                var sql = "select * from \"PaymentRequests\"\n  left outer join \"Adverts\" on \"PaymentRequests\".\"AdvertID\"=\"Adverts\".\"ID\"                left outer join \"Users\" on \"PaymentRequests\".\"UserID\" = \"Users\".\"ID\" where \"PaymentRequests\".\"Type\"=@type and \"IsSuccess\"=true and \"PaymentRequests\".\"SellerID\" = @userId  order by \"PaymentRequests\" desc";
 
                 var result = GetConnection().Query<PaymentRequest, Advert, User, PaymentRequest>(sql,
                     (request, advert, buyer) =>

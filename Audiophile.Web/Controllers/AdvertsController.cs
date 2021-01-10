@@ -67,8 +67,8 @@ namespace Audiophile.Web.Controllers
                 bool IsPaymentStepActive = false;
 
                 int bannerCount = userService.GetBannersCount(loginid);
-
-                IsPaymentStepActive = ((id == null || id == 0) && service.GetUserAdverts(GetLoginID()).Count >= freeAdvertLimit); // Müşterini max ilan sayısını aşmış ise yeni lan ekeleme ücretli olacak.
+                int advCountOfUser = service.GetUserAdverts(GetLoginID()).Count(x=>x.IsDeleted == false);
+                IsPaymentStepActive = ((id == null || id == 0) && advCountOfUser>= freeAdvertLimit); // Müşterini max ilan sayısını aşmış ise yeni lan ekeleme ücretli olacak.
 
                 //if (Env.EnvironmentName == "Production")
                 //{
@@ -488,6 +488,7 @@ namespace Audiophile.Web.Controllers
                         var file = files[index];
                         if (file.Length < 5242880) //10mb
                         {
+                            path = string.Empty;
                             string randomFileName = GetLoginID().ToString() + "_" + (index + 1) + "_" + DateTime.Now.ToShortDateString().Replace(".", "") + DateTime.Now.ToShortTimeString().Replace(":", "");
                             var ext = Path.GetExtension(file.FileName);
                             path = fileService.FileUpload(GetLoginID(), file, "/Upload/Sales/", randomFileName + "" + ext);

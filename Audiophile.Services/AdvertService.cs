@@ -367,7 +367,26 @@ namespace Audiophile.Services
 
         public bool Delete(int id)
         {
-            return GetConnection().Delete(new Advert() { ID = id });
+            try
+            {
+                return GetConnection().Delete(new Advert() { ID = id });
+            }
+            catch (Exception e)
+            {
+
+                Log(new Log
+                {
+                    Function = "AdvertServie.DeletePublishRequests",
+                    CreatedDate = DateTime.Now,
+                    Message = e.Message,
+                    Detail = e.ToString(),
+                    IsError = true,
+                    Params = "advertId" + id.ToString()
+                });
+                return false;
+            }
+
+
         }
 
         public Advert GetMyAdvert(int id, int userId)
@@ -431,7 +450,7 @@ namespace Audiophile.Services
 
 
         public List<Advert> FilterAdverts(int parentCategoryId, int categoryId, string content, string brand,
-            string model, int advertId, int minPrice, int maxPrice, int lang, int userId,int passivFilterStatus)
+            string model, int advertId, int minPrice, int maxPrice, int lang, int userId, int passivFilterStatus)
         {
             try
             {
@@ -463,9 +482,9 @@ namespace Audiophile.Services
                 {
                     list = list.Where(x => x.Price <= maxPrice).ToList();
                 }
-                if(passivFilterStatus ==1)
+                if (passivFilterStatus == 1)
                 {
-                    list = list.Where(x => x.IsActive  == true).ToList();
+                    list = list.Where(x => x.IsActive == true).ToList();
                 }
                 CheckAdvertsIsDraft(ref list);
                 return list;
@@ -490,7 +509,15 @@ namespace Audiophile.Services
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Log(new Log
+                {
+                    Function = "AdvertServie.DeletePublishRequests",
+                    CreatedDate = DateTime.Now,
+                    Message = e.Message,
+                    Detail = e.ToString(),
+                    IsError = true,
+                    Params = "advertId" + advertId.ToString()
+                });
             }
         }
         public void DeactivetePublishRequests(int advertId)
@@ -862,7 +889,7 @@ namespace Audiophile.Services
 
         public List<AdvertDoping> GetadvertDopings(int advertId)
         {
-            string sql = "SELECT * FROM \"AdvertDopings\" AS A INNER JOIN \"DopingTypes\" AS B ON A.\"TypeID\" = B.\"ID\" where A.\"AdvertID\"= " + advertId + " and A.\"IsActive\"= true and A.\"EndDate\" > '" + DateTime.Now + "'"; 
+            string sql = "SELECT * FROM \"AdvertDopings\" AS A INNER JOIN \"DopingTypes\" AS B ON A.\"TypeID\" = B.\"ID\" where A.\"AdvertID\"= " + advertId + " and A.\"IsActive\"= true and A.\"EndDate\" > '" + DateTime.Now + "'";
 
             var advertDopings = GetConnection().Query<AdvertDoping, DopingType, AdvertDoping>(
                     sql,

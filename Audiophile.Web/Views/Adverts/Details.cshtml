@@ -812,7 +812,7 @@
     <meta itemprop="brand" content="@Html.Raw(Model.Advert?.Title?.Length > 20 ? Model.Advert.Title.Substring(0,20).ToString() : Model.Advert.Title) " />
     <meta itemprop="sku" content="Kalem">
     <meta itemprop="category" content="@Model.Advert.CategoryNameTr">
-    <meta itemprop="description" content="@Html.Raw(Model.Advert.Content?.Replace("@","[at]"))" />
+    <meta itemprop="description" content="@Html.Raw(Model.Advert.Title?.Replace("@","[at]"))" />
     <meta itemprop="image" content="@("https://www.audiophile.org/"+Model.Advert.Thumbnail)" />
     <meta itemprop="itemCondition" content="@Model.Advert.ProductDefects" />
     <div itemprop="offers" itemscope itemtype="http://schema.org/Offer" hidden>
