@@ -553,13 +553,19 @@ h2 {
 
 .button, .button.button-main {
     display: block;
-    background-color: #ed0026;
+	 background-color: #da1323;
     -webkit-transform: none;
     -ms-transform: none;
     text-align: center;
     background-image: none;
-    opacity: 1
+    opacity: 1;
+    transition: all .4s;
 }
+
+    .button.button-main:hover {
+        color: #fff;
+        box-shadow: 0px 0px 10px 0px #fff;
+ }
 
 .button {
     width: 189px;
