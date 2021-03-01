@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Audiophile.Models;
 using Dapper;
 using Dapper.FastCrud;
@@ -175,20 +176,26 @@ namespace Audiophile.Services
             
             return query;
         }
-
+        /// <summary>
+        /// Ajax olmayan urlden gelen aramalar.
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
         public int GetAdvertsCount(AdvertCategory category)
         {
             try
             {
-                var sql = " select count(*) from \"Adverts\" where \"CategoryID\"=@categoryID and \"IsActive\"=true ";
+                var sql = " select count(*) from \"Adverts\" where \"CategoryID\"=@categoryID  ";
                 if (category.ParentCategoryID == 0)
                 {
-                    sql = "select count(\"Adverts\".\"ID\") from \"Adverts\",\"AdvertCategories\",\"AdvertCategories\" as \"ParentCategories\" " +
-                          "where \"Adverts\".\"IsActive\"=true " +
-                          "  and \"Adverts\".\"CategoryID\" = \"AdvertCategories\".\"ID\" " +
-                          "  and \"AdvertCategories\".\"ParentCategoryID\" = \"ParentCategories\".\"ID\" " +
-                          " and \"AdvertCategories\".\"ParentCategoryID\" = @categoryID" +
-                          "  and ( \"AdvertCategories\".\"ID\"=@categoryID or \"ParentCategories\".\"ID\" = \"AdvertCategories\".\"ParentCategoryID\" )";
+                    //sql = "select count(\"Adverts\".\"ID\") from \"Adverts\",\"AdvertCategories\",\"AdvertCategories\" as \"ParentCategories\" " +
+                    //      "where \"Adverts\".\"IsActive\"=true " +
+                    //      "  and \"Adverts\".\"CategoryID\" = \"AdvertCategories\".\"ID\" " +
+                    //      "  and \"AdvertCategories\".\"ParentCategoryID\" = \"ParentCategories\".\"ID\" " +
+                    //      " and \"AdvertCategories\".\"ParentCategoryID\" = @categoryID" +
+                    //      "  and ( \"AdvertCategories\".\"ID\"=@categoryID or \"ParentCategories\".\"ID\" = \"AdvertCategories\".\"ParentCategoryID\" )";
+
+                    sql = @"select count(*) from ""Adverts""  where ""CategoryID"" in (select ""ID"" from ""AdvertCategories"" ac   where ""ParentCategoryID"" =@categoryID)";
                 }
                 
                 var count = GetConnection().Query<int>(sql, new {categoryID = category.ID}).SingleOrDefault();

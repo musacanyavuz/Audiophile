@@ -617,8 +617,8 @@
                         formData.append("MainImage", $('input[name="main-image"]:checked').val());
                     });
                 this.on("addedfile",
-                    function(file) {
-                      
+                    function (file) {
+                        debugger;
                         if (file.size > 5242880) {
                             @*console.log("Dikkat 10 mb büyük!"); *@
                             //alert("DİKKAT 5 MB DAN BÜYÜK RESİM YÜKLEYEMEZSİNİZ.");
@@ -634,7 +634,8 @@
                         $(file.previewElement).find('input').val(file.name);
                     });
                 this.on("removedfile",
-                    function(file) {
+                    function (file) {
+                        debugger;
                         var id = parseInt($(file.previewElement).attr("id"));
                         @*console.log("remove it: " + id); *@
                         $(file.previewElement).remove();
@@ -647,6 +648,7 @@
                         @*console.log("success file", file);
                         //console.log("success response", response); *@
                         if (response.isSuccess === true) {
+                            debugger;
                             uploadedFileCount++;
                             @*console.log("add: " + response.id); *@
                             addToSelectedPhotos(response.id);
@@ -672,12 +674,12 @@
 
         };
 
-        function addToSelectedPhotos(id) {
+        function addToSelectedPhotos(id) {           
             selectedPhotos.push(id);
             updatePhotosInput();
         }
 
-        function removeFromSelectedPhotos(id) {
+        function removeFromSelectedPhotos(id) {          
             for (var i = 0; i < selectedPhotos.length; i++) {
                 if (selectedPhotos[i] === id) {
                     selectedPhotos.splice(i, 1);
@@ -687,7 +689,7 @@
         }
 
         function updatePhotosInput() {
-            var result = "";
+            var result = "";           
             for (var i = 0; i < selectedPhotos.length; i++) {
                 result += selectedPhotos[i] + ",";
             }
@@ -741,7 +743,7 @@
     </script>
     <script>
         function getPrices() {
-
+           
             if (parseInt($('input[name="PaymentMethodID"]:checked').val()) ===
                 @((int) Enums.PaymentMethods.KrediKartiIle)) {
                 if ("@Model.CanUseSecurePayment" === "False") {

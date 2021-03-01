@@ -182,7 +182,12 @@ namespace Audiophile.Web.Controllers
                         var resimIdler = SelectedPhotos.Split(",");
                         foreach (var im in resimIdler)
                         {
-                            var resim = service.GetPhoto(int.Parse(im));
+                            if (string.IsNullOrEmpty(im)) continue;
+                            int imgId;
+                            if (!int.TryParse(im, out imgId))
+                                continue;
+                            
+                            var resim = service.GetPhoto(imgId);
                             if (resim != null) continue;
                             Notification = new UiMessage(NotyType.error, "Resim Yüklenmediğinden Dolayı İlan Eklenemedi.",
                                 "Please upload image", lang);
@@ -227,7 +232,7 @@ namespace Audiophile.Web.Controllers
 
                     try
                     {
-                        var imageIds = UpdateNewPhotos(advert.ID, SelectedPhotos);
+                        var imageIds = updateNewPhotos(advert.ID, SelectedPhotos);
                         if (mainImage != 0)
                         {
                             var mainPhoto = service.GetPhoto(mainImage);
@@ -339,7 +344,7 @@ namespace Audiophile.Web.Controllers
 
         }
 
-        private int[] UpdateNewPhotos(int advertId, string selectedPhotos)
+        private int[] updateNewPhotos(int advertId, string selectedPhotos)
         {
             if (string.IsNullOrEmpty(selectedPhotos)) return null;
             var photoIds = selectedPhotos.Split(',');
