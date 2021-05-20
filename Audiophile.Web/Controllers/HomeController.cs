@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Audiophile.Common;
+using Audiophile.Common.Extensions;
 using Audiophile.Models;
 using Audiophile.Services;
 using Audiophile.Web.ViewModels;
@@ -25,6 +26,7 @@ namespace Audiophile.Web.Controllers
 
             using (var advertCategoryService = new AdvertCategoryService())
             using (var blogService = new BlogPostService())
+            using (var textService = new TextService())
             using (var bannerService = new BannerService())
             using (var service = new AdvertService())
             {
@@ -41,8 +43,18 @@ namespace Audiophile.Web.Controllers
                     Banners = banners,
                     HomepageSplitBanners = homepageSplitBanners,
                     //HomepageBottomAd = homepageBottomAd,
-                    Items = MergeAdsBlogs(adverts, posts, lang, true)
+                    Items = MergeAdsBlogs(adverts, posts, lang, true),
+                    SeoValues = new SeoKeys
+                    {
+                        Title = textService.GetText(Enums.Texts.AnasayfaKapakBaslik, lang).RemoveHtmlTags(),
+                        Description = textService.GetText(Enums.Texts.AnasayfaKapakBaslik, lang),
+                        Keywords = textService.GetText(Enums.Texts.AnasayfaKapakBaslik, lang),
+                        Separator = textService.GetText(Enums.Texts.AnasayfaKapakBaslik, lang)
+                    }
+                   
                 };
+                
+
                 return View(model);
             }
         }

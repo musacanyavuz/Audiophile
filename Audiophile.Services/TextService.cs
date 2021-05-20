@@ -96,7 +96,11 @@ namespace Audiophile.Services
         { 
             return GetText((int) key, lang);
         }
-        
+        public string GetTextWithoutHtml(Enums.Texts key, int lang)
+        {
+            return GetText((int)key, lang);
+        }
+
         public string GetText(int key, int language)
         {   
             var text = GetConnection().Find<Content>(s => s
@@ -151,5 +155,8 @@ namespace Audiophile.Services
                 return null;
             }
         }
+
+
+        
     }
 }

@@ -1,7 +1,7 @@
 ﻿@model HomePageViewModel
 @{
     var lang = Constants.GetLang(Context.Session.GetString("lang"));
-    ViewData["Title"] = Localization.Get("Satılık Hoparlör, Amfi, Sıfır, İkinci El Ses Sistemleri ", "Electronic Musical Instruments Trading Site", lang);
+    ViewData["Title"] = Model.SeoValues.Title;// Localization.Get("Satılık Hoparlör, Amfi, Sıfır, İkinci El Ses Sistemleri ", "Electronic Musical Instruments Trading Site", lang);
     ViewBag.SeoDescription = "Audiophile Sahibinden Satılık Hi-Fi Müzik Seti, Müzik Sistemi, Amfi, Hoparlör, Müzik Tesisatı Yeni, İkinci El Müzik Tesisatı, Ev Sineması, Kolon, CD Player";
     Layout = "_Layout";
 }

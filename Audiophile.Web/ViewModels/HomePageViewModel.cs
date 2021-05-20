@@ -11,5 +11,7 @@ namespace Audiophile.Web.ViewModels
         public List<Banner> HomepageSplitBanners { get; set; }
         public Banner HomepageBottomAd { get; set; }
         public List<HomePageItem> Items { get; set; }
+
+        public SeoKeys SeoValues { get; set; }
     }
 }
