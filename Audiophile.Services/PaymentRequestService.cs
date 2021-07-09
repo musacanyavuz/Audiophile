@@ -20,7 +20,7 @@ namespace Audiophile.Services
         {
             try
             {
-                var sql = $"select * from \"PaymentRequests\"\nleft outer join \"Adverts\" on \"PaymentRequests\".\"AdvertID\"=\"Adverts\".\"ID\"\nleft outer join  \"Users\" as \"Buyer\" on \"PaymentRequests\".\"UserID\"=\"Buyer\".\"ID\"\nleft outer join \"Users\" as \"Seller\" on \"PaymentRequests\".\"SellerID\"=\"Seller\".\"ID\"\nwhere \"PaymentRequests\".\"ID\" = @id";
+                var sql = $"select * from PaymentRequests\nleft outer join Adverts on PaymentRequests.AdvertID=Adverts.ID\nleft outer join  Users as Buyer on PaymentRequests.UserID=Buyer.ID\nleft outer join Users as Seller on PaymentRequests.SellerID=Seller.ID\nwhere PaymentRequests.ID = @id";
                 return GetConnection().Query<PaymentRequest, Advert, User, User, PaymentRequest>(sql,
                     (pr, ad, buyer, seller) =>
                     {
@@ -41,7 +41,7 @@ namespace Audiophile.Services
         {
             try
             {
-                var sql = $"select * from \"PaymentRequests\"\nleft outer join \"Adverts\" on \"PaymentRequests\".\"AdvertID\"=\"Adverts\".\"ID\"\nleft outer join  \"Users\" as \"Buyer\" on \"PaymentRequests\".\"UserID\"=\"Buyer\".\"ID\"\nleft outer join \"Users\" as \"Seller\" on \"PaymentRequests\".\"SellerID\"=\"Seller\".\"ID\"";
+                var sql = $"select * from PaymentRequests\nleft outer join Adverts on PaymentRequests.AdvertID=Adverts.ID\nleft outer join  Users as Buyer on PaymentRequests.UserID=Buyer.ID\nleft outer join Users as Seller on PaymentRequests.SellerID=Seller.ID";
                 return GetConnection().Query<PaymentRequest, Advert, User, User, PaymentRequest>(sql,
                         (pr, ad, buyer, seller) =>
                         {
@@ -85,19 +85,19 @@ namespace Audiophile.Services
 
         public List<PaymentRequest> GetWaitingPaymentRequests()
         {
-            var sql = $"select * from \"PaymentRequests\"\nLEFT OUTER JOIN \"Users\" as \"user\" on \"user\".\"ID\"=\"PaymentRequests\".\"UserID\"\n LEFT OUTER JOIN \"Users\" as \"seller\" on \"seller\".\"ID\"=\"PaymentRequests\".\"SellerID\"  " +
-                      //   "\n LEFT OUTER JOIN  \"Adverts\" as \"advert\" on \"advert\".\"ID\" = \"PaymentRequests\".\"AdvertID\" " +
+            var sql = $"select * from PaymentRequests\nLEFT OUTER JOIN Users as user on user.ID=PaymentRequests.UserID\n LEFT OUTER JOIN Users as seller on seller.ID=PaymentRequests.SellerID  " +
+                      //   "\n LEFT OUTER JOIN  Adverts as advert on advert.ID = PaymentRequests.AdvertID " +
                          $"where " +
-                         $"\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.Bekleniyor + " or " +
-                         "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.OnlineOdemeYapildi + " or " +
-                         "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.AliciIptalEtti + " or " +
-                         "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.AliciIptalTalebiOlusturdu + " or " +
-                         "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.KargoyaVerildi + " or " +
-                         "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.TeslimEdildi + " or " +
-                         "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.SaticiIptalEtti + " or " +
-                         "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.Reddedildi + " or " +
-                         "\"PaymentRequests\".\"Status\"=" + (int)Enums.PaymentRequestStatus.AliciIptalTalebiOlusturdu + " " +
-                         $"order by \"PaymentRequests\".\"CreatedDate\" desc";
+                         $"PaymentRequests.Status=" + (int)Enums.PaymentRequestStatus.Bekleniyor + " or " +
+                         "PaymentRequests.Status=" + (int)Enums.PaymentRequestStatus.OnlineOdemeYapildi + " or " +
+                         "PaymentRequests.Status=" + (int)Enums.PaymentRequestStatus.AliciIptalEtti + " or " +
+                         "PaymentRequests.Status=" + (int)Enums.PaymentRequestStatus.AliciIptalTalebiOlusturdu + " or " +
+                         "PaymentRequests.Status=" + (int)Enums.PaymentRequestStatus.KargoyaVerildi + " or " +
+                         "PaymentRequests.Status=" + (int)Enums.PaymentRequestStatus.TeslimEdildi + " or " +
+                         "PaymentRequests.Status=" + (int)Enums.PaymentRequestStatus.SaticiIptalEtti + " or " +
+                         "PaymentRequests.Status=" + (int)Enums.PaymentRequestStatus.Reddedildi + " or " +
+                         "PaymentRequests.Status=" + (int)Enums.PaymentRequestStatus.AliciIptalTalebiOlusturdu + " " +
+                         $"order by PaymentRequests.CreatedDate desc";
 
             //using (var multi = GetConnection().QueryMultiple(sql))
             //{
@@ -142,18 +142,18 @@ namespace Audiophile.Services
         {
             //Enums.PaymentRequestStatus.KargoyaVerildi
 
-            var sql = $"select * from \"PaymentRequests\"\nwhere\n\"Status\"= " + (int)Enums.PaymentRequestStatus.KargoyaVerildi + "\nAND DATE_PART('day', now() - \"CargoDate\") >= " + days + "\nAND \"IsSuccess\" = true";
+            var sql = $"select * from PaymentRequests\nwhere\nStatus= " + (int)Enums.PaymentRequestStatus.KargoyaVerildi + "\nAND DATE_PART('day', now() - CargoDate) >= " + days + "\nAND IsSuccess = true";
             var query = GetConnection().Query<PaymentRequest>(sql).ToList();
             return query;
         }
 
         public List<PaymentRequest> GetNotificationAutoTransferOrders(int days)
         {
-            var sql = $"select * from \"PaymentRequests\", \"Users\" " +
+            var sql = $"select * from PaymentRequests, Users " +
                       $"where " +
-                      $" \"Status\"= " + (int)Enums.PaymentRequestStatus.KargoyaVerildi + "\nAND DATE_PART('day', now() - \"CargoDate\") = " + days + "\n " +
-                      "AND \"PaymentRequests\".\"UserID\"=\"Users\".\"ID\" " +
-                      "AND \"IsSuccess\" = true";
+                      $" Status= " + (int)Enums.PaymentRequestStatus.KargoyaVerildi + "\nAND DATE_PART('day', now() - CargoDate) = " + days + "\n " +
+                      "AND PaymentRequests.UserID=Users.ID " +
+                      "AND IsSuccess = true";
             var query = GetConnection().Query<PaymentRequest, User, PaymentRequest>(sql, (request, user) =>
             {
                 request.Buyer = user;

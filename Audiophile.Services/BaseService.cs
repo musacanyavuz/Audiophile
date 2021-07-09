@@ -2,13 +2,14 @@
 using Audiophile.Models;
 using Dapper.FastCrud;
 using Microsoft.Extensions.Configuration;
+using MySql.Data.MySqlClient;
 using Npgsql;
 
 namespace Audiophile.Services
 {
     public class BaseService : IDisposable
     {
-        private NpgsqlConnection connection;
+        private MySqlConnection connection;
         // private string connectionString = "";
 
 
@@ -19,16 +20,16 @@ namespace Audiophile.Services
         public BaseService()
         {
            connectionString = AppConfiguration.GetConnectionString();
-            connection = new NpgsqlConnection(connectionString);
+            connection = new MySqlConnection(connectionString);
         }
        
 
-        public NpgsqlConnection GetConnection()
+        public MySqlConnection GetConnection()
         {
-            OrmConfiguration.DefaultDialect = SqlDialect.PostgreSql;
+            OrmConfiguration.DefaultDialect = SqlDialect.MySql;
             if (connection != null)
                 return connection;
-            connection = new NpgsqlConnection(connectionString);
+            connection = new MySqlConnection(connectionString);
             return connection;
         }
 

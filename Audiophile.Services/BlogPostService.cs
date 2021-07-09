@@ -42,7 +42,7 @@ namespace Audiophile.Services
         {
             try
             {
-                GetConnection().Execute($"update \"BlogPosts\" set \"ViewCount\" = \"ViewCount\" + 1 where \"ID\" = @id",
+                GetConnection().Execute($"update BlogPosts set ViewCount = ViewCount + 1 where ID = @id",
                     new { id });
             }
             catch (Exception e)
@@ -163,13 +163,13 @@ namespace Audiophile.Services
             {
                 if (dopingFilter)
                 {
-                    return GetConnection().Query<int>("select count(*) from \"BlogPosts\" where " +
-                                                      " \"DopingEndDate\" > now() " +
-                                                      "and \"IsActive\"=true and \"CategoryID\"=@categoryId", new { categoryId })
+                    return GetConnection().Query<int>("select count(*) from BlogPosts where " +
+                                                      " DopingEndDate > now() " +
+                                                      "and IsActive=true and CategoryID=@categoryId", new { categoryId })
                         .SingleOrDefault();
                 }
-                return GetConnection().Query<int>("select count(*) from \"BlogPosts\" where " +
-                                           "\"IsActive\"=true and \"CategoryID\"=@categoryId", new { categoryId })
+                return GetConnection().Query<int>("select count(*) from BlogPosts where " +
+                                           "IsActive=true and CategoryID=@categoryId", new { categoryId })
                     .SingleOrDefault();
             }
             catch (Exception e)
@@ -264,7 +264,7 @@ namespace Audiophile.Services
         {
             try
             {
-                var counts = GetConnection().Execute($"DELETE FROM \"BlogPostImages\"  WHERE \"PostID\"=@postId",
+                var counts = GetConnection().Execute($"DELETE FROM BlogPostImages  WHERE PostID=@postId",
                     new { postId });
                 return counts;
             }

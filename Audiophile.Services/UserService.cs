@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Audiophile.Common;
 using Audiophile.Models;
@@ -20,12 +21,12 @@ namespace Audiophile.Services
 
         public List<User> GetList(string search, int count, int offset)
         {
-            var sql = $"select * from \"Users\" order by \"ID\" desc limit @count offset @offset";
+            var sql = $"select * from Users order by ID desc limit @count offset @offset";
             if (!string.IsNullOrEmpty(search))
             {
-                sql = $"select * from \"Users\" " +
-                      $"where \"UserName\" ilike @search or \"Email\" ilike @search or \"MobilePhone\" ilike @search\nor \"Name\" ilike @search or cast(\"ID\" as varchar) ilike @search  " +
-                      $"order by \"ID\" desc limit @count offset @offset";
+                sql = $"select * from Users " +
+                      $"where UserName ilike @search or Email ilike @search or MobilePhone ilike @search\nor Name ilike @search or cast(ID as varchar) ilike @search  " +
+                      $"order by ID desc limit @count offset @offset";
             }
             return GetConnection().Query<User>(sql, new { search = "%" + search + "%", count, offset }).ToList();
         }
@@ -34,11 +35,11 @@ namespace Audiophile.Services
         {
             if (string.IsNullOrEmpty(search))
             {
-                return GetConnection().Query<int>($"select count(*) from \"Users\" ").First();
+                return GetConnection().Query<int>($"select count(*) from Users ").First();
             }
 
-            var sql = $"select count(*) from \"Users\" " +
-                      $"where \"UserName\" ilike @search or \"Email\" ilike @search or \"MobilePhone\" ilike @search\nor \"Name\" ilike @search or cast(\"ID\" as varchar) ilike @search  ";
+            var sql = $"select count(*) from Users " +
+                      $"where UserName ilike @search or Email ilike @search or MobilePhone ilike @search\nor Name ilike @search or cast(ID as varchar) ilike @search  ";
             var count = GetConnection().Query<int>(sql, new { search = "%" + search + "%" }).First();
             return count;
         }
@@ -69,7 +70,7 @@ namespace Audiophile.Services
         {
             try
             {
-                var sql = $"select * from \"Users\"\nleft outer join \"Countries\" on \"CountryID\" = \"Countries\".\"ID\"\nleft outer join \"Cities\" on \"CityID\" = \"Cities\".\"ID\"\nleft outer join \"Districts\" on \"DistrictID\" = \"Districts\".\"ID\"\nwhere \"Users\".\"ID\" = @id";
+                var sql = $"select * from Users\nleft outer join Countries on CountryID = Countries.ID\nleft outer join Cities on CityID = Cities.ID\nleft outer join Districts on DistrictID = Districts.ID\nwhere Users.ID = @id";
                 return GetConnection().Query<User, Country, City, District, User>(sql,
                     (user, country, city, district) =>
                     {
@@ -90,7 +91,7 @@ namespace Audiophile.Services
         {
             try
             {
-                var sql = $"select * from \"Users\"\nwhere (lower(\"Email\") = lower(@userName) or lower(\"UserName\") = lower(@userName))\nand \"Password\" = @password";
+                var sql = $"select * from Users\nwhere (lower(Email) = lower(@userName) or lower(UserName) = lower(@userName))\nand Password = @password";
                 return GetConnection().Query<User>(sql, new
                 {
                     userName,
@@ -114,8 +115,8 @@ namespace Audiophile.Services
 
         public User Get(string userNameOrEmail)
         {
-            const string sql = "select * from \"Users\" where lower(\"UserName\") = lower(@userNameOrEmail) " +
-                               "or lower(\"Email\") = lower(@userNameOrEmail) ";
+            const string sql = "select * from Users where lower(UserName) = lower(@userNameOrEmail) " +
+                               "or lower(Email) = lower(@userNameOrEmail) ";
             try
             {
                 return GetConnection().Query<User>(sql, new
@@ -165,7 +166,7 @@ namespace Audiophile.Services
         {
             try
             {
-                var sql = $"select * from \"Users\" where \"OAuth_Provider\" = @oauth_provider and \"OAuth_Uid\" = @oauth_id";
+                var sql = $"select * from Users where OAuth_Provider = @oauth_provider and OAuth_Uid = @oauth_id";
                 return GetConnection().Query<User>(sql, new
                 {
                     oauth_provider,
@@ -213,7 +214,7 @@ namespace Audiophile.Services
         {
             if (string.IsNullOrEmpty(email))
                 return false;
-            const string sql = "select * from \"Users\" where lower(\"Email\")= lower(@email) and \"ID\"<>@userId ";
+            const string sql = "select * from Users where lower(Email)= lower(@email) and ID<>@userId ";
             return GetConnection().Query<User>(sql, new { email, userId }).ToList().Count == 0;
         }
 
@@ -221,7 +222,7 @@ namespace Audiophile.Services
         {
             if (string.IsNullOrEmpty(username))
                 return false;
-            const string sql = "select * from \"Users\" where lower(\"UserName\")= lower(@username) and \"ID\"<>@userId ";
+            const string sql = "select * from Users where lower(UserName)= lower(@username) and ID<>@userId ";
             return GetConnection().Query<User>(sql, new { username, userId }).ToList().Count == 0;
         }
 
@@ -234,7 +235,7 @@ namespace Audiophile.Services
         {
             try
             {
-                var sql = $"select * from \"UserAddresses\"\nleft outer join \"Countries\" on \"UserAddresses\".\"CountryID\"=\"Countries\".\"ID\"\nleft outer join \"Cities\" on \"UserAddresses\".\"CityID\"=\"Cities\".\"ID\"\nleft outer join \"Districts\" on \"UserAddresses\".\"DistrictID\"=\"Districts\".\"ID\"\nwhere \"UserAddresses\".\"UserID\"=@userId";
+                var sql = $"select * from UserAddresses\nleft outer join Countries on UserAddresses.CountryID=Countries.ID\nleft outer join Cities on UserAddresses.CityID=Cities.ID\nleft outer join Districts on UserAddresses.DistrictID=Districts.ID\nwhere UserAddresses.UserID=@userId";
                 return GetConnection().Query<UserAddress, Country, City, District, UserAddress>(sql,
                     (address, country, city, district) =>
                 {
@@ -254,7 +255,7 @@ namespace Audiophile.Services
         {
             try
             {
-                var sql = $"select * from \"UserAddresses\"\nleft outer join \"Countries\" on \"UserAddresses\".\"CountryID\"=\"Countries\".\"ID\"\nleft outer join \"Cities\" on \"UserAddresses\".\"CityID\"=\"Cities\".\"ID\"\nleft outer join \"Districts\" on \"UserAddresses\".\"DistrictID\"=\"Districts\".\"ID\"\nwhere \"UserAddresses\".\"ID\"=@addressId";
+                var sql = $"select * from UserAddresses\nleft outer join Countries on UserAddresses.CountryID=Countries.ID\nleft outer join Cities on UserAddresses.CityID=Cities.ID\nleft outer join Districts on UserAddresses.DistrictID=Districts.ID\nwhere UserAddresses.ID=@addressId";
                 return GetConnection().Query<UserAddress, Country, City, District, UserAddress>(sql,
                     (address, country, city, district) =>
                 {
@@ -299,7 +300,7 @@ namespace Audiophile.Services
         {
             try
             {
-                var sql = "delete from \"UserAddresses\" where \"UserID\"=@userId and \"ID\"=@addressId ";
+                var sql = "delete from UserAddresses where UserID=@userId and ID=@addressId ";
                 return GetConnection().Execute(sql, new { userId, addressId }) > 0;
             }
             catch (Exception e)
@@ -316,7 +317,7 @@ namespace Audiophile.Services
         {
             try
             {
-                var sql = "select * from \"UserSecurePaymentDetails\" where \"UserID\"=@userId";
+                var sql = "select * from UserSecurePaymentDetails where UserID=@userId";
                 return GetConnection().Query<UserSecurePaymentDetail>(sql, new { userId }).SingleOrDefault();
             }
             catch (Exception e)
@@ -376,7 +377,7 @@ namespace Audiophile.Services
         {
             try
             {
-                return GetConnection().Query<int>("SELECT COUNT (*) FROM \"AdvertLikes\" where \"UserID\"=@userId", new { userId }).FirstOrDefault();
+                return GetConnection().Query<int>("SELECT COUNT (*) FROM AdvertLikes where UserID=@userId", new { userId }).FirstOrDefault();
             }
             catch (Exception)
             {
@@ -387,22 +388,22 @@ namespace Audiophile.Services
         public int GetAdvertsCount(int userId)
         {
             return GetConnection()
-                .Query<int>("SELECT COUNT(*) FROM \"Adverts\" where \"IsActive\" ='true' and \"UserID\" =@userId",
+                .Query<int>("SELECT COUNT(*) FROM Adverts where IsActive ='true' and UserID =@userId",
                     new { userId }).FirstOrDefault();
         }
 
         public int GetBlogPostsCount(int userId)
         {
-            return GetConnection().Query<int>("SELECT COUNT(*) FROM \"BlogPosts\" WHERE \"IsActive\" ='true' and  \"UserID\" = @userId AND \"CategoryID\" IN (1,2)", new{userId}).FirstOrDefault();
+            return GetConnection().Query<int>("SELECT COUNT(*) FROM BlogPosts WHERE IsActive ='true' and  UserID = @userId AND CategoryID IN (1,2)", new{userId}).FirstOrDefault();
         }
 
         public int GetArticlesCount(int userId)
         {
-            return GetConnection().Query<int>("SELECT COUNT(*) FROM \"BlogPosts\" WHERE \"IsActive\" ='true' and  \"UserID\" = @userId AND \"CategoryID\" IN (3,4)", new { userId }).FirstOrDefault();
+            return GetConnection().Query<int>("SELECT COUNT(*) FROM BlogPosts WHERE IsActive ='true' and  UserID = @userId AND CategoryID IN (3,4)", new { userId }).FirstOrDefault();
         }
         public int GetBannersCount(int userId)
         {
-            return GetConnection().Query<int>("SELECT COUNT(*) FROM \"Banners\" WHERE \"IsActive\" ='true' and \"UserID\" = @userId", new { userId }).FirstOrDefault();
+            return GetConnection().Query<int>("SELECT COUNT(*) FROM Banners WHERE IsActive ='true' and UserID = @userId", new { userId }).FirstOrDefault();
         }
         public AdvertLike GetAdvertLike(int id)
         {
@@ -434,7 +435,7 @@ namespace Audiophile.Services
         {
             try
             {
-                var sql = "select * from \"PaymentRequests\"\n  left outer join \"Adverts\" on \"PaymentRequests\".\"AdvertID\"=\"Adverts\".\"ID\"\n                left outer join \"Users\" on \"PaymentRequests\".\"SellerID\" = \"Users\".\"ID\"\nwhere \"PaymentRequests\".\"Type\"=@type and \"IsSuccess\"=true\nand \"PaymentRequests\".\"UserID\" = @userId  order by \"PaymentRequests\" asc";
+                var sql = "select * from PaymentRequests\n  left outer join Adverts on PaymentRequests.AdvertID=Adverts.ID\n                left outer join Users on PaymentRequests.SellerID = Users.ID\nwhere PaymentRequests.Type=@type and IsSuccess=true\nand PaymentRequests.UserID = @userId  order by PaymentRequests asc";
 
                 var result = GetConnection().Query<PaymentRequest, Advert, User, PaymentRequest>(sql,
                     (request, advert, seller) =>
@@ -456,7 +457,7 @@ namespace Audiophile.Services
         {
             try
             {
-                var sql = "select * from \"PaymentRequests\"\n  left outer join \"Adverts\" on \"PaymentRequests\".\"AdvertID\"=\"Adverts\".\"ID\"                left outer join \"Users\" on \"PaymentRequests\".\"UserID\" = \"Users\".\"ID\" where \"PaymentRequests\".\"Type\"=@type and \"IsSuccess\"=true and \"PaymentRequests\".\"SellerID\" = @userId  order by \"PaymentRequests\" desc";
+                var sql = "select * from PaymentRequests\n  left outer join Adverts on PaymentRequests.AdvertID=Adverts.ID                left outer join Users on PaymentRequests.UserID = Users.ID where PaymentRequests.Type=@type and IsSuccess=true and PaymentRequests.SellerID = @userId  order by PaymentRequests desc";
 
                 var result = GetConnection().Query<PaymentRequest, Advert, User, PaymentRequest>(sql,
                     (request, advert, buyer) =>
@@ -478,11 +479,11 @@ namespace Audiophile.Services
         {
             try
             {
-                var sql = "select * from \"PaymentRequests\"\n  left outer join \"Adverts\" on " +
-                          "\"PaymentRequests\".\"AdvertID\"=\"Adverts\".\"ID\"                " +
-                          "left outer join \"Users\" on \"PaymentRequests\".\"UserID\" = \"Users\".\"ID\" where " +
-                          "\"PaymentRequests\".\"Type\"=@type and \"IsSuccess\"=true " +
-                          "and \"PaymentRequests\".\"SellerID\" = @userId and \"PaymentRequests\".\"ID\"=@id ";
+                var sql = "select * from PaymentRequests\n  left outer join Adverts on " +
+                          "PaymentRequests.AdvertID=Adverts.ID                " +
+                          "left outer join Users on PaymentRequests.UserID = Users.ID where " +
+                          "PaymentRequests.Type=@type and IsSuccess=true " +
+                          "and PaymentRequests.SellerID = @userId and PaymentRequests.ID=@id ";
 
                 return GetConnection().Query<PaymentRequest, Advert, User, PaymentRequest>(sql,
                     (request, advert, buyer) =>
@@ -510,13 +511,13 @@ namespace Audiophile.Services
             try
             {
                 GetConnection().Open();
-                NpgsqlTransaction trans = GetConnection().BeginTransaction();
+                IDbTransaction trans = GetConnection().BeginTransaction();
 
-                GetConnection().Execute(" insert into \"Users\" " +
-                "(\"ID\", \"UserName\", \"Name\", \"Email\", \"GenderID\", \"Password\", \"IsActive\", \"LastLoginDate\", " +
-                " \"MobilePhone\", \"WorkPhone\", \"BirthDate\", \"WebSite\", \"About\", \"LanguageID\", " +
-                " \"CreatedDate\", \"InMailing\", \"ProfilePicture\", \"TC\", \"CityID\", \"DistrictID\"," +
-                " \"CountryID\", \"Role\" " +
+                GetConnection().Execute(" insert into Users " +
+                "(ID, UserName, Name, Email, GenderID, Password, IsActive, LastLoginDate, " +
+                " MobilePhone, WorkPhone, BirthDate, WebSite, About, LanguageID, " +
+                " CreatedDate, InMailing, ProfilePicture, TC, CityID, DistrictID," +
+                " CountryID, Role " +
                 ") " +
                 "values( @ID, @UserName, @Name, @Email, @GenderID, @Password, @IsActive, @LastLoginDate, " +
                 "@MobilePhone, @WorkPhone, @BirthDate, @WebSite, @About, @LanguageID, @CreatedDate, @InMailing, " +

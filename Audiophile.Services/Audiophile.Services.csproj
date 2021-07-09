@@ -13,6 +13,7 @@
       <Version>4.3.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.1" />
+    <PackageReference Include="MySql.Data" Version="8.0.25" />
     <PackageReference Include="Npgsql">
       <Version>4.0.3</Version>
     </PackageReference>

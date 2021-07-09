@@ -54,7 +54,7 @@ namespace Audiophile.Services
             try
             {
                 var sql = 
-                    $"UPDATE \"Contents\" set \"TextContent\"=@content where \"Key\"=@key and \"LanguageID\"=@lang";
+                    $"UPDATE Contents set TextContent=@content where Key=@key and LanguageID=@lang";
                 var count = GetConnection().Execute(sql, new {content, key, lang});
                 return count > 0;
             }
@@ -82,7 +82,7 @@ namespace Audiophile.Services
         {
             try
             {
-                var sql = $"select max(\"Key\")+1 as \"Max\" from \"Contents\"";
+                var sql = $"select max(Key)+1 as Max from Contents";
                 var next = GetConnection().Query<int>(sql).SingleOrDefault();
                 if (next > 0)
                     return next;
@@ -139,9 +139,9 @@ namespace Audiophile.Services
             try
             {
                 var sql = "select * from ( "+
-                    "select *, (select \"GetText\"(\"TitleID\", @lang)) as \"Title\", (select \"GetText\"(\"ContentID\", @lang)) as \"Content\" " +
-                    "from \"ContentArrays\" where \"TypeID\" = @typeId "+
-                    ") as tbl where \"Content\" is not null";
+                    "select *, (select GetText(TitleID, @lang)) as Title, (select GetText(ContentID, @lang)) as Content " +
+                    "from ContentArrays where TypeID = @typeId "+
+                    ") as tbl where Content is not null";
                 var list = GetConnection().Query<ContentArray>(sql, new {typeId, lang}).ToList();
                 return list;
             }

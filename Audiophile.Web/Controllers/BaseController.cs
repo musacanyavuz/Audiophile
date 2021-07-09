@@ -152,7 +152,10 @@ namespace Audiophile.Web.Controllers
 
         public List<HomePageItem> Ads2HomePageItems(List<Advert> ads, int lang)
         {
+           
             var result = new List<HomePageItem>();
+            if (ads == null)
+                return result;
             foreach (var ad in ads)
             {
                 result.Add(Ad2HomePageItem(ad, lang));
