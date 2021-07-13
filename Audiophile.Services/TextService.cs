@@ -149,7 +149,7 @@ namespace Audiophile.Services
             {
                 Log(new Log
                 {
-                    Function = "TextService.GetContentArray", CreatedDate = DateTime.Now, Message = e.Message, Detail = e.InnerException?.Message,
+                    Function = "TextService.GetContentArray", CreatedDate = DateTime.Now, Message = e.Message, Detail = e.ToString(),
                     IsError = true, Params = typeId.ToString() + " "+lang.ToString() 
                 });
                 return null;

@@ -640,10 +640,10 @@ namespace Audiophile.Services
                       $" Users.* " +
                       $" from Adverts, Users " +
                       $"where UserID=Users.ID and (" +
-                      $"Title ilike @search or Content ilike @search or Brand ilike @search\nor " +
-                      $" (select GetText((select NameID from AdvertCategories where ID = Adverts.CategoryID), 1 )) ilike @search  or " +
-                      $" Users.Name ilike @search or " +
-                      $"cast(Adverts.ID as varchar) ilike @search ) " +
+                      $"Title like @search or Content like @search or Brand like @search\nor " +
+                      $" (select GetText((select NameID from AdvertCategories where ID = Adverts.CategoryID), 1 )) like @search  or " +
+                      $" Users.Name like @search or " +
+                      $"cast(Adverts.ID as varchar) like @search ) " +
                       $"order by Adverts.ID desc limit @count offset @offset";
             }
             var list = GetConnection().Query<Advert, User, Advert>(sql, (advert, user) =>
@@ -663,7 +663,7 @@ namespace Audiophile.Services
                 return GetConnection().Query<int>($"select count(*) from Adverts, Users where UserID=Users.ID").First();
             }
 
-            var sql = $"select count(Adverts.ID)\nfrom Adverts\nwhere\n  Title ilike @search\n  or Content ilike @search\n  or Brand ilike @search\n  or  (select GetText((select NameID from AdvertCategories where ID = Adverts.CategoryID), 1 )) ilike @search\n  or (select Name from Users where Users.ID=UserID) ilike @search\n  or cast(Adverts.ID as varchar) ilike @search";
+            var sql = $"select count(Adverts.ID)\nfrom Adverts\nwhere\n  Title like @search\n  or Content like @search\n  or Brand like @search\n  or  (select GetText((select NameID from AdvertCategories where ID = Adverts.CategoryID), 1 )) like @search\n  or (select Name from Users where Users.ID=UserID) like @search\n  or cast(Adverts.ID as varchar) like @search";
             var count = GetConnection().Query<int>(sql, new { search = "%" + search + "%" }).First();
             return count;
         }
@@ -673,7 +673,9 @@ namespace Audiophile.Services
             try
             {
                 var sql =
-                    "SELECT ( SELECT GetOrderFromDopingInHomepage((Adverts.ID)) AS GetOrderFromDopingInHomepage) AS AdvertOrder,\n       Adverts.*,    ( SELECT count(*) AS count           FROM AdvertLikes          WHERE (AdvertLikes.AdvertID = Adverts.ID)) AS LikesCount,\n       ( SELECT GetLabelDoping((Adverts.ID)) AS GetLabelDoping) AS LabelDoping,\n       ( SELECT GetYellowFrameDoping((Adverts.ID)) AS GetYellowFrameDoping) AS YellowFrameDoping,\n       ( SELECT IsILiked(Adverts.ID, @userId ) ) as IsILiked,    GetText((AdvertCategories.SlugID), (1)) AS SubCategorySlugTr,\n       GetText((ParentCategory.SlugID), (1)) AS ParentCategorySlugTr,    GetText((AdvertCategories.SlugID), (2)) AS SubCategorySlugEn,\n       GetText((ParentCategory.SlugID), (2)) AS ParentCategorySlugEn\nFROM Adverts,    AdvertCategories,    AdvertCategories ParentCategory ,Users \nWHERE (Adverts.CategoryID = AdvertCategories.ID)\n  AND (AdvertCategories.ParentCategoryID = ParentCategory.ID)\n  AND (Adverts.UserID=Users.ID ) \n  AND (Users.IsActive=true) \n AND (Adverts.Title ilike @query or Adverts.Content ilike @query or Adverts.ProductDefects ilike @query or Adverts.ID::text ilike @query or Users.Name ilike @query )\nORDER BY AdvertOrder, CreatedDate DESC limit 200;";
+                      "SELECT ( SELECT GetOrderFromDopingInHomepage((Adverts.ID)) AS GetOrderFromDopingInHomepage) AS AdvertOrder,\n       Adverts.*,    " +
+                      "( SELECT count(*) AS count           FROM AdvertLikes          WHERE (AdvertLikes.AdvertID = Adverts.ID)) AS LikesCount,\n       ( SELECT GetLabelDoping((Adverts.ID)) AS GetLabelDoping) AS LabelDoping,\n       ( SELECT GetYellowFrameDoping((Adverts.ID)) AS GetYellowFrameDoping) AS YellowFrameDoping,\n       ( SELECT IsILiked(Adverts.ID, @userId ) ) as IsILiked,    GetText((AdvertCategories.SlugID), (1)) AS SubCategorySlugTr,\n       GetText((ParentCategory.SlugID), (1)) AS ParentCategorySlugTr,    GetText((AdvertCategories.SlugID), (2)) AS SubCategorySlugEn,\n       GetText((ParentCategory.SlugID), (2)) AS ParentCategorySlugEn\nFROM Adverts,    AdvertCategories,    AdvertCategories ParentCategory ,Users \nWHERE (Adverts.CategoryID = AdvertCategories.ID)\n  AND (AdvertCategories.ParentCategoryID = ParentCategory.ID)\n  AND (Adverts.UserID=Users.ID ) \n  AND (Users.IsActive=true) \n AND (Adverts.Title like @query or Adverts.Content like @query or Adverts.ProductDefects like @query or Adverts.ID like @query or Users.Name like @query )\nORDER BY AdvertOrder, CreatedDate DESC limit 200;";
+                //"SELECT ( SELECT GetOrderFromDopingInHomepage((Adverts.ID)) AS GetOrderFromDopingInHomepage) AS AdvertOrder,\n       Adverts.*,    ( SELECT count(*) AS count           FROM AdvertLikes          WHERE (AdvertLikes.AdvertID = Adverts.ID)) AS LikesCount,\n       ( SELECT GetLabelDoping((Adverts.ID)) AS GetLabelDoping) AS LabelDoping,\n       ( SELECT GetYellowFrameDoping((Adverts.ID)) AS GetYellowFrameDoping) AS YellowFrameDoping,\n       ( SELECT IsILiked(Adverts.ID, @userId ) ) as IsILiked,    GetText((AdvertCategories.SlugID), (1)) AS SubCategorySlugTr,\n       GetText((ParentCategory.SlugID), (1)) AS ParentCategorySlugTr,    GetText((AdvertCategories.SlugID), (2)) AS SubCategorySlugEn,\n       GetText((ParentCategory.SlugID), (2)) AS ParentCategorySlugEn\nFROM Adverts,    AdvertCategories,    AdvertCategories ParentCategory ,Users \nWHERE (Adverts.CategoryID = AdvertCategories.ID)\n  AND (AdvertCategories.ParentCategoryID = ParentCategory.ID)\n  AND (Adverts.UserID=Users.ID ) \n  AND (Users.IsActive=true) \n AND (Adverts.Title ilike @query or Adverts.Content ilike @query or Adverts.ProductDefects ilike @query or Adverts.ID::text ilike @query or Users.Name ilike @query )\nORDER BY AdvertOrder, CreatedDate DESC limit 200;";
                 var list = GetConnection().Query<Advert>(sql, new { query = "%" + query + "%", userId, lang }).ToList();
                 using (var publicService = new PublicService())
                 {
@@ -691,6 +693,7 @@ namespace Audiophile.Services
             }
             catch (Exception e)
             {
+                throw;
                 return new List<Advert>();
             }
 

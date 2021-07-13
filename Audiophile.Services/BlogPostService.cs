@@ -57,7 +57,7 @@ namespace Audiophile.Services
             try
             {
                 return GetConnection().Find<BlogPost>(s => s
-                    .Where($"{nameof(BlogPost.IsActive):C}=true and ( {nameof(BlogPost.Title):C} ilike @query and {nameof(BlogPost.Content):C} ilike @query ) ")
+                    .Where($"{nameof(BlogPost.IsActive):C}=true and ( {nameof(BlogPost.Title):C} like @query and {nameof(BlogPost.Content):C} like @query ) ")
                     .WithParameters(new { query = "%" + query + "%" })
                     .OrderBy($"{nameof(BlogPost.ID):C} DESC")
                     .Top(20)
@@ -65,7 +65,7 @@ namespace Audiophile.Services
             }
             catch (Exception e)
             {
-                return null;
+                throw;
             }
         }
 

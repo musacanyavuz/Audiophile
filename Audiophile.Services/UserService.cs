@@ -25,7 +25,7 @@ namespace Audiophile.Services
             if (!string.IsNullOrEmpty(search))
             {
                 sql = $"select * from Users " +
-                      $"where UserName ilike @search or Email ilike @search or MobilePhone ilike @search\nor Name ilike @search or cast(ID as varchar) ilike @search  " +
+                      $"where UserName like @search or Email like @search or MobilePhone like @search\nor Name like @search or cast(ID as varchar) like @search  " +
                       $"order by ID desc limit @count offset @offset";
             }
             return GetConnection().Query<User>(sql, new { search = "%" + search + "%", count, offset }).ToList();
@@ -39,7 +39,7 @@ namespace Audiophile.Services
             }
 
             var sql = $"select count(*) from Users " +
-                      $"where UserName ilike @search or Email ilike @search or MobilePhone ilike @search\nor Name ilike @search or cast(ID as varchar) ilike @search  ";
+                      $"where UserName like @search or Email like @search or MobilePhone like @search\nor Name like @search or cast(ID as varchar) like @search  ";
             var count = GetConnection().Query<int>(sql, new { search = "%" + search + "%" }).First();
             return count;
         }
@@ -388,22 +388,22 @@ namespace Audiophile.Services
         public int GetAdvertsCount(int userId)
         {
             return GetConnection()
-                .Query<int>("SELECT COUNT(*) FROM Adverts where IsActive ='true' and UserID =@userId",
+                .Query<int>("SELECT COUNT(*) FROM Adverts where IsActive =true and UserID =@userId",
                     new { userId }).FirstOrDefault();
         }
 
         public int GetBlogPostsCount(int userId)
         {
-            return GetConnection().Query<int>("SELECT COUNT(*) FROM BlogPosts WHERE IsActive ='true' and  UserID = @userId AND CategoryID IN (1,2)", new{userId}).FirstOrDefault();
+            return GetConnection().Query<int>("SELECT COUNT(*) FROM BlogPosts WHERE IsActive =true and  UserID = @userId AND CategoryID IN (1,2)", new{userId}).FirstOrDefault();
         }
 
         public int GetArticlesCount(int userId)
         {
-            return GetConnection().Query<int>("SELECT COUNT(*) FROM BlogPosts WHERE IsActive ='true' and  UserID = @userId AND CategoryID IN (3,4)", new { userId }).FirstOrDefault();
+            return GetConnection().Query<int>("SELECT COUNT(*) FROM BlogPosts WHERE IsActive =true and  UserID = @userId AND CategoryID IN (3,4)", new { userId }).FirstOrDefault();
         }
         public int GetBannersCount(int userId)
         {
-            return GetConnection().Query<int>("SELECT COUNT(*) FROM Banners WHERE IsActive ='true' and UserID = @userId", new { userId }).FirstOrDefault();
+            return GetConnection().Query<int>("SELECT COUNT(*) FROM Banners WHERE IsActive =true and UserID = @userId", new { userId }).FirstOrDefault();
         }
         public AdvertLike GetAdvertLike(int id)
         {
@@ -435,7 +435,7 @@ namespace Audiophile.Services
         {
             try
             {
-                var sql = "select * from PaymentRequests\n  left outer join Adverts on PaymentRequests.AdvertID=Adverts.ID\n                left outer join Users on PaymentRequests.SellerID = Users.ID\nwhere PaymentRequests.Type=@type and IsSuccess=true\nand PaymentRequests.UserID = @userId  order by PaymentRequests asc";
+                var sql = "select * from PaymentRequests  left outer join Adverts on PaymentRequests.AdvertID=Adverts.ID  left outer join Users on PaymentRequests.SellerID = Users.ID\nwhere PaymentRequests.Type=@type and IsSuccess=true\nand PaymentRequests.UserID = @userId  order by PaymentRequests.ID asc";
 
                 var result = GetConnection().Query<PaymentRequest, Advert, User, PaymentRequest>(sql,
                     (request, advert, seller) =>
@@ -449,7 +449,7 @@ namespace Audiophile.Services
             }
             catch (Exception ex)
             {
-                return null;
+                throw;
             }
         }
 
@@ -457,7 +457,7 @@ namespace Audiophile.Services
         {
             try
             {
-                var sql = "select * from PaymentRequests\n  left outer join Adverts on PaymentRequests.AdvertID=Adverts.ID                left outer join Users on PaymentRequests.UserID = Users.ID where PaymentRequests.Type=@type and IsSuccess=true and PaymentRequests.SellerID = @userId  order by PaymentRequests desc";
+                var sql = "select * from PaymentRequests\n  left outer join Adverts on PaymentRequests.AdvertID=Adverts.ID                left outer join Users on PaymentRequests.UserID = Users.ID where PaymentRequests.Type=@type and IsSuccess=true and PaymentRequests.SellerID = @userId  order by PaymentRequests.ID desc";
 
                 var result = GetConnection().Query<PaymentRequest, Advert, User, PaymentRequest>(sql,
                     (request, advert, buyer) =>
@@ -471,7 +471,7 @@ namespace Audiophile.Services
             }
             catch (Exception ex)
             {
-                return null;
+                throw;
             }
         }
 
@@ -502,7 +502,7 @@ namespace Audiophile.Services
             }
             catch (Exception e)
             {
-                return null;
+                throw;
             }
         }
 

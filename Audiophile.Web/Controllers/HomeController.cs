@@ -30,11 +30,7 @@ namespace Audiophile.Web.Controllers
             using (var bannerService = new BannerService())
             using (var service = new AdvertService())
             {
-               if(service == null )
-                throw new NullReferenceException("Deneme Null Service");
-
-                if (service != null)
-                    throw new NullReferenceException("AdvertService Null Değil");
+                
                 var adverts = service.GetHomePageAdverts(lang, GetLoginID());
                 adverts.Reverse();
                 var banners = bannerService.GetBanners();

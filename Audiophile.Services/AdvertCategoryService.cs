@@ -197,7 +197,7 @@ namespace Audiophile.Services
                     //      " and AdvertCategories.ParentCategoryID = @categoryID" +
                     //      "  and ( AdvertCategories.ID=@categoryID or ParentCategories.ID = AdvertCategories.ParentCategoryID )";
 
-                    sql = @"select count(*) from ""Adverts""  where ""CategoryID"" in (select ""ID"" from ""AdvertCategories"" ac   where ""ParentCategoryID"" =@categoryID)";
+                    sql = @"select count(*) from  Adverts  where CategoryID in (select ID from AdvertCategories ac   where ParentCategoryID =@categoryID)";
                 }
                 
                 var count = GetConnection().Query<int>(sql, new {categoryID = category.ID}).SingleOrDefault();
