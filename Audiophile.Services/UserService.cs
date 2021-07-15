@@ -25,7 +25,7 @@ namespace Audiophile.Services
             if (!string.IsNullOrEmpty(search))
             {
                 sql = $"select * from Users " +
-                      $"where UserName like @search or Email like @search or MobilePhone like @search\nor Name like @search or cast(ID as varchar) like @search  " +
+                      $"where UserName like @search or Email like @search or MobilePhone like @search\nor Name like @search or cast(ID as CHAR(10)) like @search  " +
                       $"order by ID desc limit @count offset @offset";
             }
             return GetConnection().Query<User>(sql, new { search = "%" + search + "%", count, offset }).ToList();
@@ -39,7 +39,7 @@ namespace Audiophile.Services
             }
 
             var sql = $"select count(*) from Users " +
-                      $"where UserName like @search or Email like @search or MobilePhone like @search\nor Name like @search or cast(ID as varchar) like @search  ";
+                      $"where UserName like @search or Email like @search or MobilePhone like @search\nor Name like @search or cast(ID as CHAR(10)) like @search  ";
             var count = GetConnection().Query<int>(sql, new { search = "%" + search + "%" }).First();
             return count;
         }

@@ -643,7 +643,7 @@ namespace Audiophile.Services
                       $"Title like @search or Content like @search or Brand like @search\nor " +
                       $" (select GetText((select NameID from AdvertCategories where ID = Adverts.CategoryID), 1 )) like @search  or " +
                       $" Users.Name like @search or " +
-                      $"cast(Adverts.ID as varchar) like @search ) " +
+                      $"cast(Adverts.ID as CHAR(50)) like @search ) " +
                       $"order by Adverts.ID desc limit @count offset @offset";
             }
             var list = GetConnection().Query<Advert, User, Advert>(sql, (advert, user) =>
@@ -663,7 +663,7 @@ namespace Audiophile.Services
                 return GetConnection().Query<int>($"select count(*) from Adverts, Users where UserID=Users.ID").First();
             }
 
-            var sql = $"select count(Adverts.ID)\nfrom Adverts\nwhere\n  Title like @search\n  or Content like @search\n  or Brand like @search\n  or  (select GetText((select NameID from AdvertCategories where ID = Adverts.CategoryID), 1 )) like @search\n  or (select Name from Users where Users.ID=UserID) like @search\n  or cast(Adverts.ID as varchar) like @search";
+            var sql = $"select count(Adverts.ID)\nfrom Adverts\nwhere\n  Title like @search\n  or Content like @search\n  or Brand like @search\n  or  (select GetText((select NameID from AdvertCategories where ID = Adverts.CategoryID), 1 )) like @search\n  or (select Name from Users where Users.ID=UserID) like @search\n  or cast(Adverts.ID as CHAR(10)) like @search";
             var count = GetConnection().Query<int>(sql, new { search = "%" + search + "%" }).First();
             return count;
         }
