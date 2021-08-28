@@ -7,13 +7,13 @@ using Audiophile.Models;
 
 namespace Audiophile.Services
 {
-    public class MailingService : IDisposable
+    public class MailingService : BaseService , IDisposable
     {
         //private const string baseUrl = "https://localhost:5001";
         private const string baseUrl = "https://www.audiophile.org";
         private const string username = "noreply@audiophile.org";
         private const string password = "Petek28051962_!!";
-        private const string server = "audiophile.org";
+        private const string server = "srvm09.trwww.com";
         private const int port = 587;
         private const bool useSsl = false;
         
@@ -237,6 +237,15 @@ namespace Audiophile.Services
             }
             catch (Exception e)
             {
+                Log(new Log
+                {
+                    Function = "MailingService.Send",
+                    CreatedDate = DateTime.Now,
+                    Message = e.Message,
+                    Detail = e.ToString(),
+                    IsError = true
+                   
+                });
                 return false;
             }
         }

@@ -65,7 +65,7 @@ namespace Audiophile.Web.Areas.AdminPanel.Controllers
             using (var service = new UserService())
             {
                 var user = service.Get(id);
-               
+               // SendActivationMail(user);
                 
                 if (user == null)
                 {
@@ -79,7 +79,25 @@ namespace Audiophile.Web.Areas.AdminPanel.Controllers
                     UserSecurePaymentDetail = userPayment,
                     UserAddress = service.GetUserAddresses(id)
                 };
+
+
                 return View(model);
+            }
+        }
+        private bool SendActivationMail(User user)
+        {
+            var lang = 1;
+            var tran = new Localization();
+            using (var mailing = new MailingService())
+            using (var content = new TextService())
+            {
+                var link = Constants.GetURL((int)Enums.Routing.HesabimiAktiflestir, user.LanguageID) + "/" + user.Token;
+                var mailHtml = content.GetText(Enums.Texts.MailAktivasyon, lang);
+                mailHtml = mailHtml
+                    .Replace("@adSoyad", $"{user.Name}")
+                    .Replace("@link", link);
+                var title = $"Audiophile.org | {tran.Get("Hesabınızı Aktifleştirin", "Account Activation", lang)}";
+                return mailing.Send(mailHtml, user.Email, user.Name, title);
             }
         }
         public IActionResult ExcelExport(){
