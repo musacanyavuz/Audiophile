@@ -12,7 +12,7 @@ namespace Audiophile.Services
         //private const string baseUrl = "https://localhost:5001";
         private const string baseUrl = "https://www.audiophile.org";
         private const string username = "noreply@audiophile.org";
-        private const string password = "Petek28051962_!!";
+        private const string password = "Petek28051964SelamiKelle";
         private const string server = "srvm09.trwww.com";
         private const int port = 587;
         private const bool useSsl = false;
