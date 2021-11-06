@@ -381,7 +381,7 @@ namespace Audiophile.Web.Controllers
         [Authorize]
         [HttpPost]
         [Route("AddListing/AdPhotoUpload/{id}")]
-        public async Task<IActionResult> AdPhotoUpload(int id, string MainImage)
+        public IActionResult AdPhotoUpload(int id, string MainImage)
         {
             var lang = GetLang();
             using (var fileService = new FileService())
@@ -622,6 +622,18 @@ namespace Audiophile.Web.Controllers
                     new FileService().DeleteFile(photo.Source);
                     new FileService().DeleteFile(photo.Thumbnail);
                     return Json(new { isSuccess = true, message = t.Get("Fotoğraf silindi.", "Photo has been deleted.", lang) });
+                }
+                using (var logService = new LogServices())
+                {
+                    Log log = new Log()
+                    {
+                        Function = "DeletePhoto",
+                        Message = $"{GetLoginID()} id li kullanici  işlem yaparken hata aldi. Photo ID : {id}",
+                        Params = $"Photo Source : {photo.Source}",
+                        Detail = "",
+                        CreatedDate = DateTime.Now
+                    };
+                    logService.Insert(log);
                 }
                 return Json(new
                 {

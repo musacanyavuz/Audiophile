@@ -41,7 +41,7 @@
                 }
 
                 <span class="description" hidden>
-                    <span itemprop="description">@Html.Raw(Model.Description)</span>
+                    <span itemprop="description">@HtmlEncoder.Encode(Model.Description)</span>
                 </span>
                 <meta itemprop="brand" content="@Html.Raw(Model.Brand)" />
                 <meta itemprop="model" content="@Html.Raw(Model.Model)" />

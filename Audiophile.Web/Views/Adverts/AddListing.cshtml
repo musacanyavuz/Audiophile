@@ -225,7 +225,7 @@
                                 </div>
                             }
 
-
+                          
                             <h5>@Localization.Get("İşaretlediğiniz görsel ana fotoğraf olarak kullanılacak.", "Marked picture will be used as main picture", lang)</h5>
                             <small>*@Localization.Get("Max. Dosya Boyutu: 5mb. Max. 10 dosya.", "Max. File Size: 5mb. Max. 10 file.", lang) </small>
                             &nbsp;<small style="color:red">*@Localization.Get("Sadece JPG-JPEG-BMP-PNG-GIF formatında resim yükleyebilirsiniz", "Only JPG-JPEG-BMP-PNG-GIF image  extensions are allowed.", lang) </small>
@@ -617,8 +617,7 @@
                         formData.append("MainImage", $('input[name="main-image"]:checked').val());
                     });
                 this.on("addedfile",
-                    function (file) {
-                        debugger;
+                    function (file) {                                          
                         if (file.size > 5242880) {
                             @*console.log("Dikkat 10 mb büyük!"); *@
                             //alert("DİKKAT 5 MB DAN BÜYÜK RESİM YÜKLEYEMEZSİNİZ.");
@@ -626,16 +625,16 @@
                             var id = parseInt($(file.previewElement).attr("id"));
                             @*console.log("remove it: " + id); *@
                             $(file.previewElement).remove();
-                            removeFromSelectedPhotos(id);
+                            removeFromSelectedPhotos(id);                         
+                            myDropzone.removeFile(file);
                         } else {
                             addedPhotosCount++;
                             $("#save").html(bntTextWait).attr('disabled', 'disabled');
-                        }
+                        }                        
                         $(file.previewElement).find('input').val(file.name);
                     });
                 this.on("removedfile",
-                    function (file) {
-                        debugger;
+                    function (file) {                       
                         var id = parseInt($(file.previewElement).attr("id"));
                         @*console.log("remove it: " + id); *@
                         $(file.previewElement).remove();
@@ -647,8 +646,7 @@
                     function(file, response) {
                         @*console.log("success file", file);
                         //console.log("success response", response); *@
-                        if (response.isSuccess === true) {
-                            debugger;
+                        if (response.isSuccess === true) {                        
                             uploadedFileCount++;
                             @*console.log("add: " + response.id); *@
                             addToSelectedPhotos(response.id);
