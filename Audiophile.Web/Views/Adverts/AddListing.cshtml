@@ -24,15 +24,23 @@
             padding: 0;
             width: 100%;
         }
-
-            #sortable li {
-                margin: 3px 3px 3px 0;
-                padding: 1px;
-                float: left;
-                text-align: center;
-                cursor: grab;
-            }
-
+        .dragging {
+            background-color:lightgray;
+        }
+        .draggingForContainer {
+            background-color: rgba(231, 12, 30, 0.50);
+        }
+        #sortable li {
+            margin: 3px 3px 3px 0;
+            padding: 1px;
+            float: left;
+            text-align: center;
+            cursor: grab;
+        }
+        .ui-state-highlight {
+            height: 1.5em;
+            line-height: 1.2em;
+        }
         .crop-area #canvas, #canvas2 {
             height: 300px;
             width: 300px;
@@ -213,8 +221,8 @@
                                                     <div class="card-body" style="cursor:default">
                                                         <h5 class="card-title">@photo.CreatedDate.ToString("g")</h5>
                                                         <div class="custom-control custom-radio">
-                                                            <input onclick="updateMainImage(@photo.ID)" @(Model.Advert.Thumbnail == photo.Thumbnail ? "checked" : " ") type="radio" class="custom-control-input" name="mainImage" value="@photo.ID" id="inputM_@photo.ID">
-                                                            <label class="custom-control-label" style="padding-top: 2px;" for="inputM_@photo.ID">@Localization.Get("Ana fotoğraf", "Main photo", lang)</label>
+                                                            <input  onclick="updateMainImage(@photo.ID)" @(Model.Advert.Thumbnail == photo.Thumbnail ? "checked" : " ") type="radio" class="custom-control-input" name="mainImage" value="@photo.ID" id="inputM_@photo.ID">
+                                                            <label  class="custom-control-label" style="padding-top: 2px; cursor:pointer" for="inputM_@photo.ID">@Localization.Get("Ana fotoğraf", "Main photo", lang)</label>
                                                         </div>
                                                         <a href="#" onclick="ask(@photo.ID, '')" style="width: 72px !important;" class="button w-button button-sil m-t-10 display-inline-grid">@Localization.Get("Sil", "Delete", lang)</a>
                                                     </div>
@@ -468,6 +476,8 @@
     <script src="~/Content/plugins/canvas-to-blob/canvas-to-blob.min.js"></script>
     <script src="~/Content/plugins/tinymce/tinymce.js"></script>
     <script>
+        var bntText = '';
+        var bntTextWait = '';
         var selectedPhotos = [];
         var addedPhotosCount = 0;
         var uploadedFileCount = 0;
@@ -476,16 +486,15 @@
         Dropzone.options.myDropzone = {
             url: '/AddListing/UploadPhoto',
             autoProcessQueue: true,
-            uploadMultiple: true,
+            uploadMultiple: true,// Seçilen resimleri tek ajax ile yüklesin mi ?
             parallelUploads: 10,
             timeout: 540000,
-            maxFiles: 10,
+            maxFiles: 10, // Kaç resim seçip yükleyebilir.
             maxFilesize: 60,
             paramName: "Files",
             acceptedFiles: 'image/*',
             addRemoveLinks: true,
             transformFile: function(file, done) {
-               
                 if (file.size < 5242880) {
                     // Create Dropzone reference for use in confirm button click handler
                     var myDropZone = this;
@@ -557,8 +566,9 @@
                             }
                         });
                     buttonCancel.addEventListener("click", function () {
-                        document.body.removeChild(editor);
+                       document.body.removeChild(editor);
                         myDropZone.removeFile(file);
+
                     });
                     buttonRotate.addEventListener('click',
                         function() {
@@ -599,6 +609,7 @@
                                         done(blob);
                                     });
                             });
+                           // $("#save").html(bntTextWait).attr('disabled', 'disabled');
                             // Remove the editor from the view
                             document.body.removeChild(editor);
                         });
@@ -608,16 +619,29 @@
             },
             previewTemplate: $('#preview').html(),
             init: function () {
-                 var bntText = '@Localization.Get("Kaydet ve Devam Et", "Save and Continue", lang)';
-                var bntTextWait = '  <i class="fa fa-spinner fa-spin fa-1x fa-fw"></i>@Localization.Get("Resimler Yükleniyor...", "'Images are uploading...", lang)'.replace('&#xFC;', 'ü');
+                  bntText = '@Localization.Get("Kaydet ve Devam Et", "Save and Continue", lang)';
+                 bntTextWait = '  <i class="fa fa-spinner fa-spin fa-1x fa-fw"></i>@Localization.Get("Resimler Yükleniyor...", "'Images are uploading...", lang)'.replace('&#xFC;', 'ü');
 
                 var myDropzone = this;
                 this.on("sendingmultiple",
-                    function(data, xhr, formData) {
+                    function (data, xhr, formData) {
                         formData.append("MainImage", $('input[name="main-image"]:checked').val());
+                        if (myDropzone.files.length > 0) {
+                            $("#save").html(bntTextWait).attr('disabled', 'disabled');
+                        }
                     });
-                this.on("addedfile",
-                    function (file) {                                          
+                this.on("addedfile", function (file) {
+                        var type = file.type;
+                        var pattern = /^image\/(jpg|gif|png|jpeg|bmp)/;
+                        var result = pattern.test(type);
+                        if (result == false) {
+                            var errMsg = '@Localization.Get("Geçersiz resim formatı : ", " Invalid image file : ", lang)' + type;
+                            notify("error", errMsg);
+                            $(file.previewElement).remove();
+                            removeFromSelectedPhotos(id);
+                            myDropzone.removeFile(file);
+                        }
+                       // $("#save").text(bntText).removeAttr('disabled');
                         if (file.size > 5242880) {
                             @*console.log("Dikkat 10 mb büyük!"); *@
                             //alert("DİKKAT 5 MB DAN BÜYÜK RESİM YÜKLEYEMEZSİNİZ.");
@@ -625,16 +649,16 @@
                             var id = parseInt($(file.previewElement).attr("id"));
                             @*console.log("remove it: " + id); *@
                             $(file.previewElement).remove();
-                            removeFromSelectedPhotos(id);                         
+                            removeFromSelectedPhotos(id);
                             myDropzone.removeFile(file);
+
                         } else {
                             addedPhotosCount++;
-                            $("#save").html(bntTextWait).attr('disabled', 'disabled');
-                        }                        
+                        }
                         $(file.previewElement).find('input').val(file.name);
                     });
                 this.on("removedfile",
-                    function (file) {                       
+                    function (file) {
                         var id = parseInt($(file.previewElement).attr("id"));
                         @*console.log("remove it: " + id); *@
                         $(file.previewElement).remove();
@@ -646,13 +670,14 @@
                     function(file, response) {
                         @*console.log("success file", file);
                         //console.log("success response", response); *@
-                        if (response.isSuccess === true) {                        
+                        if (response.isSuccess === true) {
                             uploadedFileCount++;
                             @*console.log("add: " + response.id); *@
                             addToSelectedPhotos(response.id);
                             $(file.previewElement).find(".dz-progress").remove();
                             $(file.previewElement).attr("id", response.id);
                             $($(file.previewElement).find("input")).attr("value", response.id);
+                            $("#save").text(bntText).removeAttr('disabled');
                         } else {
                             myDropzone.removeFile(file);
                             notify("error", response.message);
@@ -663,6 +688,11 @@
                             $("#save").text(bntText).removeAttr('disabled');
                         }
                     });
+                this.on("error",
+                    function (file, response) {
+
+
+                    });
                 this.on("maxfilesexceeded", function (file) {
                     myDropzone.removeFile(file);
                     var message = file.name + '@Localization.Get(" isimli resim 10 adet maksimum resim sınırını geçtiği için yüklenmedi.", " image is not loaded because it exceeds the maximum image limit of 10.", lang)';
@@ -672,12 +702,12 @@
 
         };
 
-        function addToSelectedPhotos(id) {           
+        function addToSelectedPhotos(id) {
             selectedPhotos.push(id);
             updatePhotosInput();
         }
 
-        function removeFromSelectedPhotos(id) {          
+        function removeFromSelectedPhotos(id) {
             for (var i = 0; i < selectedPhotos.length; i++) {
                 if (selectedPhotos[i] === id) {
                     selectedPhotos.splice(i, 1);
@@ -687,7 +717,7 @@
         }
 
         function updatePhotosInput() {
-            var result = "";           
+            var result = "";
             for (var i = 0; i < selectedPhotos.length; i++) {
                 result += selectedPhotos[i] + ",";
             }
@@ -909,14 +939,32 @@
     @if (Model.Advert != null)
     {
         <script>
+          
             $(function () {
-                $("#sortable").sortable({
-                    update: function (event, ui) {
+                var arr = $("#sortable").sortable({
+                    start: function (e, ui) {                        
+                        $('.ui-sortable').addClass('draggingForContainer');
+                        $('li.ui-sortable-handle').not('#' + ui.item.get(0).id).find('div.card').addClass('dragging');
+                    
+                    },
+                    stop: function (e, ui) {
+                        setTimeout(
+                            function () {                                
+                                $('.ui-sortable').removeClass('draggingForContainer');
+                                $('li.ui-sortable-handle').not('#' + ui.item.get(0).id).find('div.card').removeClass('dragging');
+                            },
+                            200
+                        )
+                    },
+                    forcePlaceholderSize :true,
+                    placeholder: "ui-state-highlight",
+                    update: function (event, ui) {                          
                         var items = $('#sortable li');
                         if (items.length == 0) {
                             noitfy("danger", '@Localization.Get("Fotoğraf bulunamadı", "Photo not found", lang)');
                             return;
                         }
+
                         var ids = [];
                         for (var i = 0; i < items.length; i++) {
                             var id = $($('#sortable li')[i]).prop("id").replace("q_", "");
@@ -930,7 +978,10 @@
                                 data: { id: @Model.Advert.ID, photos: ids },
                                 success: function (data) {
                                     if (data.isSuccess) {
-                                        notify("success", data.message);
+                                        notify("success", data.message);    
+                                        if (items.get(0).id === ui.item[0].id) {
+                                            updateMainImage(items.get(0).id.replace("q_", ""));
+                                        }
                                     } else {
                                         notify("danger", data.message);
                                     }
@@ -1003,7 +1054,8 @@
                     data: { id: @Model.Advert.ID, photoId: parseInt(mainImageId) },
                     success: function(data) {
                         if (data.isSuccess) {
-                            notify("success", data.message);
+                            notify("success", data.message);                           
+                            $("#sortable #q_" + mainImageId).insertBefore($("#sortable li:eq(0)"));                           
                         } else {
                             notify("danger", data.message);
                         }

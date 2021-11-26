@@ -22,15 +22,15 @@ namespace Audiophile.Importer
         static void Main(string[] args)
         {
             Console.WriteLine("Program Started...Excel File Reading...");
-            using (var adCatService = new AdvertCategoryService())
-            using (var baseService = new BaseService())
-            using (var service = new PublicService())
-            {
-                cities = service.GetCities();
-                districts = service.GetDistricts();
-                advertCategories = adCatService.GetAll();
-                adverts = baseService.GetConnection().Find<Advert>().ToList();
-            }
+            //using (var adCatService = new AdvertCategoryService())
+            //using (var baseService = new BaseService())
+            //using (var service = new PublicService())
+            //{
+            //    cities = service.GetCities();
+            //    districts = service.GetDistricts();
+            //    advertCategories = adCatService.GetAll();
+            //    adverts = baseService.GetConnection().Find<Advert>().ToList();
+            //}
             
             //ImportUsers();
             //ImportAds();

@@ -68,7 +68,7 @@ namespace Audiophile.Web.Controllers
 
                 int bannerCount = userService.GetBannersCount(loginid);
                 int advCountOfUser = service.GetUserAdverts(GetLoginID()).Count(x=>x.IsDeleted == false);
-                IsPaymentStepActive = ((id == null || id == 0) && advCountOfUser>= freeAdvertLimit); // Müşterini max ilan sayısını aşmış ise yeni lan ekeleme ücretli olacak.
+                IsPaymentStepActive = ((id == null || id == 0) && advCountOfUser>= freeAdvertLimit); // Müşterini max ilan sayısını aşmış ise yeni ilan ekeleme ücretli olacak.
 
                 //if (Env.EnvironmentName == "Production")
                 //{
@@ -494,7 +494,8 @@ namespace Audiophile.Web.Controllers
                         if (file.Length < 5242880) //10mb
                         {
                             path = string.Empty;
-                            string randomFileName = GetLoginID().ToString() + "_" + (index + 1) + "_" + DateTime.Now.ToShortDateString().Replace(".", "") + DateTime.Now.ToShortTimeString().Replace(":", "");
+                            string timeStemp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                            string randomFileName = GetLoginID().ToString() + "_" + (index + 1) + "_" + timeStemp;
                             var ext = Path.GetExtension(file.FileName);
                             path = fileService.FileUpload(GetLoginID(), file, "/Upload/Sales/", randomFileName + "" + ext);
                             if (!string.IsNullOrWhiteSpace(path))
@@ -502,7 +503,7 @@ namespace Audiophile.Web.Controllers
                                 //var fileName = GetLoginID().ToString() + "_" + (index + 1) + "_" + DateTime.Now.ToShortDateString().Replace(".", "") + DateTime.Now.ToShortTimeString().Replace(":", "");
                                 //var optimize75 = imageService.Optimize75(path, directory, fileName);
 
-                                var thumbName = GetLoginID().ToString() + "_" + (index + 1) + "_thumb" + "_" + DateTime.Now.ToShortDateString().Replace(".", "") + DateTime.Now.ToShortTimeString().Replace(":", "") + ".jpg";
+                                var thumbName = GetLoginID().ToString() + "_" + (index + 1) + "_thumb" + "_"  + timeStemp + ".jpg";
                                 var result = imageService.CreateThumbnail(GetLoginID(), path, directory, thumbName);
                                 if (result)
                                 {
@@ -671,7 +672,22 @@ namespace Audiophile.Web.Controllers
                             "Ad photo order update failed", lang)
                         });
                     }
+                    else
+                    {
+
+                    }
                 }
+
+             //  UpdateMainPhoto(id, photos[0]);
+               // var firstPhotoOfTheArray = service.GetPhoto(photos[0]);// gelen sıralamadan ilk sıradaki resmi al.
+
+                //if (firstPhotoOfTheArray != null)
+                //{
+                //    if (firstPhotoOfTheArray.Thumbnail == ad.Thumbnail)// 
+                //    {
+                //        UpdateMainPhoto(id, photos[0]);
+                //    }
+                //}
 
                 return Json(new
                 {
@@ -708,6 +724,15 @@ namespace Audiophile.Web.Controllers
                         "Ad update failed", lang)
                     });
                 }
+
+                var allPhotosOfAdvert = service.GetPhotos(id);//.Where(x => x.OrderNumber == 0 || x.Thumbnail == ad.Thumbnail);
+                
+                var photoFirstOrder = allPhotosOfAdvert.FirstOrDefault(x => x.OrderNumber == 1); // eski ilk foto al.               
+                var newFirstOrderPhoto = allPhotosOfAdvert.FirstOrDefault(x => x.ID == photoId);// yeni foto al
+
+                service.UpdatePhotoOrder(photoFirstOrder.ID, newFirstOrderPhoto.OrderNumber);
+                service.UpdatePhotoOrder(photoId, 1);
+
 
                 return Json(new
                 {
@@ -1339,8 +1364,10 @@ namespace Audiophile.Web.Controllers
                         advertDopings.Add(advertDoping);
                         if (!insert)
                         {
+                            
                             return Json(new { isSuccess = false, message = new Localization().Get("Doping girişi yapılamadı. ", "Doping insert failed.", lang) + " #" + dopingType.Name });
                         }
+                       
                     }
 
                     if (securePayment)

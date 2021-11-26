@@ -153,6 +153,10 @@
                                         <td class="width-200">
                                             <a href="@url">
                                                 @ad.Title
+                                                @if (ad.IsDraft)
+                                                {
+                                                    <span class="color-red" id="status_@ad.ID"> ( @Localization.Get(" Taslak ", " Draft ", lang) ) </span>
+                                                }
                                             </a>
                                         </td>
                                         <td>
@@ -172,7 +176,10 @@
                                             }
                                             else if (!ad.IsActive && ad.IsPendingApproval)
                                             {
-                                                <span class="color-195-195-0" id="status_@ad.ID"> @Localization.Get("Onay Bekliyor", "Waiting Approval", lang) </span>
+                                        <span class="color-195-195-0" id="status_@ad.ID">
+                                            @Localization.Get("Onay Bekliyor", "Waiting Approval", lang)
+                                           
+                                        </span>
                                             }
                                             else if (ad.IsActive)
                                             {

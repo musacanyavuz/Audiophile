@@ -29,7 +29,8 @@ namespace Audiophile.Services
             OrmConfiguration.DefaultDialect = SqlDialect.MySql;
             if (connection != null)
                 return connection;
-            connection = new MySqlConnection(connectionString);
+
+            connection = new MySqlConnection(connectionString);            
             return connection;
         }
 

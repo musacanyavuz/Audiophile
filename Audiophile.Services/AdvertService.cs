@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlTypes;
 using System.Linq;
 using System.Transactions;
@@ -21,8 +22,10 @@ namespace Audiophile.Services
 
         public List<Advert> GetHomePageAdverts(int lang = 1, int userId = 0)
         {
+            DbConnection cnn = null;
             try
             {
+                cnn = GetConnection();
                 //var sql_ = "  SELECT\n    \"Adverts\".*,\n  " +
                 //         "( SELECT count(*) AS count FROM \"AdvertLikes\" WHERE (\"AdvertLikes\".\"AdvertID\" = \"Adverts\".\"ID\")) AS \"LikesCount\",\n  " +
                 //         "( SELECT \"GetLabelDoping\"((\"Adverts\".\"ID\")) AS \"GetLabelDoping\") AS \"LabelDoping\",\n  " +
@@ -54,12 +57,13 @@ namespace Audiophile.Services
                           "Users.Name AS UserName " +
                           "FROM Adverts,Users, AdvertCategories, AdvertCategories ParentCategory\n\n  " +
                           "WHERE " +
-                          "Adverts.IsActive = true\n\n  " +
+                          "Adverts.IsActive = 1\n\n  " +
                           "AND Adverts.CategoryID = AdvertCategories.ID\n\n  " +
                           "AND Adverts.UserID = Users.ID\n\n  " +
                           "AND (AdvertCategories.ParentCategoryID = ParentCategory.ID)\n\n  AND (( SELECT Users.IsActive  FROM Users WHERE (Users.ID = Adverts.UserID)) = true)\n\n  AND (\n            (select count(*)\n             from AdvertDopings\n             where AdvertID = Adverts.ID\n               and StartDate < now()\n               and EndDate > now()\n               and IsActive = true\n               and TypeID in (1, 2)) > 0\n      OR\n                Adverts.UseSecurePayment = true\n            )\n  ORDER BY Adverts.LastUpdateDate DESC,Adverts.CreatedDate DESC;";
 
-                var list = GetConnection().Query<Advert>(sql, new { userId }).ToList();
+                 cnn = GetConnection();              
+                var list = cnn.Query<Advert>(sql, new { userId }).ToList();
                 using (var publicService = new PublicService())
                 {
                     var dopingTypes = publicService.GetDopingTypes();
@@ -69,6 +73,8 @@ namespace Audiophile.Services
                         x.SubCategorySlug = (lang == 1) ? x.SubCategorySlugTr : x.SubCategorySlugEn;
                         x.LabelDopingModel = (x.LabelDoping != 0) ? dopingTypes.Single(d => d.ID == x.LabelDoping) : null;
                     });
+                    cnn.Close();
+                    cnn.Dispose();
                 }
 
                 CheckAdvertsIsDraft(ref list);
@@ -86,6 +92,15 @@ namespace Audiophile.Services
                     Params = ""
                 });
             }
+            finally
+            {
+                if (cnn != null && cnn.State != System.Data.ConnectionState.Closed)
+                {
+                    cnn.Close();
+                    cnn.Dispose();
+                }
+
+            }
             return null;
         }
 
@@ -101,8 +116,8 @@ namespace Audiophile.Services
                     sql += " LIMIT  @limit;";
 
                 sql = sql.Replace("@maxOperator", !maxToMin ? "<" : ">=");
-
-                var list = GetConnection().Query<Advert>(sql, new { maxId, userId, limit }).ToList();
+                var cnn = GetConnection();
+                var list = cnn.Query<Advert>(sql, new { maxId, userId, limit }).ToList();
                 using (var publicService = new PublicService())
                 {
                     var dopingTypes = publicService.GetDopingTypes();
@@ -427,7 +442,7 @@ namespace Audiophile.Services
             return ad;
         }
 
-        public List<Advert> GetUserAdverts(int userId)
+        public List<Advert> GetUserAdverts(int userId,bool checkForDraft = true )
         {
             try
             {
@@ -442,7 +457,10 @@ namespace Audiophile.Services
                     advert.User = user;
                     return advert;
                 }, new { userId }, splitOn: "ID").ToList();
+                if(checkForDraft == true)
                 CheckAdvertsIsDraft(ref list);
+                
+
                 return list;
             }
             catch (Exception e)
@@ -450,6 +468,7 @@ namespace Audiophile.Services
                 return null;
             }
         }
+       
 
         public List<Advert> GetAdverts()
         {

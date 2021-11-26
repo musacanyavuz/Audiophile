@@ -97,7 +97,7 @@
             @if (!Model.IsActive)
             {
                 <div class="div-block-40 ad-passive">
-                    <div>@Localization.Get("Bu İlan Pasiftir", "Not Available", lang)</div>
+                    <div>@Localization.Get("Bu İlan Onay Sürecindedir", "This ad is on approval process", lang)</div>
                 </div>
             }
             @if (!string.IsNullOrEmpty(Model.SecurePayment) && Model.IsActive)

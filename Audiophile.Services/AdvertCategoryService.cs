@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using Audiophile.Models;
@@ -12,8 +13,10 @@ namespace Audiophile.Services
     {
         public AdvertCategory Get(int id, int lang = 1)
         {
+            DbConnection cnn=null;
             try
             {
+                 cnn = GetConnection();
                 var sql = "select AdvertCategories.*, " +
                       "(select GetText(AdvertCategories.NameID, @lang)) as Name, " +
                       "(select GetText(AdvertCategories.DescriptionID, @lang)) as Description, " +
@@ -30,13 +33,14 @@ namespace Audiophile.Services
                       "(select GetText(parent.SlugID, @lang) ) " +
                       "from AdvertCategories LEFT OUTER JOIN AdvertCategories as parent on AdvertCategories.ParentCategoryID=parent.ID " +
                       "where AdvertCategories.ID = @id ";
-                var x = GetConnection().Query<AdvertCategory,AdvertCategory,AdvertCategory>(sql,
+                var x = cnn.Query<AdvertCategory,AdvertCategory,AdvertCategory>(sql,
                     (category, parentCategory) =>
                     {
                         category.ParentCategory = parentCategory;
                         return category;
                     },  new { lang, id }
-                    ).SingleOrDefault(); 
+                    ).SingleOrDefault();
+               
                 return x;
             }
             catch (Exception e)
@@ -46,14 +50,21 @@ namespace Audiophile.Services
                     Function = "AdvertCategoryService.Get", CreatedDate = DateTime.Now, Message = e.Message, Detail = e.InnerException?.Message,
                     IsError = true, Params = id.ToString() + " "+ lang.ToString()
                 });
-            } 
+            }
+            finally
+            {
+                cnn.Close();
+                cnn.Dispose();
+            }     
             return null;
         }
         
         public AdvertCategory Get(string slug, int lang = 1)
         {
+            DbConnection cnn = null;
             try
             {
+                cnn = GetConnection();
                 var sql = "select AdvertCategories.*, " +
                       "(select GetText(AdvertCategories.NameID, @lang)) as Name, " +
                       "(select GetText(AdvertCategories.DescriptionID, @lang)) as Description, " +
@@ -86,7 +97,12 @@ namespace Audiophile.Services
                     Function = "AdvertCategoryService.Get", CreatedDate = DateTime.Now, Message = e.Message, Detail = e.InnerException?.Message,
                     IsError = true, Params = slug + " " + lang.ToString() 
                 });
-            } 
+            }
+            finally
+            {
+                cnn.Close();
+                cnn.Dispose();
+            }
             return null;
         }
 
@@ -103,8 +119,10 @@ namespace Audiophile.Services
         
         public List<AdvertCategory> GetMasterCategories(int lang = 1)
         {
+            DbConnection cnn = null;
             try
             {
+                cnn = GetConnection();
                 var sql = "select *, "+
                           "(select GetText(NameID, @lang)) as Name, "+
                           "    (select GetText(DescriptionID, @lang)) as Description, "+
@@ -118,7 +136,7 @@ namespace Audiophile.Services
                           "order by \"Order\" ";
                 DynamicParameters pars = new DynamicParameters();
                 pars.Add("@lang",lang);
-                var x = GetConnection().Query<AdvertCategory>(sql, pars).ToList(); 
+                var x = cnn.Query<AdvertCategory>(sql, pars).ToList(); 
                 return x;
             }
             catch (Exception e)
@@ -128,14 +146,21 @@ namespace Audiophile.Services
                     Function = "AdvertCategoryService.GetMasterCategories", CreatedDate = DateTime.Now, Message = e.Message, Detail = e.InnerException?.Message,
                     IsError = true, Params = lang.ToString()
                 });
-            } 
+            }
+            finally
+            {
+                cnn.Close();
+                cnn.Dispose();
+            }
             return null;
         }
 
         public List<AdvertCategory> GetAll(int lang = 1)
         {
+            DbConnection cnn = null;
             try
             {
+                cnn = GetConnection();
                 var sql = "select *, "+
                           "(select GetText(NameID, @lang)) as Name, "+
                           "    (select GetText(DescriptionID, @lang)) as Description, "+
@@ -146,7 +171,7 @@ namespace Audiophile.Services
                           "from AdvertCategories " +
                           "where IsActive=true "+
                           "order by \"Order\" ";  
-                var categories = GetConnection().Query<AdvertCategory>(sql, new { lang }).ToList();
+                var categories = cnn.Query<AdvertCategory>(sql, new { lang }).ToList();
                 var masterCategories = categories.Where(x => x.ParentCategoryID == 0).ToList();
                 var childCategories = categories.Where(x => x.ParentCategoryID > 0).ToList();
                 
@@ -162,20 +187,55 @@ namespace Audiophile.Services
                     IsError = true, Params = lang.ToString() 
                 });
             }
+            finally
+            {
+                if(cnn != null && cnn.State != System.Data.ConnectionState.Closed)
+                {
+                    cnn.Close();
+                    cnn.Dispose();
+                }
+               
+            }
             return null;
         }
 
         public List<AdvertCategory> GetAllCategories(int lang = 1)
         {
-            //TODO tüm kategoriler çekilecek, parent kategori propertysi dolu olarak
-            var sql = "select AdvertCategories.*,\n  (select GetText(AdvertCategories.NameID, @lang)) as Name,\n  (select GetText(AdvertCategories.DescriptionID, @lang)) as Description,\n  (select GetText(AdvertCategories.SeoTitleID, @lang)) as SeoTitle,\n  (select GetText(AdvertCategories.SeoKeywordsID, @lang)) as SeoKeywords,\n  (select GetText(AdvertCategories.SeoDescriptionID, @lang)) as SeoDescription,\n  (select GetText(AdvertCategories.SlugID, @lang)) as Slug,\n  Parent.*,\n  (select GetText(Parent.NameID, @lang)) as Name,\n  (select GetText(Parent.DescriptionID, @lang)) as Description,\n  (select GetText(Parent.SeoTitleID, @lang)) as SeoTitle,\n  (select GetText(Parent.SeoKeywordsID, @lang)) as SeoKeywords,\n  (select GetText(Parent.SeoDescriptionID, @lang)) as SeoDescription,\n  (select GetText(Parent.SlugID, @lang)) as Slug\nfrom\n     AdvertCategories left outer join AdvertCategories as Parent on AdvertCategories.ParentCategoryID=Parent.ID\n\norder by AdvertCategories.Order";
-            var query = GetConnection().Query<AdvertCategory, AdvertCategory, AdvertCategory>(sql,
-                (category, parent) =>
+            List<AdvertCategory> query = null;
+            DbConnection cnn = null;
+            try
+            {
+                cnn = GetConnection();
+                //TODO tüm kategoriler çekilecek, parent kategori propertysi dolu olarak
+                var sql = "select AdvertCategories.*,\n  (select GetText(AdvertCategories.NameID, @lang)) as Name,\n  (select GetText(AdvertCategories.DescriptionID, @lang)) as Description,\n  (select GetText(AdvertCategories.SeoTitleID, @lang)) as SeoTitle,\n  (select GetText(AdvertCategories.SeoKeywordsID, @lang)) as SeoKeywords,\n  (select GetText(AdvertCategories.SeoDescriptionID, @lang)) as SeoDescription,\n  (select GetText(AdvertCategories.SlugID, @lang)) as Slug,\n  Parent.*,\n  (select GetText(Parent.NameID, @lang)) as Name,\n  (select GetText(Parent.DescriptionID, @lang)) as Description,\n  (select GetText(Parent.SeoTitleID, @lang)) as SeoTitle,\n  (select GetText(Parent.SeoKeywordsID, @lang)) as SeoKeywords,\n  (select GetText(Parent.SeoDescriptionID, @lang)) as SeoDescription,\n  (select GetText(Parent.SlugID, @lang)) as Slug\nfrom\n     AdvertCategories left outer join AdvertCategories as Parent on AdvertCategories.ParentCategoryID=Parent.ID\n\norder by AdvertCategories.Order";
+                query = GetConnection().Query<AdvertCategory, AdvertCategory, AdvertCategory>(sql,
+                    (category, parent) =>
+                    {
+                        category.ParentCategory = parent;
+                        return category;
+                    }, splitOn: "ID", param: new { lang }).ToList();
+            }
+            catch (Exception e)
+            {
+                Log(new Log
                 {
-                    category.ParentCategory = parent;
-                    return category;
-                }, splitOn: "ID", param: new {lang}).ToList();
-            
+                    Function = "AdvertCategoryService.GetAll",
+                    CreatedDate = DateTime.Now,
+                    Message = e.Message,
+                    Detail = e.InnerException?.Message,
+                    IsError = true,
+                    Params = lang.ToString()
+                });
+            }
+            finally
+            {
+                if (cnn != null && cnn.State != System.Data.ConnectionState.Closed)
+                {
+                    cnn.Close();
+                    cnn.Dispose();
+                }
+
+            }
             return query;
         }
         /// <summary>

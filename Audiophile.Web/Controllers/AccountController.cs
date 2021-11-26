@@ -1673,7 +1673,7 @@ namespace Audiophile.Web.Controllers
         {
             using (var service = new AdvertService())
             {
-                var list = service.GetUserAdverts(GetLoginID());
+                var list = service.GetUserAdverts(GetLoginID(),false);
                 if (list != null)
                 {
                     return View(list.OrderByDescending(x => x.CreatedDate).ToList());

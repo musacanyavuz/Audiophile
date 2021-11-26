@@ -145,10 +145,11 @@
                         <div class="form-block-4 w-clearfix w-form adetform">
                             @if (!Model.Advert.IsActive)
                             {
-                                <p class="passive-ad-warning">@Localization.Get("Bu İlan Pasiftir", "Not Available", lang)</p>
+                            <p class="passive-ad-warning">@Localization.Get("Bu İlan Onay Sürecindedir", "This ad is on approval process", lang)</p>
+                                
                             }
                             @*<span style="font-size: 22px; font-weight: bold">@Model.Advert.Title</span>*@
-                        <h1>@Model.Advert.Title</h1>
+                            <h1>@Model.Advert.Title</h1>
                         </div>
                     </div>
                     <div class="div-block-12 w-clearfix">
