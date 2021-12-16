@@ -40,9 +40,9 @@
                     <img alt="Beğenilen amplifikatör, amfi, hoparlör, müzik seti, müzik sistemi ilanları" id="likeImage_@Model.ID" src="/Content/img/images/kalp.png" class="kalp" onclick="likeAd(@Model.ID)" title="@Localization.Get("Beğen", "Like", lang)">
                 }
 
-                <span class="description" hidden>
+                @*<span class="description" hidden>
                     <span itemprop="description">@HtmlEncoder.Encode(Model.Description)</span>
-                </span>
+                </span>*@
                 <meta itemprop="brand" content="@Html.Raw(Model.Brand)" />
                 <meta itemprop="model" content="@Html.Raw(Model.Model)" />
                 <div class="new-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">

@@ -247,7 +247,7 @@
                 <div class="w-slider-mask">
                     @if (Model.Banners != null && Model.Banners.Any())
                     {
-                        foreach (var banner in Model.Banners.Where(x => x.TypeID == Enums.BannerType.Slider))
+                        foreach (var banner in Model.Banners.Where(x => x.TypeID == Enums.BannerType.Slider && x.IsActive == true))
                         {
                             <a class="slide w-slide index-a-href-style" target="_blank" href='@(banner.Url.Contains("http") ? banner.Url : "http://" + banner.Url)' onclick="clickBanner(@banner.ID);">
                                 <div class="slide w-slide big-@banner.ID" style="background-image: url('@banner.ImageSource');">
@@ -268,7 +268,7 @@
                                     </div>
                                 </div>
                             </a>
-                            <a class="slide w-slide index-a-href-style" target="_blank" href="@Constants.GetURL(Enums.Routing.BannerEkle, lang)">
+                            @*<a class="slide w-slide index-a-href-style" target="_blank" href="@Constants.GetURL(Enums.Routing.BannerEkle, lang)">
                                 <div class="slide w-slide slide-back-img">
                                     <div data-ix="new-interaction" class="div-texts width-100-60 transition-width-400-ease-in-out">
                                         <div data-ix="new-interaction" class="width-100-60  transition-width-400-ease-in-out">
@@ -281,7 +281,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </a>
+                            </a>*@
                         }
                     }
                 </div>

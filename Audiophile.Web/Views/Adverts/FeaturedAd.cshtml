@@ -272,7 +272,7 @@
 
                     <hr />
 
-                    <div class="row">
+                    <div class="row" id="TotalContainer">
                         <div class="col-12">
                             <div class="row m-b-0">
                                 <div class="col-md-12 col-12">
@@ -480,8 +480,8 @@
 
 
             $('#invoice').html('');
-
-            if (adprice > 0) {
+            $('#TotalContainer').show();
+            if (adprice > 0) {                
                 sum = sum + adprice;
                 generalrow(adprice,'@Localization.Get("İlan Fiyatı", "Advert Price", lang)');
             }
@@ -521,6 +521,8 @@
                     ' <td><b>' +
                     sum +
                     ' TL</b> </td> <td></td> <td></td> </tr>');
+            } else {
+                $('#TotalContainer').hide();
             }
             //var sum = getPrice(homepage) + getPrice(category) + getPrice(label) + getPrice(highlight);
         }

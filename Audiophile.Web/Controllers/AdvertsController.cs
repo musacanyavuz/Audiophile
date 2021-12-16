@@ -472,8 +472,9 @@ namespace Audiophile.Web.Controllers
         [Route("AddListing/UploadPhoto/")]
         public IActionResult UploadPhoto(int id)
         {
+           
             string[] optimize, directorys, idss;
-
+            int currentAdvertID = HttpContext.Request.Form["AdvertID"].FirstOrDefault() == null ? -1 :  Convert.ToInt32( HttpContext.Request.Form["AdvertID"].FirstOrDefault());
             var lang = GetLang();
             using (var fileService = new FileService())
             using (var imageService = new ImageService())
@@ -729,7 +730,8 @@ namespace Audiophile.Web.Controllers
                 
                 var photoFirstOrder = allPhotosOfAdvert.FirstOrDefault(x => x.OrderNumber == 1); // eski ilk foto al.               
                 var newFirstOrderPhoto = allPhotosOfAdvert.FirstOrDefault(x => x.ID == photoId);// yeni foto al
-
+                if (photoFirstOrder == null)
+                    photoFirstOrder = allPhotosOfAdvert.FirstOrDefault();
                 service.UpdatePhotoOrder(photoFirstOrder.ID, newFirstOrderPhoto.OrderNumber);
                 service.UpdatePhotoOrder(photoId, 1);
 
