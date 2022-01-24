@@ -24,6 +24,12 @@ namespace Audiophile.Web.Controllers
         {
             var lang = GetLang();
 
+            //using (var mailService = new MailingService())
+            //{
+            //    if(GetLoginID() == 11544 )
+            //    mailService.Send("AAA", "ilhan_aksu61@hotmail.com", "ilhan", "Title test");
+            //}
+
             using (var advertCategoryService = new AdvertCategoryService())
             using (var blogService = new BlogPostService())
             using (var textService = new TextService())

@@ -168,22 +168,40 @@
                                         <td class="position-relative">
                                             @if (ad.IsDeleted)
                                             {
-                                                <span class="color-red" id="status_@ad.ID"> @Localization.Get("Bu İlan Kaldırıldı", "This Ad Hidden", lang) </span>
+                                            <span class="color-red" id="status_@ad.ID"> @Localization.Get("Bu İlan Kaldırıldı", "This Ad Hidden", lang) </span>
                                             }
-                                            else if (!ad.IsActive && !ad.IsPendingApproval)
+                                            @*else if (!ad.IsActive)
+        {
+                 <span class="color-red" id="status_@ad.ID"> @Localization.Get("Bu İlan Kaldırıldı", "This Ad Hidden", lang) </span>
+        }*@
+                                            else if(ad.ApprovalStatus == Enums.ApprovalStatusEnum.Approved)
                                             {
-                                                <span class="color-red" id="status_@ad.ID"> @Localization.Get("Bu İlan Kaldırıldı", "This Ad Hidden", lang) </span>
+
+                                                if  (ad.IsActive)
+                                                {
+                                            <span class="color-green" id="status_@ad.ID"> @Localization.Get("Yayında", "Published", lang) </span>
+                                                }
+                                                else if (!ad.IsActive)
+                                                {
+                                            <span class="color-red" id="status_@ad.ID">@Localization.Get("Yayından Kaldırıldı", "Rejected", lang)</span>
+                                                }
+
                                             }
-                                            else if (!ad.IsActive && ad.IsPendingApproval)
+                                            else if(ad.ApprovalStatus == Enums.ApprovalStatusEnum.Rejected)
                                             {
-                                        <span class="color-195-195-0" id="status_@ad.ID">
-                                            @Localization.Get("Onay Bekliyor", "Waiting Approval", lang)
-                                           
-                                        </span>
+                                            <span class="color-red" id="status_@ad.ID">@Localization.Get("Yayından Kaldırıldı", "Rejected", lang)</span>
                                             }
-                                            else if (ad.IsActive)
+                                             else if(ad.ApprovalStatus == Enums.ApprovalStatusEnum.WaitingforApproval)
                                             {
-                                                <span class="color-green" id="status_@ad.ID"> @Localization.Get("Yayında", "Published", lang) </span>
+                                                <span class="color-195-195-0" id="status_@ad.ID">@Localization.Get("Onay Bekliyor", "Waiting Approval", lang)</span>
+                                            }
+                                            @*else if (ad.IsActive)
+        {
+            <span class="color-green" id="status_@ad.ID"> @Localization.Get("Yayında", "Published", lang) </span>
+        }*@
+                                            else if (!ad.IsActive)
+                                            {
+                                            <span class="color-195-195-0" id="status_@ad.ID">@Localization.Get("Onay Bekliyor", "Waiting Approval", lang)</span>
                                             }
                                         </td>
                                         <td>
@@ -191,14 +209,14 @@
                                             <a class="link-12" href="@Constants.GetURL(Enums.Routing.IlanDuzenle, lang)/@ad.ID">
                                                 <span class="cursor-pointer">@Localization.Get("Düzenle", "Edit", lang)</span>
                                             </a>
-                                            @if (!ad.IsActive && !ad.IsPendingApproval)
+                                            @if (!ad.IsActive && ad.ApprovalStatus == Enums.ApprovalStatusEnum.WaitingforApproval)
                                             {
                                                 <br />
                                                 <a class="link-12" onclick="ask(@ad.ID,`@Html.Raw($"#{ad.ID} {ad.Title}")`)" href="javascript:;" id="publish_@ad.ID">
                                                     <span class="cursor-pointer">@Localization.Get("Yeniden Yayınla", "Re-Publish", lang)</span>
                                                 </a>
                                             }
-                                            else if (ad.IsActive && !ad.IsPendingApproval)
+                                            else if (ad.IsActive && ad.ApprovalStatus == Enums.ApprovalStatusEnum.Approved)
                                             {
                                                 <br />
                                                 <a class="link-12" href="/@Localization.Get("IlanEkle/IlaniOneCikar","AddListing/FeaturedAd",lang)/@ad.ID">

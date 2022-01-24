@@ -1704,11 +1704,15 @@ namespace Audiophile.Web.Controllers
                 if (!insert)
                     return Json(new { isSuccess = false, message = new Localization().Get("İlan yayınlanırken bir sorun oluştu.", "Ad publish failed.", lang) });
 
-                if (ad.IsDeleted)
-                {
+              
                     ad.IsDeleted = false;
+                    ad.IsActive = true;
+                   // ad.ApprovalStatus = Enums.ApprovalStatusEnum.WaitingforApproval;
                     service.Update(ad);
-                }
+
+                
+               
+               
 
                 return Json(new
                 {
@@ -1735,11 +1739,14 @@ namespace Audiophile.Web.Controllers
                     return Json(new { isSuccess = false, message = t.Get("Erişim hatası.", "Access error.", lang) });
                 }
                 ad.IsActive = false;
+                //ad.ApprovalStatus = Enums.ApprovalStatusEnum.WaitingforApproval;
+                
                 var update = service.Update(ad);
                 if (!update)
                 {
                     return Json(new { isSuccess = false, message = t.Get("Güncelleme işlemi sırasında bir hata oluştu.", "Unpublish is failed.", lang) });
                 }
+
                 service.DeletePublishRequests(id);
 
                 return Json(new { isSuccess = true, message = t.Get("İlanınız  yayından alındı.", "Your ad has been hidden.", lang) });

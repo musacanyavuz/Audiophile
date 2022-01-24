@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Http;
+using static Audiophile.Common.Enums;
 
 namespace Audiophile.Models
 {
@@ -53,6 +54,9 @@ namespace Audiophile.Models
         public bool IsDeleted { get; set; }
         public string IpAddress { get; set; }
         public bool IsDraft { get; set; }
+        public bool IsApproved { get; set; }
+
+        public ApprovalStatusEnum ApprovalStatus { get; set; }
 
         public IEnumerable<AdvertDoping> AdvertDopings { get; set; }
         public AdvertCategory Category { get; set; }

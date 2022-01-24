@@ -58,6 +58,7 @@ namespace Audiophile.Services
                           "FROM Adverts,Users, AdvertCategories, AdvertCategories ParentCategory\n\n  " +
                           "WHERE " +
                           "Adverts.IsActive = 1\n\n  " +
+                          "AND (Adverts.ApprovalStatus = 2) \n\n " +
                           "AND Adverts.CategoryID = AdvertCategories.ID\n\n  " +
                           "AND Adverts.UserID = Users.ID\n\n  " +
                           "AND (AdvertCategories.ParentCategoryID = ParentCategory.ID)\n\n  AND (( SELECT Users.IsActive  FROM Users WHERE (Users.ID = Adverts.UserID)) = true)\n\n  AND (\n            (select count(*)\n             from AdvertDopings\n             where AdvertID = Adverts.ID\n               and StartDate < now()\n               and EndDate > now()\n               and IsActive = true\n               and TypeID in (1, 2)) > 0\n      OR\n                Adverts.UseSecurePayment = true\n            )\n  ORDER BY Adverts.LastUpdateDate DESC,Adverts.CreatedDate DESC;";
@@ -164,7 +165,9 @@ namespace Audiophile.Services
                               " GetText((AdvertCategories.NameID), (2)) AS CategoryNameEn, " +
                               "Users.Name AS UserName " +
                               " FROM " +
-                              " Adverts,Users, AdvertCategories, AdvertCategories ParentCategory\n\n  WHERE   Adverts.UserID = Users.ID  AND Adverts.CategoryID = AdvertCategories.ID\n\n  AND (AdvertCategories.ParentCategoryID = ParentCategory.ID)\n\n  AND (SELECT Users.IsActive  FROM Users WHERE (Users.ID = Adverts.UserID)) = true";
+                              " Adverts,Users, AdvertCategories, AdvertCategories ParentCategory\n\n  WHERE " +
+                              "  (Adverts.ApprovalStatus = 2) AND " +
+                              "  Adverts.UserID = Users.ID  AND Adverts.CategoryID = AdvertCategories.ID\n\n  AND (AdvertCategories.ParentCategoryID = ParentCategory.ID)\n\n  AND (SELECT Users.IsActive  FROM Users WHERE (Users.ID = Adverts.UserID)) = true";
                 var sql = String.Copy(sqlBase);
 
                 if (parentCategoryId != 0)
@@ -279,7 +282,8 @@ namespace Audiophile.Services
             {
                 var sql = "select " +
                           "Adverts.*, " +
-                          "(SELECT count(*) AS count           FROM AdvertLikes          WHERE (AdvertLikes.AdvertID = Adverts.ID)) AS LikesCount," +
+                          "Audiophile.GetIsPendingApproval(@id) as IsPendingApproval , " +
+                          "(SELECT count(*) AS count           FROM AdvertLikes   WHERE (AdvertLikes.AdvertID = Adverts.ID)) AS LikesCount," +
                           "(GetText(AdvertCategories.SlugID, 1)) as SubCategorySlugTr, " +
                           "(GetText(ParentCategory.SlugID, 1)) as ParentCategorySlugTr, " +
                           "(GetText(AdvertCategories.SlugID, 2)) as SubCategorySlugEn, " +
@@ -293,8 +297,8 @@ namespace Audiophile.Services
                           "Adverts.UserID=Users.ID " +
                           "and Adverts.CategoryID = AdvertCategories.ID " +
                           "and AdvertCategories.ParentCategoryID = ParentCategory.ID " +
-                          //"and Adverts.IsActive = true " +
-                          "and Users.IsActive = true " +
+                          // "and Users.IsActive = true " +
+                          "and (Adverts.ApprovalStatus = 2)" +
                           "and Adverts.ID = @id; " +
                           $"select * from AdvertPhotos where AdvertID = @id;";
                 using (var multi = GetConnection().QueryMultiple(sql, new { id }))
@@ -391,6 +395,7 @@ namespace Audiophile.Services
         {
             try
             {
+                advert.LastUpdateDate = DateTime.Now;
                 return GetConnection().Update(advert);
             }
             catch (Exception e)
@@ -437,7 +442,7 @@ namespace Audiophile.Services
                     .OrderBy($"{nameof(AdvertPublishRequest.ID):C} DESC")
                     .WithParameters(new { id })
                 ).FirstOrDefault();
-                ad.IsPendingApproval = request != null; //request null değil ise yayınlanma onayı bekliyor demektir.
+                ad.IsPendingApproval = ad.ApprovalStatus  == Enums.ApprovalStatusEnum.WaitingforApproval;// request != null; //request null değil ise yayınlanma onayı bekliyor demektir.
             }
             return ad;
         }
@@ -447,7 +452,9 @@ namespace Audiophile.Services
             try
             {
                 var sql = "select Adverts.*, " +
-                          "GetIsPendingApproval(Adverts.ID) as IsPendingApproval, Users.* " +
+                          "GetIsPendingApproval(Adverts.ID) as IsPendingApproval," +
+                         // " (ApprovalStatus = 1 ) as IsPendingApproval" +
+                          " Users.* " +
                           "from Adverts, Users where Adverts.UserID=@userId and Adverts.UserID=Users.ID " +
                           " " +
                           " " +
@@ -468,6 +475,7 @@ namespace Audiophile.Services
                 return null;
             }
         }
+
        
 
         public List<Advert> GetAdverts()
@@ -588,15 +596,22 @@ namespace Audiophile.Services
             }
         }
 
-        public List<AdvertPublishRequest> GetPublishRequests()
+        public List<Advert> GetPublishRequests()
         {
-            var sql = "select\n   AdvertPublishRequests.*,\n   Adverts.*,\n   GetText(AdvertCategories.NameID, 1) as CategorySlug,\n   Users.*\nfrom\n  AdvertPublishRequests, Adverts, AdvertCategories, Users\nwhere\n    AdvertPublishRequests.AdvertID = Adverts.ID\nand Adverts.UserID = Users.ID\nand Adverts.CategoryID = AdvertCategories.ID\nand AdvertPublishRequests.IsActive = true \n and Adverts.IsDraft=false";
+            var sql = "select\n   " +
+                // "AdvertPublishRequests.*,\n  " +
+                " Adverts.*,\n   GetText(AdvertCategories.NameID, 1) as CategorySlug,\n   Users.* \n" +
+                " from " +
+                // "\n  AdvertPublishRequests, " +
+                "Adverts, AdvertCategories, Users\nwhere\n  " +
+                // "  AdvertPublishRequests.AdvertID = Adverts.ID\nand " +
+                "Adverts.UserID = Users.ID\nand Adverts.CategoryID = AdvertCategories.ID\n and " +
+                "  (Adverts.ApprovalStatus =1) /* AdvertPublishRequests.IsActive = true*/ \n and Adverts.IsDraft=false";
 
-            var list = GetConnection().Query<AdvertPublishRequest, Advert, User, AdvertPublishRequest>(sql,
-                (request, advert, user) =>
-                {
-                    request.Advert = advert;
-                    request.Advert.User = user;
+            var list = GetConnection().Query<Advert, User, Advert>(sql,
+                (request,  user) =>                {
+                   
+                    request.User = user;
                     return request;
                 }, splitOn: "ID").ToList();
 
@@ -651,6 +666,7 @@ namespace Audiophile.Services
                       $" Users.* " +
                       $"from Adverts, Users " +
                       $"where UserID=Users.ID " +
+                      $" and (Adverts.ApprovalStatus = 2) " +
                       $"order by Adverts.ID desc limit @count offset @offset";
             if (!string.IsNullOrEmpty(search))
             {
@@ -658,8 +674,10 @@ namespace Audiophile.Services
                       $"(select GetText((select NameID from AdvertCategories where ID = Adverts.CategoryID), 1 )) as CategorySlug," +
                       $" Users.* " +
                       $" from Adverts, Users " +
-                      $"where UserID=Users.ID and (" +
-                      $"Title like @search or Content like @search or Brand like @search\nor " +
+                      $"where "+
+                      $" (Adverts.ApprovalStatus = 2) AND " +
+                      $" UserID=Users.ID and (" +
+                      $" Title like @search or Content like @search or Brand like @search\nor " +
                       $" (select GetText((select NameID from AdvertCategories where ID = Adverts.CategoryID), 1 )) like @search  or " +
                       $" Users.Name like @search or " +
                       $"cast(Adverts.ID as CHAR(50)) like @search ) " +
@@ -693,7 +711,7 @@ namespace Audiophile.Services
             {
                 var sql =
                       "SELECT ( SELECT GetOrderFromDopingInHomepage((Adverts.ID)) AS GetOrderFromDopingInHomepage) AS AdvertOrder,\n       Adverts.*,    " +
-                      "( SELECT count(*) AS count           FROM AdvertLikes          WHERE (AdvertLikes.AdvertID = Adverts.ID)) AS LikesCount,\n       ( SELECT GetLabelDoping((Adverts.ID)) AS GetLabelDoping) AS LabelDoping,\n       ( SELECT GetYellowFrameDoping((Adverts.ID)) AS GetYellowFrameDoping) AS YellowFrameDoping,\n       ( SELECT IsILiked(Adverts.ID, @userId ) ) as IsILiked,    GetText((AdvertCategories.SlugID), (1)) AS SubCategorySlugTr,\n       GetText((ParentCategory.SlugID), (1)) AS ParentCategorySlugTr,    GetText((AdvertCategories.SlugID), (2)) AS SubCategorySlugEn,\n       GetText((ParentCategory.SlugID), (2)) AS ParentCategorySlugEn\nFROM Adverts,    AdvertCategories,    AdvertCategories ParentCategory ,Users \nWHERE (Adverts.CategoryID = AdvertCategories.ID)\n  AND (AdvertCategories.ParentCategoryID = ParentCategory.ID)\n  AND (Adverts.UserID=Users.ID ) \n  AND (Users.IsActive=true) \n AND (Adverts.Title like @query or Adverts.Content like @query or Adverts.ProductDefects like @query or Adverts.ID like @query or Users.Name like @query )\nORDER BY AdvertOrder, CreatedDate DESC limit 200;";
+                      "( SELECT count(*) AS count           FROM AdvertLikes          WHERE (AdvertLikes.AdvertID = Adverts.ID)) AS LikesCount,\n       ( SELECT GetLabelDoping((Adverts.ID)) AS GetLabelDoping) AS LabelDoping,\n       ( SELECT GetYellowFrameDoping((Adverts.ID)) AS GetYellowFrameDoping) AS YellowFrameDoping,\n       ( SELECT IsILiked(Adverts.ID, @userId ) ) as IsILiked,    GetText((AdvertCategories.SlugID), (1)) AS SubCategorySlugTr,\n       GetText((ParentCategory.SlugID), (1)) AS ParentCategorySlugTr,    GetText((AdvertCategories.SlugID), (2)) AS SubCategorySlugEn,\n       GetText((ParentCategory.SlugID), (2)) AS ParentCategorySlugEn\nFROM Adverts,    AdvertCategories,    AdvertCategories ParentCategory ,Users \nWHERE (Adverts.CategoryID = AdvertCategories.ID)\n  AND (AdvertCategories.ParentCategoryID = ParentCategory.ID)\n  AND (Adverts.UserID=Users.ID ) \n  AND (Users.IsActive=true) \n AND (Adverts.Title like @query or Adverts.Content like @query or Adverts.ProductDefects like @query or Adverts.ID like @query or Users.Name like @query )\n and (Adverts.ApprovalStatus = 2) ORDER BY AdvertOrder, CreatedDate DESC limit 200;";
                 //"SELECT ( SELECT GetOrderFromDopingInHomepage((Adverts.ID)) AS GetOrderFromDopingInHomepage) AS AdvertOrder,\n       Adverts.*,    ( SELECT count(*) AS count           FROM AdvertLikes          WHERE (AdvertLikes.AdvertID = Adverts.ID)) AS LikesCount,\n       ( SELECT GetLabelDoping((Adverts.ID)) AS GetLabelDoping) AS LabelDoping,\n       ( SELECT GetYellowFrameDoping((Adverts.ID)) AS GetYellowFrameDoping) AS YellowFrameDoping,\n       ( SELECT IsILiked(Adverts.ID, @userId ) ) as IsILiked,    GetText((AdvertCategories.SlugID), (1)) AS SubCategorySlugTr,\n       GetText((ParentCategory.SlugID), (1)) AS ParentCategorySlugTr,    GetText((AdvertCategories.SlugID), (2)) AS SubCategorySlugEn,\n       GetText((ParentCategory.SlugID), (2)) AS ParentCategorySlugEn\nFROM Adverts,    AdvertCategories,    AdvertCategories ParentCategory ,Users \nWHERE (Adverts.CategoryID = AdvertCategories.ID)\n  AND (AdvertCategories.ParentCategoryID = ParentCategory.ID)\n  AND (Adverts.UserID=Users.ID ) \n  AND (Users.IsActive=true) \n AND (Adverts.Title ilike @query or Adverts.Content ilike @query or Adverts.ProductDefects ilike @query or Adverts.ID::text ilike @query or Users.Name ilike @query )\nORDER BY AdvertOrder, CreatedDate DESC limit 200;";
                 var list = GetConnection().Query<Advert>(sql, new { query = "%" + query + "%", userId, lang }).ToList();
                 using (var publicService = new PublicService())
@@ -1134,6 +1152,16 @@ namespace Audiophile.Services
                 return;
             }
             advert.IsDraft = status;
+            GetConnection().Update(advert);
+        }
+        public void SetApprovalStatus(int id, bool status)
+        {
+            var advert = GetConnection().Find<Advert>().FirstOrDefault(p => p.ID == id);
+            if (advert == null)
+            {
+                return;
+            }
+            advert.IsApproved = status;
             GetConnection().Update(advert);
         }
 

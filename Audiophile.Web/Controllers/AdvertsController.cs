@@ -152,7 +152,9 @@ namespace Audiophile.Web.Controllers
                             {
                                 _ad.AvailableInstallments = Constants.Array2String(AvailableInstallments);
                             }
-                            _ad.IsActive = false;
+                            _ad.IsApproved = false;
+                            _ad.ApprovalStatus = Enums.ApprovalStatusEnum.WaitingforApproval;
+                            _ad.IsActive = true;
                             var update = service.Update(_ad);
                             if (!update)
                             {
@@ -194,12 +196,14 @@ namespace Audiophile.Web.Controllers
                             return RedirectToAction("AddListing");
                         }
                         advert.Title = advert.Title.Replace("&", " ");
-                        advert.IsActive = false;
+                        advert.IsActive = true;
                         advert.CreatedDate = DateTime.Now;
                         advert.UserID = GetLoginID();
                         advert.UseSecurePayment = (advert.PaymentMethodID == (int)Enums.PaymentMethods.KrediKartiIle);
                         advert.IpAddress = GetIpAddress();
                         advert.IsDraft = true;
+                        advert.IsApproved = false;
+                        advert.ApprovalStatus = Enums.ApprovalStatusEnum.WaitingforApproval;
                         if (advert.PaymentMethodID == (int)Enums.PaymentMethods.KrediKartiIle)
                             advert.MoneyTypeID = (int)Enums.MoneyType.tl;
 
@@ -1444,7 +1448,7 @@ namespace Audiophile.Web.Controllers
 
                 }
 
-
+               
                 var route = new Localization().Get("/IlanEkle/Sonuc/", "/AddListing/Summary/", lang) + advert.ID;
                 return Json(new { isSuccess = true, url = route });
             }
@@ -1473,7 +1477,8 @@ namespace Audiophile.Web.Controllers
             using (var service = new AdvertService())
             {
                 var advert = service.GetMyAdvert(id, GetLoginID());
-                service.SetDraft(id, false);
+                advert.IsDraft = false;
+                service.Update(advert);
                 return View(advert);
             }
         }

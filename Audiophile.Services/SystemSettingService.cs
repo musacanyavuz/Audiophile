@@ -20,5 +20,6 @@ namespace Audiophile.Services
             var setting = GetSystemSettings().FirstOrDefault(p => p.Name == name);
             return setting;
         }
+      
     }
 }

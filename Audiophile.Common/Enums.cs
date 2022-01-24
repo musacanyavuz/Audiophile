@@ -238,7 +238,9 @@
             IletisimFormuMail,
             FreeAdvertPublishLimit,
             AdvertPublishPrice,
-            AvailableInstallments
+            AvailableInstallments,
+            MailServerSMTPPassword
+
         }
 
         public enum HomePageItemType
@@ -255,6 +257,14 @@
         public enum OauthProviders
         {
             Facebook = 0
+        }
+
+        public enum ApprovalStatusEnum 
+        {
+            Undefined = 0 ,
+            WaitingforApproval = 1, 
+            Approved = 2,
+            Rejected = 3
         }
     }
 }

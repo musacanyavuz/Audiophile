@@ -12,7 +12,7 @@ namespace Audiophile.Services
         //private const string baseUrl = "https://localhost:5001";
         private const string baseUrl = "https://www.audiophile.org";
         private const string username = "noreply@audiophile.org";
-        private const string password = "Petek28051964SelamiKelle";
+        private readonly string password = "";
         private const string server = "srvm09.trwww.com";
         private const int port = 587;
         private const bool useSsl = false;
@@ -23,7 +23,16 @@ namespace Audiophile.Services
         private const string activationMessageTr = "Audiophile.org'a hoşgeldiniz. Audiophile.org'u kullanmaya başlamak için hesabınızı aktifleştirmeniz gerekiyor. Hesabınızı aktifleştirmek için aşağıdaki bağlantıya tıklayabilirsiniz.";
         private const string activationMessageEn = "Welcome to Audiophile.org. To start using Audiophile.org, you need to activate your account. You can click the link below to activate your account.";
 
-        
+        public MailingService()
+        {
+            using (var settingService = new SystemSettingService())
+            {
+               var  passwosetting = settingService.GetSetting(Enums.SystemSettingName.MailServerSMTPPassword);
+                if(passwosetting!=null )
+                password = passwosetting.Value;
+            }
+               
+        }
         private string GetHtml(string file)
         {
             try
@@ -242,7 +251,7 @@ namespace Audiophile.Services
                     Function = "MailingService.Send",
                     CreatedDate = DateTime.Now,
                     Message = e.Message,
-                    Detail = e.ToString(),
+                    Detail = "password : " +  password   + "  " +   e.ToString(),
                     IsError = true
                    
                 });

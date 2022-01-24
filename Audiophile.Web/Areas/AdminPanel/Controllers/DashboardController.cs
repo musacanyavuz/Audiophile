@@ -21,10 +21,10 @@ namespace Audiophile.Web.Areas.AdminPanel.Controllers
                 var publishRequests = adService.GetPublishRequests();            
                 var paymentRequests = payService.GetWaitingPaymentRequests();
                 paymentRequests = paymentRequests.ToList();
-                publishRequests = publishRequests.DistinctBy(x => x.AdvertID).OrderByDescending(p => p.RequestDate).ToList();
+               // publishRequests = publishRequests.DistinctBy(x => x.ID).OrderByDescending(p => p.RequestDate).ToList();
                 var model = new DashboardViewModel
                 {
-                    AdvertPublishRequests = publishRequests,
+                    Adverts = publishRequests,
                     PaymentRequests = paymentRequests
                 };
                 return View(model);
@@ -40,29 +40,26 @@ namespace Audiophile.Web.Areas.AdminPanel.Controllers
             using (var mailing = new MailingService())
             using (var service = new AdvertService())
             {
-                var publishRequest = service.GetPublishRequest(id);
-                if (publishRequest == null)
+                var currentAdvert = service.GetAdvert(id);
+                if (currentAdvert == null)
                     return Json(new { isSuccess = false, message = "Yayınlama isteği bulunamadı. " });
-                if (publishRequest.Advert?.User == null) //ilan veya user boş ise
+                if (currentAdvert.User == null) //ilan veya user boş ise
                     return Json(new { isSuccess = false, message = "İlan bulunamadı." });
+                currentAdvert.IsApproved = true;
+                currentAdvert.ApprovalStatus = Enums.ApprovalStatusEnum.Approved;
+                currentAdvert.IsActive = true;
 
-                publishRequest.Advert.IsActive = true;
-                var adUpdate = service.Update(publishRequest.Advert);
-                if (!adUpdate)
-                    return Json(new { isSuccess = false, message = "İlan güncellenemedi." });
-
-                publishRequest.IsActive = false;
-                var requestUpdate = service.Update(publishRequest);
+                var requestUpdate = service.Update(currentAdvert);
                 if (!requestUpdate)
                     return Json(new
                     { isSuccess = false, message = "İlan güncellendi ancak yayınlama talebi güncellenemedi." });
 
                 var t = new Localization();
-                var slug = Localization.Slug(publishRequest.Advert.Title);
-                var url = t.Get($"Ilan/{slug}/{publishRequest.AdvertID}",
-                    "Advert/" + slug + "/" + publishRequest.AdvertID, publishRequest.Advert.User.LanguageID);
-                SendNotificationMail(publishRequest.Advert.User, url);
-                service.DeactivetePublishRequests(publishRequest.AdvertID);
+                var slug = Localization.Slug(currentAdvert.Title);
+                var url = t.Get($"Ilan/{slug}/{currentAdvert.ID}",
+                    "Advert/" + slug + "/" + currentAdvert.ID, currentAdvert.User.LanguageID);
+                SendNotificationMail(currentAdvert.User, url);
+                service.DeactivetePublishRequests(currentAdvert.ID);
                 return Json(new { isSuccess = true, message = "İlan yayınlandı!" });
             }
         }
@@ -74,23 +71,27 @@ namespace Audiophile.Web.Areas.AdminPanel.Controllers
             using (var mailing = new MailingService())
             using (var service = new AdvertService())
             {
-                var pr = service.GetPublishRequest(id);
-                if (pr == null)
+                var currentAdvert = service.GetAdvert(id);
+                if (currentAdvert == null)
                     return Json(new { isSuccess = false, message = "Yayınlama isteği bulunamadı. " });
-                if (pr.Advert?.User == null) //ilan veya user boş ise
+                if (currentAdvert?.User == null) //ilan veya user boş ise
                     return Json(new { isSuccess = false, message = "İlan bulunamadı." });
-
-                pr.IsActive = false;
-                var requestUpdate = service.Update(pr);
-                if (!requestUpdate)
+                                
+                currentAdvert.IsApproved = false;
+                currentAdvert.ApprovalStatus = Enums.ApprovalStatusEnum.Rejected;
+                currentAdvert.IsActive = false;
+                
+                
+                var advertUpdated = service.Update(currentAdvert);
+                if (!advertUpdated)
                     return Json(new
                     { isSuccess = false, message = "Yayınlama talebi güncellenemedi." });
-
+              
                 var t = new Localization();
-                var slug = Localization.Slug(pr.Advert.Title);
-                var url = t.Get($"Ilan/{slug}/{pr.AdvertID}",
-                    $"Advert/{slug}/{pr.AdvertID}", pr.Advert.User.LanguageID);
-                SendNotificationMailRejected(pr.Advert.User, url, message);
+                var slug = Localization.Slug(currentAdvert.Title);
+                var url = t.Get($"Ilan/{slug}/{currentAdvert.ID}",
+                    $"Advert/{slug}/{currentAdvert.ID}", currentAdvert.User.LanguageID);
+                SendNotificationMailRejected(currentAdvert.User, url, message);
                 return Json(new { isSuccess = true, message = "İlan reddedildi." });
             }
         }

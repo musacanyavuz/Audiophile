@@ -38,5 +38,7 @@ namespace Audiophile.Web.ViewModels
 
         public bool IsActive { get; set; }
 
+        public bool IsApproved { get; set; }
+
     }
 }

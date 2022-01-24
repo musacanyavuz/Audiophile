@@ -192,6 +192,7 @@ namespace Audiophile.Web.Controllers
                 Content = ad.Content,
                 Model = ad.Model,
                 IsActive = ad.IsActive,
+                IsApproved = ad.IsApproved,
                 Url =
                     $"{Constants.GetURL((int)Enums.Routing.Ilan, lang)}/{Common.Localization.Slug(ad.Title)}/{ad.ID}"
             };

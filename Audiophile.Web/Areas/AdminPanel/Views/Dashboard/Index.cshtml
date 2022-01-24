@@ -191,29 +191,29 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var pr in Model.AdvertPublishRequests)
+                                @foreach (var pr in Model.Adverts)
                                 {
                                     <tr id="ad_@pr.ID">
                                         <td>
-                                            <a href="/AdminPanel/Adverts/Details/@pr.Advert.ID" target="_blank"> #@pr.Advert.ID </a>
+                                            <a href="/AdminPanel/Adverts/Details/@pr.ID" target="_blank"> #@pr.ID </a>
                                         </td>
                                         <td>
-                                            <a href="@pr.Advert.Thumbnail" target="_blank">
-                                                <img src="@pr.Advert.Thumbnail" height="100" width="100" style="object-fit: cover" />
+                                            <a href="@pr.Thumbnail" target="_blank">
+                                                <img src="@pr.Thumbnail" height="100" width="100" style="object-fit: cover" />
                                             </a>
                                         </td>
-                                        <td> @(pr.Advert.User?.Name) </td>
-                                        <td> @(pr.Advert.Title.Length > 50 ? pr.Advert.Title.Substring(0, 50) : pr.Advert.Title) </td>
-                                        <td> @(pr.Advert?.CategorySlug) </td>
-                                        <td> @pr.Advert.Price  @Constants.GetMoney(pr.Advert.MoneyTypeID)</td>
-                                        <td> @(pr.Advert.CreatedDate.ToShortDateString()) </td>
-                                        <td> @(pr.Advert?.LastUpdateDate?.ToShortDateString()) </td>
-                                        <td> @(pr.Advert.UseSecurePayment ? "Evet " + pr.Advert.AvailableInstallments : "Hayır") </td>
+                                        <td> @(pr.User?.Name) </td>
+                                        <td> @(pr.Title.Length > 50 ? pr.Title.Substring(0, 50) : pr.Title) </td>
+                                        <td> @(pr?.CategorySlug) </td>
+                                        <td> @pr.Price  @Constants.GetMoney(pr.MoneyTypeID)</td>
+                                        <td> @(pr.CreatedDate.ToShortDateString()) </td>
+                                        <td> @(pr?.LastUpdateDate?.ToShortDateString()) </td>
+                                        <td> @(pr.UseSecurePayment ? "Evet " + pr.AvailableInstallments : "Hayır") </td>
                                         <td>
                                             <div class="btn-group btn-group-sm">
-                                                <button class="btn btn-outline-success" onclick="advertPublishMessage(@pr.ID,@pr.AdvertID, '@(pr.Advert?.Title?.Replace("'",""))')">Onayla</button>
+                                                <button class="btn btn-outline-success" onclick="advertPublishMessage(@pr.ID,@pr.ID, '@(pr.Title?.Replace("'",""))')">Onayla</button>
 
-                                                <button class="btn btn-outline-danger" onclick="advertReject(@pr.ID, '@(pr.Advert?.Title?.Replace("'",""))', @(pr.Advert?.User?.LanguageID))">Reddet</button>
+                                                <button class="btn btn-outline-danger" onclick="advertReject(@pr.ID, '@(pr.Title?.Replace("'",""))', @(pr.User?.LanguageID))">Reddet</button>
                                             </div>
                                         </td>
                                     </tr>

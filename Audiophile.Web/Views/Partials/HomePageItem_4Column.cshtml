@@ -41,8 +41,8 @@
                 }
 
                 @*<span class="description" hidden>
-                    <span itemprop="description">@HtmlEncoder.Encode(Model.Description)</span>
-                </span>*@
+                        <span itemprop="description">@HtmlEncoder.Encode(Model.Description)</span>
+                    </span>*@
                 <meta itemprop="brand" content="@Html.Raw(Model.Brand)" />
                 <meta itemprop="model" content="@Html.Raw(Model.Model)" />
                 <div class="new-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
@@ -74,7 +74,7 @@
             @if (!string.IsNullOrEmpty(Model.LabelDopingType))
             {
                 string className = "", enText = "";
-               if (Model.LabelDopingType == "Yeni")
+                if (Model.LabelDopingType == "Yeni")
                 {
                     className = "new";
                     enText = "New";
@@ -94,12 +94,18 @@
                     <div>@Localization.Get(Model.LabelDopingType, enText, lang)</div>
                 </div>
             }
-            @if (!Model.IsActive)
+            @if (!Model.IsActive && Model.IsApproved)
             {
                 <div class="div-block-40 ad-passive">
-                    <div>@Localization.Get("Bu İlan Onay Sürecindedir", "This ad is on approval process", lang)</div>
+                    <div>@Localization.Get("Bu İlan Pasiftir", "This ad is passive", lang)</div>
                 </div>
             }
+            @*else if (Model.IsActive && Model.IsApproved)
+            {
+                <div class="div-block-40 ad-passive">
+                    <div>@Localization.Get("Bu İlan Pasiftir", "This ad is passive", lang)</div>
+                </div>
+            }*@
             @if (!string.IsNullOrEmpty(Model.SecurePayment) && Model.IsActive)
             {
                 <div class="fiyati-dustu gittibu">
