@@ -57,11 +57,19 @@ namespace Audiophile.Web.Controllers
             }
         }
 
+       
         public void Localization()
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("lang")))
             {
-                HttpContext.Session.SetString("lang", "tr");
+                var headerLang = Request.Headers["Accept-Language"].ToString();
+                var userLang = Constants.GetUserBrowserLanguage(headerLang);
+                if (userLang != null)
+                {
+                    userLang = userLang == "tr" ? "tr" : "en";
+                    SetLang(userLang);
+                }
+
             }
         }
 

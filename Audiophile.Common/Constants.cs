@@ -37,6 +37,13 @@ namespace Audiophile.Common
             }
             return 1;
         }
+        public static string GetUserBrowserLanguage(string acceptLanguage)
+        {
+            var userLangs = acceptLanguage;
+            var firstLang = userLangs.Split(',')[0];
+            var defaultLang = string.IsNullOrEmpty(firstLang) ? "en" : firstLang;
+            return defaultLang;
+        }
 
         public static string GetMoney(int code)
         {
