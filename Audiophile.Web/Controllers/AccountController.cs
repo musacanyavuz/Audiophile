@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Security.AccessControl;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Audiophile.Common;
 using Audiophile.Common.Extensions;
@@ -19,6 +20,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -30,8 +32,10 @@ namespace Audiophile.Web.Controllers
 {
     public class AccountController : BaseController
     {
+       
         string stTr = "Facebook ile giriş işlemi için e-posta erişim izni vermelisiniz ! ";
         string stEn = "Email address is mandatory to complete login via facebook  !";
+       
         #region Login
 
         [Route("GirisYap")]
@@ -56,7 +60,7 @@ namespace Audiophile.Web.Controllers
             }
             using (var service = new UserService())
             {
-                // var pass = Encryptor.DecryptData("Mi8Vw3Ke3ZH5xDB7C98ZQQ==");
+                // var pass = Encryptor.DecryptData("f3DUsWKsCyWLjS4DCp3WuA==");
                 password = Encryptor.EncryptData(password);
                 var user = service.Get(username, password);
                 if (user == null)
@@ -92,10 +96,10 @@ namespace Audiophile.Web.Controllers
             var identity = new ClaimsIdentity(claims,
                 CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
-
+           
             var authProperties = new AuthenticationProperties
             {
-                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30),
+                ExpiresUtc = DateTime.UtcNow.AddDays(30),
                 IsPersistent = rememberMe,
             };
             await HttpContext.SignInAsync(
@@ -322,8 +326,34 @@ namespace Audiophile.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(User user)
         {
-            var t = new Localization();
+           
+                var t = new Localization();
             var lang = GetLang();
+            var match = Regex.Match(user.MobilePhone, @"^[0-9\s]*$", RegexOptions.IgnoreCase);
+
+            if (!match.Success)
+            {
+                TempData.Put("UiMessage", new UiMessage { Class = "danger", Message = t.Get(Messages.RegisterPhoneFail_tr, Messages.RegisterPhoneFail_en, lang) });
+                return RedirectToAction("Register");
+            }
+            bool validation = false;
+           
+                var response = Request.Form["g-recaptcha-response"];
+                const string secret = Constants.RecaptchaSecretKey;
+                var client = new System.Net.WebClient();
+                var reply =
+                    client.DownloadString(
+                        $"https://www.google.com/recaptcha/api/siteverify?secret={secret}&response={response}");
+                var captchaResponse = JsonConvert.DeserializeObject<CaptchaResponse>(reply);
+                validation = captchaResponse.Success;
+            
+            if (!validation)
+            {               
+                TempData.Put("UiMessage", new UiMessage { Class = "danger", Message = t.Get(Messages.RegisterReCaptchaError_tr, Messages.RegisterReCaptchaError_en, lang) });
+                return RedirectToAction("Register");
+            }
+                
+            
             using (var service = new UserService())
             {
                 var usernameIsUsable = service.UsernameIsUsable(user.UserName, GetLoginID());
@@ -443,7 +473,8 @@ namespace Audiophile.Web.Controllers
         public JsonResult UserNameIsUsable(string username)
         {
             var t = new Localization();
-            var lang = GetLang();
+            var lang = GetLang();           
+
             if (string.IsNullOrEmpty(username))
                 return Json(new
                 { isSuccess = false, message = t.Get("Geçersiz kullanıcı adı.", "Invalid user name.", lang) });

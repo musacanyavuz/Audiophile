@@ -16,10 +16,14 @@ namespace Audiophile.Common
         public const string RegisterSuccess_en = "Your registration is complete. To activate your account, click on the confirmation link to your e-mail address.";
         public const string RegisterMailError_tr = "Kayıt işleminiz tamamlandı ancak aktivasyon maili gönderilemedi. Lütfen bizimle iletişime geçin.";
         public const string RegisterMailError_en = "Your registration was completed but the activation mail could not be sent. Please contact us.";
+        public const string RegisterReCaptchaError_tr = "Doğrulama işlemi başarısız oldu.";
+        public const string RegisterReCaptchaError_en = "Invalid Captcha";
+        public const string RegisterPhoneFail_en = "Invalid Phone Number";
+        public const string RegisterPhoneFail_tr = "Geçersiz telefon numarası";
 
         #endregion
-        
-        
-        
+
+
+
     }
 }

@@ -45,6 +45,15 @@ namespace Audiophile.Web
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
+                    options.Cookie = new CookieBuilder
+                    {
+                        Name = "AudiophileCookie",
+                        HttpOnly = false, 
+                        Expiration = TimeSpan.FromDays(10),
+                        SecurePolicy = CookieSecurePolicy.Always 
+                    };
+                    options.ExpireTimeSpan = TimeSpan.FromDays(5);
+                    options.SlidingExpiration = true; // the cookie would be re-issued on any request half way through the ExpireTimeSpan
                     options.LoginPath = new PathString("/GirisYap");
                 });
             services.Configure<RequestLocalizationOptions>(options =>

@@ -12,6 +12,7 @@
     <PackageReference Include="FreeImage-dotnet-core">
       <Version>4.3.6</Version>
     </PackageReference>
+    <PackageReference Include="MailKit" Version="3.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.1" />
     <PackageReference Include="MySql.Data" Version="8.0.25" />
     <PackageReference Include="Npgsql">

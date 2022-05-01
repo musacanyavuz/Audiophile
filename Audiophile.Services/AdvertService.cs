@@ -606,7 +606,7 @@ namespace Audiophile.Services
                 "Adverts, AdvertCategories, Users\nwhere\n  " +
                 // "  AdvertPublishRequests.AdvertID = Adverts.ID\nand " +
                 "Adverts.UserID = Users.ID\nand Adverts.CategoryID = AdvertCategories.ID\n and " +
-                "  (Adverts.ApprovalStatus =1) /* AdvertPublishRequests.IsActive = true*/ \n and Adverts.IsDraft=false";
+                "  (Adverts.ApprovalStatus = 1) /* AdvertPublishRequests.IsActive = true*/ \n and Adverts.IsDraft=false";
 
             var list = GetConnection().Query<Advert, User, Advert>(sql,
                 (request,  user) =>                {
@@ -666,7 +666,7 @@ namespace Audiophile.Services
                       $" Users.* " +
                       $"from Adverts, Users " +
                       $"where UserID=Users.ID " +
-                      $" and (Adverts.ApprovalStatus = 2) " +
+                      $" and (Adverts.ApprovalStatus in (2,3)) " +
                       $"order by Adverts.ID desc limit @count offset @offset";
             if (!string.IsNullOrEmpty(search))
             {
@@ -675,7 +675,7 @@ namespace Audiophile.Services
                       $" Users.* " +
                       $" from Adverts, Users " +
                       $"where "+
-                      $" (Adverts.ApprovalStatus = 2) AND " +
+                      $"(Adverts.ApprovalStatus in (2,3)) AND " +
                       $" UserID=Users.ID and (" +
                       $" Title like @search or Content like @search or Brand like @search\nor " +
                       $" (select GetText((select NameID from AdvertCategories where ID = Adverts.CategoryID), 1 )) like @search  or " +

@@ -60,15 +60,20 @@ namespace Audiophile.Web.Controllers
        
         public void Localization()
         {
+
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("lang")))
             {
+                HttpContext.Session.SetString("lang", "tr");
+                /*
+                 * kullanıcının dil seçimini browserdan almak için
                 var headerLang = Request.Headers["Accept-Language"].ToString();
                 var userLang = Constants.GetUserBrowserLanguage(headerLang);
                 if (userLang != null)
                 {
-                    userLang = userLang == "tr" ? "tr" : "en";
+                    userLang = userLang.IndexOf("tr") > -1 ? "tr" : "en";
                     SetLang(userLang);
                 }
+                */
 
             }
         }

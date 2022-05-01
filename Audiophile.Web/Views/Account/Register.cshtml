@@ -132,17 +132,17 @@
 
 
                         @*<div class="row margin_bottom">
-                                <div class="col-6">
-                                    <label class="field-label">@Localization.Get("Cinsiyet", "Gender", lang)*:</label>
-                                    <select class="form-control w-dropdown textfield" name="GenderID">
-                                        <option value="1">@Localization.Get("Erkek", "Man", lang)</option>
-                                        <option value="2">@Localization.Get("Kadın", "Woman", lang)</option>
-                                    </select>
-                                </div>
-                                <div class="col-6">
+                <div class="col-6">
+                    <label class="field-label">@Localization.Get("Cinsiyet", "Gender", lang)*:</label>
+                    <select class="form-control w-dropdown textfield" name="GenderID">
+                        <option value="1">@Localization.Get("Erkek", "Man", lang)</option>
+                        <option value="2">@Localization.Get("Kadın", "Woman", lang)</option>
+                    </select>
+                </div>
+                <div class="col-6">
 
-                                </div>
-                            </div>*@
+                </div>
+            </div>*@
 
 
 
@@ -164,10 +164,10 @@
 
                         <div class="row margin_bottom">
                             @*<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                                    <label class="field-label">@Localization.Get("Doğum Tarihi", "Birthday", lang)*:</label>
+                    <label class="field-label">@Localization.Get("Doğum Tarihi", "Birthday", lang)*:</label>
 
-                                    <input class="textfield w-input" name="BirthDate" id="birthDay" type="date">
-                                </div>*@
+                    <input class="textfield w-input" name="BirthDate" id="birthDay" type="date">
+                </div>*@
 
                             <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
                             </div>
@@ -182,8 +182,16 @@
                             </div>
                         </div>
                         <div class="row margin_bottom">
+                            <div class="d-flex justify-content-center col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                                <div class="g-recaptcha" style="margin:30px 0 30px 0" data-sitekey="@Constants.RecaptchaSiteKey"></div>
+                            </div>
+                        </div>
+                        <div class="row margin_bottom">
                             <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                             </div>
+
+
                             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                                 <input type="button" onclick="register()" id="btnRegister" value="@Localization.Get("Kayıt Ol", "Register", lang)" class="button button-main button-satn button-submit w-button">
                             </div>
@@ -191,6 +199,7 @@
                             <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
                             </div>
                         </div>
+
                     }
                     <div id="alertArea">
                     </div>
@@ -308,7 +317,7 @@
                 type:'POST',
                 dataType:'json',
                 data: {username},
-                success:function(data){
+                success: function (data) {                   
                     if (!data.isSuccess) {
                         showAlert(data.message, "danger");
                     } else {

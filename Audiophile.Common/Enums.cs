@@ -98,7 +98,13 @@
             AliciRed = 384,
             IlanOnay = 385,
             IlanRed = 386,
-            WarningAdverts = 411
+            WarningAdverts = 411,
+            HeraderIlanVer = 412,
+            HeaderExpore = 413,
+            Categories = 414,
+            Advertorial=415,
+            Blog = 416,
+            Support = 417
 
         }
 
@@ -239,8 +245,8 @@
             FreeAdvertPublishLimit,
             AdvertPublishPrice,
             AvailableInstallments,
-            MailServerSMTPPassword
-
+            MailServerSMTPPassword,
+            MailServerSettings
         }
 
         public enum HomePageItemType

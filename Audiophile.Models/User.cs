@@ -21,6 +21,7 @@ namespace Audiophile.Models
         public string Name { get; set; }
         public string Email { get; set; }
         public int GenderID { get; set; }
+        
         public string MobilePhone { get; set; }
         public string WorkPhone { get; set; }
         public DateTime? BirthDate { get; set; }

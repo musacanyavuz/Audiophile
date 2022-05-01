@@ -35,7 +35,7 @@
             @if (!User.Identity.IsAuthenticated)
             {
                 <li class="nav-item">
-                    <a class="nav-link" href='@Constants.GetURL(Enums.Routing.GirisYap, lang)'>@Localization.Get("Ücretsiz İlan Ver", "Advertise Free", lang) </a>
+                    <a class="nav-link" href='@Constants.GetURL(Enums.Routing.GirisYap, lang)'> @TextService.GetText((int)Enums.Texts.HeraderIlanVer, lang)</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href='@Constants.GetURL(Enums.Routing.UyeOl, lang)'>@Localization.Get("Üye Ol", "Register", lang) </a>
@@ -78,7 +78,7 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
-                    Advertorial
+                    @TextService.GetText((int)Enums.Texts.HeaderExpore, lang)
                 </a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" href='@Localization.Get("/Blog/Haberler-Kampanyalar", "/Blog/News-Campaigns", lang)'>

@@ -5,6 +5,7 @@ using System.Net.Mail;
 using Audiophile.Common;
 using Audiophile.Models;
 
+
 namespace Audiophile.Services
 {
     public class MailingService : BaseService , IDisposable
@@ -16,7 +17,9 @@ namespace Audiophile.Services
         private const string server = "srvm09.trwww.com";
         private const int port = 587;
         private const bool useSsl = false;
-        
+        private MailServerSMTPSettings allSettings;
+
+
         private const string resetPasswordMessageTr = "Bir şifre sıfırlama bağlantısı oluşturuldu. Eğer bu bağlantıyı siz oluşturmadıysanız bu maili dikkate almayınız. Şifrenizi sıfırlamak için aşağıdaki bağlantıya tıklayabilirsiniz.";
         private const string resetPasswordMessageEn = "A password reset link has been created. If you did not create this link, please ignore this mail. You can click the link below to reset your password.";
         
@@ -30,6 +33,14 @@ namespace Audiophile.Services
                var  passwosetting = settingService.GetSetting(Enums.SystemSettingName.MailServerSMTPPassword);
                 if(passwosetting!=null )
                 password = passwosetting.Value;
+
+
+                var temp = settingService.GetSetting(Enums.SystemSettingName.MailServerSettings);
+                if (temp != null)
+                {
+                    allSettings= Newtonsoft.Json.JsonConvert.DeserializeObject<MailServerSMTPSettings>(temp.Value);
+                    
+                }
             }
                
         }
@@ -191,17 +202,17 @@ namespace Audiophile.Services
         {
             try
             { 
-                var fromAddress = new MailAddress(username, "Audiophile.org");
-                var smtp = new SmtpClient
+                var fromAddress = new System.Net.Mail.MailAddress(allSettings.UserName, "Audiophile.org");
+                var smtp = new System.Net.Mail.SmtpClient
                 {
-                    Host = server,
-                    Port = port,
-                    EnableSsl = useSsl,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(fromAddress.Address, password)
+                    Host = allSettings.Host,
+                    Port = allSettings.Port,
+                    EnableSsl = allSettings.EnableSsl,
+                    DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = allSettings.UseDefaultCredentials,//true,
+                    Credentials = new System.Net.NetworkCredential(fromAddress.Address, allSettings.Password)
                 };
-                var mail = new MailMessage()
+                var mail = new System.Net.Mail.MailMessage()
                 {
                     From = fromAddress,
                     Subject = title,
@@ -219,21 +230,76 @@ namespace Audiophile.Services
             {
             }
         }
-        
+
+
+        public bool Send2(string body, string toMail, string toName, string title)
+        {
+
+            var message = new MimeKit.MimeMessage();
+            message.From.Add(new MimeKit.MailboxAddress("testAudiophile.org", allSettings.UserName));
+            message.To.Add(new MimeKit.MailboxAddress(toName, toMail));
+            message.Subject = title;
+
+            message.Body = new MimeKit.TextPart("plain")
+            {
+                Text = body
+
+            };
+            try
+            {
+                using (var client = new MailKit.Net.Smtp.SmtpClient())
+                {
+                    client.Connect(allSettings.Host, 587, false);
+
+                    // Note: only needed if the SMTP server requires authentication
+                    client.Authenticate(allSettings.UserName, allSettings.Password);
+
+                    client.Send(message);
+                    client.Disconnect(true);
+                }
+                Log(new Log
+                {
+                    Function = "MailingService.Send",
+                    CreatedDate = DateTime.Now,
+                    Message = "Mail Gönderimi Tamam to:  " + toMail,
+                    Detail = "password : " + password,
+                    IsError = false
+
+                });
+            }
+            catch (Exception e)
+            {
+
+                Log(new Log
+                {
+                    Function = "MailingService.Send",
+                    CreatedDate = DateTime.Now,
+                    Message = e.Message,
+                    Detail = "password : " + password + "  " + e.ToString(),
+                    IsError = true
+
+                });
+                return false;
+            }
+
+
+            return true;
+        }
+
         public bool Send(string body, string toMail, string toName, string title)
         {
             try
             {
                 var toAddress = new MailAddress(toMail, toName);
-                var fromAddress = new MailAddress(username, "Audiophile.org");
+                var fromAddress = new MailAddress(allSettings.UserName, "Audiophile.org");
                 var smtp = new SmtpClient
                 {
-                    Host = server,
-                    Port = port,
-                    EnableSsl = useSsl,
+                    Host = allSettings.Host,
+                    Port = allSettings.Port,
+                    EnableSsl = allSettings.EnableSsl,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(fromAddress.Address, password)
+                    UseDefaultCredentials = allSettings.UseDefaultCredentials,
+                    Credentials = new NetworkCredential(fromAddress.Address, allSettings.Password)
                 };
                 using (var mail = new MailMessage(fromAddress, toAddress)
                 {
@@ -241,7 +307,11 @@ namespace Audiophile.Services
                     Body = body,
                     IsBodyHtml = true
                 })
-                smtp.Send(mail);
+                    smtp.Send(mail);
+
+               
+
+
                 return true;
             }
             catch (Exception e)
@@ -251,9 +321,9 @@ namespace Audiophile.Services
                     Function = "MailingService.Send",
                     CreatedDate = DateTime.Now,
                     Message = e.Message,
-                    Detail = "password : " +  password   + "  " +   e.ToString(),
+                    Detail = "password : " + password + "  " + e.ToString(),
                     IsError = true
-                   
+
                 });
                 return false;
             }
@@ -263,5 +333,16 @@ namespace Audiophile.Services
         {
             
         }
+    }
+
+    public class MailServerSMTPSettings
+    {
+        public int Port { get; set; }
+
+        public string UserName { get; set; }
+        public string Password { get; set; }
+        public string Host { get; set; }
+        public bool EnableSsl { get; set; }
+        public bool UseDefaultCredentials { get; set; }
     }
 }

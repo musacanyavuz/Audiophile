@@ -7,9 +7,18 @@
 }
 
 @section Styles{
-    <link href="/AdminContent/assets/vendors/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css">
+    <link href="/AdminContent/assets/vendors/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css">   
 }
-
+<style>
+    .rejected {
+        color: white;      
+        background: red;
+        border-radius: 0px;
+        padding-left: 5px;
+        padding-right: 5px;
+        float: left;
+    }
+</style>
 <div class="m-portlet m-portlet--mobile">
     <div class="m-portlet__head">
         <div class="m-portlet__head-caption">
@@ -78,34 +87,37 @@
                     render: function (data, type, full, meta) {
                         const title = `${full.title.split("'").join("")}`;
                         var html = `
-                                            <div class="btn-group btn-group-sm" role="group">
-                                            <a href="/AdminPanel/Adverts/Details/${full.id}" class="m-btn btn btn-info" title="Detaylar">
-                                                <i class="la la-bars"></i>
-                                            </a>
-                                            <a href="/AdminPanel/Adverts/AddDoping/${full.id}" class="m-btn btn btn-primary" title="Doping Ekle">
-                                                <i class="la la-plus"></i>
-                                            </a>
-                                            `;
-                        if (full.isActive) {
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                <a href="/AdminPanel/Adverts/Details/${full.id}" class="m-btn btn btn-info" title="Detaylar">
+                                                    <i class="la la-bars"></i>
+                                                </a>
+                                                <a href="/AdminPanel/Adverts/AddDoping/${full.id}" class="m-btn btn btn-primary" title="Doping Ekle">
+                                                    <i class="la la-plus"></i>
+                                                </a>
+                                                `;
 
-                            html += `
-                                                <button onclick="updateStatusMessage(${full.id}, false, '${title}')" class="m-btn btn btn-warning" title="Pasifleştir">
-                                                            <i class="la la-close"></i>
-                                                </button>
-                                                `;
-                        } else {
-                            html += `
-                                                <button onclick="updateStatusMessage(${full.id}, true, '${title}')" class="m-btn btn btn-success" title="Aktifleştir">
-                                                    <i class="la la-check"></i>
-                                                </button>
-                                                `;
-                        }
+                        //if (full.approvalStatus != 3) {
+                            if (full.isActive) {
+
+                                html += `
+                                                    <button onclick="updateStatusMessage(${full.id}, false, '${title}')" class="m-btn btn btn-warning" title="Pasifleştir">
+                                                                <i class="la la-close"></i>
+                                                    </button>
+                                                    `;
+                            } else {
+                                html += `
+                                                    <button onclick="updateStatusMessage(${full.id}, true, '${title}')" class="m-btn btn btn-success" title="Aktifleştir">
+                                                        <i class="la la-check"></i>
+                                                    </button>
+                                                    `;
+                            }
+                        //}
                         html += `
-                                                 <button onclick="deleteMessage(${full.id},'${title}')" class="m-btn btn btn-danger" title="Sil">
-                                                    <i class="la la-trash"></i>
-                                                </button>
-                                            `;
-
+                                                     <button onclick="deleteMessage(${full.id},'${title}')" class="m-btn btn btn-danger" title="Sil">
+                                                        <i class="la la-trash"></i>
+                                                    </button>
+                                                `;
+                        
                         html += "</div>";
                         return html;
                     },
@@ -113,22 +125,33 @@
                 {
                     targets: 4,
                     render: function (data, type, full, meta) {
-                        if (data === true) {
-                            return "Aktif";
+                        var html = ``;
+                        statusClass = '';
+                        //if (full.approvalStatus == 3) {
+                        //    statusClass = 'rejected';
+                        //  //  html += `<div class='rejected'>R</div> `;
+                        //}
+                        //if (full.approvalStatus == 3) {
+                        //    html += " <div class='rejected'>Red</div>";
+                        //}else
+                         if (data === true) {
+                            html += " <div>Aktif</div>";
                         } else {
-                            return "Pasif";
+                            html += "<div>Pasif</div>";
                         }
+                        return html;
+                       
                     }
                 },
                 {
                     targets: 5,
-                    render: function(data) {
+                    render: function (data) {
                         return data ? "Taslak" : "Tamamlanmış";
                     }
                 }
             ]
         });
-
+        var statusClass = '';
 
     </script>
     <script>

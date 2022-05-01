@@ -92,7 +92,9 @@
 
         <div class="side-bar">
             <div class="kategoriler-div">
-                <div class="kategoriler">@Html.Raw(Localization.Get("KATEGORİLER1", "CATEGORIES", lang))</div>
+                <div class="kategoriler"> @TextService.GetText((int)Enums.Texts.Categories, lang).ToUpper()
+               
+                </div>
 
                 @foreach (var category in Model.AdvertCategories)
                 {
@@ -103,7 +105,7 @@
                 }
             </div>
             <div class="w-clearfix">
-                <div class="kategoriler">ADVERTORIAL</div>
+                <div class="kategoriler"> @TextService.GetText((int)Enums.Texts.Advertorial, lang).ToUpper() </div>
                 <a href="@Constants.GetURL((int) Enums.Routing.Blog_HaberlerKampanyalar, lang)" class="link-block w-clearfix w-inline-block">
                     <img alt="@Localization.Get("Haber, Kampanyalar", "News, Campaings", lang)" src="/Upload/Categories/news.png" onerror="this.src = '/Content/img/images/favicon.jpg';" width="19" height="19" title="@Localization.Get("Haber, Kampanyalar", "News, Campaings", lang)" />
 
@@ -117,7 +119,7 @@
             </div>
 
             <div class="w-clearfix">
-                <div class="kategoriler">BLOG</div>
+                <div class="kategoriler"> @TextService.GetText((int)Enums.Texts.Blog, lang)</div>
                 <a href="@Constants.GetURL((int) Enums.Routing.Blog_OdyofilSistemler, lang)" class="link-block w-clearfix w-inline-block">
                     <img alt="@Localization.Get("Odyofil Sistemler", "Audiophile's Systems", lang)" src="/Upload/Categories/audiophile_systems.png" onerror="this.src = '/Content/img/images/favicon.jpg';" class="icon ic2" width="19" height="19" title="@Localization.Get("Odyofil Sistemler", "Audiophile's Systems", lang)" />
 
@@ -131,7 +133,7 @@
             </div>
             <div class="w-clearfix">
 
-                <div class="kategoriler">@Localization.Get("DESTEK", "SUPPORT", lang) </div>
+                <div class="kategoriler"> @TextService.GetText((int)Enums.Texts.Support, lang) </div>
 
                 <a href="@Constants.GetURL((int) Enums.Routing.Hakkimizda, lang)" class="link-block w-inline-block w-clearfix">
                     <h4 class="home-left-item m-l-0">- @Localization.Get("Hakkımızda", "About Us", lang)</h4>

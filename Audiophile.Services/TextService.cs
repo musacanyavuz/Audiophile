@@ -109,6 +109,14 @@ namespace Audiophile.Services
             ).SingleOrDefault()?.TextContent;
             return text;
         }
+        public string GetTextByTextCode(string name, int language)
+        {
+            var text = GetConnection().Find<Content>(s => s
+                .Where($"{nameof(Content.Name):C}=@name and {nameof(Content.LanguageID):C}=@language")
+                .WithParameters(new { name, language })
+            ).SingleOrDefault()?.TextContent;
+            return text;
+        }
 
         public List<Content> GetContents()
         {
