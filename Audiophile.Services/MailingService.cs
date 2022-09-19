@@ -228,6 +228,7 @@ namespace Audiophile.Services
             }
             catch (Exception e)
             {
+.                throw;
             }
         }
 

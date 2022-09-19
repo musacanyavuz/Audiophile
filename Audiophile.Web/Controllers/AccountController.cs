@@ -1720,6 +1720,8 @@ namespace Audiophile.Web.Controllers
         {
             var lang = GetLang(false);
             using (var service = new AdvertService())
+            using (var mailing = new MailingService())
+            using (var settingService = new SystemSettingService())
             {
                 var ad = service.GetMyAdvert(id, GetLoginID());
                 if (ad == null)
@@ -1741,9 +1743,44 @@ namespace Audiophile.Web.Controllers
                    // ad.ApprovalStatus = Enums.ApprovalStatusEnum.WaitingforApproval;
                     service.Update(ad);
 
-                
-               
-               
+                var admins = settingService.GetSystemSettings()?.SingleOrDefault(s => s.Name == Enums.SystemSettingName.YoneticiMailleri)?.Value;
+                string message = string.Empty;
+                string mailSubject = string.Empty;                
+                const string href = "https://audiophile.org/AdminPanel";
+                if (admins != null)
+                {
+
+
+                    mailSubject = "Kullanıcı tarafından ilan güncellemesi yapıldı.";
+                    message = $"{ad.ID} id'li ilan güncellenmiştir .<br/>Başlık: {ad.Title}<br/><a href={href}>İlanı Onaylamak İçin Tıkla</a>";
+                    try
+                    {
+                        mailing.SendMail2Admins(admins, mailSubject, message);
+                    }
+                    catch (Exception ex)
+                    {
+                        using (var logService = new LogServices())
+                        {
+                            Log log = new Log()
+                            {
+                                Function = "AccountController.MyListing",
+                                Message = GetLoginID() + "id li kullanici AccountController.MyListing metot içerisindeki try'da hata aldi.",
+                                Params = JsonConvert.SerializeObject(new List<string>
+                                        {
+                                            id.ToString(),
+                                            JsonConvert.SerializeObject(ad)
+                                        }),
+                                Detail =ex.ToString(),
+                                CreatedDate = DateTime.Now
+                            };
+                            logService.Insert(log);
+                        }
+                        
+                    }
+
+                }
+
+
 
                 return Json(new
                 {
