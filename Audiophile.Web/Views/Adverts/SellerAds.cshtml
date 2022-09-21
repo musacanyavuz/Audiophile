@@ -6,8 +6,9 @@
     ViewBag.Title = Localization.Get("Satıcının Diğer İlanları", "Seller's Other Ads", lang);
     Layout = "_Layout";
 }
+
 @section style{
-<style>
+    <style>
     .product-wrapper {
         float: left !important;
     }
@@ -66,22 +67,22 @@
 }
 
 @section MetaTag {
-    <meta property="og:title" content="@Model.Seller.Name" />
-    <meta property="og:image" content="@Html.Raw($"https://{Context.Request.Host}{Model.Seller.ProfilePicture}")" />
-    <meta property="og:url" content="@Html.Raw($"https://{Context.Request.Host}{Context.Request.Path}")" />
+    <meta property="og:title" content="@Model.Seller.Name"/>
+    <meta property="og:image" content="@Html.Raw($"https://{Context.Request.Host}{Model.Seller.ProfilePicture}")"/>
+    <meta property="og:url" content="@Html.Raw($"https://{Context.Request.Host}{Context.Request.Path}")"/>
 }
 
-    <div itemscope itemtype="http://schema.org/Person" hidden="hidden">
-        <span itemprop="name">@Model.Seller.Name</span>
-        <img src="@Html.Raw($"https://{Context.Request.Host}{Model.Seller.ProfilePicture}")" itemprop="image" alt="@Model.Seller.Name" />
-        <span itemprop="jobTitle">@Model.Seller?.Name</span>
-        <div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
-            <span itemprop="addressLocality">@Model.Seller?.District?.Name</span>,
-            <span itemprop="addressRegion">@Model.Seller?.City?.Name</span>
-        </div>
-        <a href="https://@Context.Request.Host@Context.Request.Path" itemprop="url">https://@Context.Request.Host@Context.Request.Path</a>
-
+<div itemscope itemtype="http://schema.org/Person" hidden="hidden">
+    <span itemprop="name">@Model.Seller.Name</span>
+    <img src="@Html.Raw($"https://{Context.Request.Host}{Model.Seller.ProfilePicture}")" itemprop="image" alt="@Model.Seller.Name"/>
+    <span itemprop="jobTitle">@Model.Seller?.Name</span>
+    <div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
+        <span itemprop="addressLocality">@Model.Seller?.District?.Name</span>,
+        <span itemprop="addressRegion">@Model.Seller?.City?.Name</span>
     </div>
+    <a href="https://@Context.Request.Host@Context.Request.Path" itemprop="url">https://@Context.Request.Host@Context.Request.Path</a>
+
+</div>
 
 
 <div class="section-1 sec-altsayfa sec-hesaplar">
@@ -102,133 +103,141 @@
     font-size: 40px;
     text-align: center;
     padding: 30px;font-weight: bold;line-height: 40px;">@Model.Seller.Name</div>
-    <table class="table table-hover" id="statsTable">
-        <tr>
-            <td>@Localization.Get("Yayınlanan İlanlar", "Published Ads", lang)</td>
-            <td>@Model.Ads?.Count</td>
-        </tr>
-        @if (User.Identity.IsAuthenticated)
-        {
-            <tr>
-                <td>@Localization.Get("Cep Telefon", "Mobile Telephone", lang)</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(Model.Seller.MobilePhone))
-                    {
-                        <a href="tel:@Model.Seller.MobilePhone.Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-","")"> @Model.Seller.MobilePhone </a>
-                    }
-                    else
-                    {
-                        @Localization.Get("Bulunamadı.", "Not found.", lang)
-                    }
-                </td>
-            </tr>
-            <tr>
-                <td>@Localization.Get("İş Telefon", "Work Telephone", lang)</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(Model.Seller.WorkPhone))
-                    {
-                        <a href="tel:@Model.Seller.WorkPhone.Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-","")"> @Model.Seller.WorkPhone </a>
-                    }
-                    else
-                    {
-                        @Localization.Get("Bulunamadı.", "Not found.", lang)
-                    }
-                </td>
-            </tr>
-            <tr>
-                <td>@Localization.Get("Lokasyon", "Location", lang)</td>
-                <td>
-                    @Model?.Seller?.Country?.Name - @Model?.Seller?.City?.Name - @Model?.Seller?.District?.Name
-                </td>
-            </tr>
-            <tr>
-                <td>@Localization.Get("Mail Adresi", "E-Mail", lang)</td>
-                <td>
-                    <a href="mailto:@Model.Seller.Email">@Model.Seller.Email</a>
-                </td>
-            </tr>
+                        <table class="table table-hover" id="statsTable">
+                            <tr>
+                                <td>@Localization.Get("Yayınlanan İlanlar", "Published Ads", lang)</td>
+                                <td>@Model.Ads?.Count</td>
+                            </tr>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <tr>
+                                    <td>@Localization.Get("Cep Telefon", "Mobile Telephone", lang)</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(Model.Seller.MobilePhone))
+                                        {
+                                            <a href="tel:@Model.Seller.MobilePhone.Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", "")"> @Model.Seller.MobilePhone </a>
+                                        }
+                                        else
+                                        {
+                                            @Localization.Get("Bulunamadı.", "Not found.", lang)
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@Localization.Get("İş Telefon", "Work Telephone", lang)</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(Model.Seller.WorkPhone))
+                                        {
+                                            <a href="tel:@Model.Seller.WorkPhone.Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", "")"> @Model.Seller.WorkPhone </a>
+                                        }
+                                        else
+                                        {
+                                            @Localization.Get("Bulunamadı.", "Not found.", lang)
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@Localization.Get("Lokasyon", "Location", lang)</td>
+                                    <td>
+                                        @Model?.Seller?.Country?.Name - @Model?.Seller?.City?.Name - @Model?.Seller?.District?.Name
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>@Localization.Get("Mail Adresi", "E-Mail", lang)</td>
+                                    <td>
+                                        <a href="mailto:@Model.Seller.Email">@Model.Seller.Email</a>
+                                    </td>
+                                </tr>
+                                    @if (!string.IsNullOrEmpty(Model.Seller.WebSite))
+                                    {
+                                        <tr>
+                                            <td>@Localization.Get("Web Sitesi", "Personel Website", lang)</td>
+                                            <td>
+                                                <a rel="nofollow" href="@Model.Seller.WebSite" target="_blank">@Model.Seller.WebSite</a>
+                                            </td>
+                                        </tr>
+                                    }
             @*<tr>
                     <td>@Localization.Get("Hakkında", "About", lang)</td>
                     <td>
                         @Model.Seller.About
                     </td>
                 </tr>*@
-        }
-        else
-        {
-            <tr>
-                <td>@Localization.Get("Telefon", "Telephone", lang)</td>
-                <td>@Localization.Get("Giriş Yapmalısınız.", "You must sign in.", lang)</td>
-            </tr>
-            <tr>
-                <td>@Localization.Get("Alışlarım", "My Buys", lang)</td>
-                <td>@Localization.Get("Giriş Yapmalısınız.", "You must sign in.", lang)</td>
-            </tr>
-            <tr>
-                <td>@Localization.Get("İş Telefon", "Work Telephone", lang)</td>
-                <td>@Localization.Get("Giriş Yapmalısınız.", "You must sign in.", lang)</td>
-            </tr>
-            <tr>
-                <td>@Localization.Get("Lokasyon", "Location", lang)</td>
-                <td>@Localization.Get("Giriş Yapmalısınız.", "You must sign in.", lang)</td>
-            </tr>
-            <tr>
-                <td>@Localization.Get("Mail Adresi", "E-Mail", lang)</td>
-                <td>@Localization.Get("Giriş Yapmalısınız.", "You must sign in.", lang)</td>
-            </tr>
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>@Localization.Get("Telefon", "Telephone", lang)</td>
+                                    <td>@Localization.Get("Giriş Yapmalısınız.", "You must sign in.", lang)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Localization.Get("Alışlarım", "My Buys", lang)</td>
+                                    <td>@Localization.Get("Giriş Yapmalısınız.", "You must sign in.", lang)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Localization.Get("İş Telefon", "Work Telephone", lang)</td>
+                                    <td>@Localization.Get("Giriş Yapmalısınız.", "You must sign in.", lang)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Localization.Get("Lokasyon", "Location", lang)</td>
+                                    <td>@Localization.Get("Giriş Yapmalısınız.", "You must sign in.", lang)</td>
+                                </tr>
+                                <tr>
+                                    <td>@Localization.Get("Mail Adresi", "E-Mail", lang)</td>
+                                    <td>@Localization.Get("Giriş Yapmalısınız.", "You must sign in.", lang)</td>
+                                </tr>
             @*<tr>
                     <td>@Localization.Get("Hakkında", "About", lang)</td>
                     <td>
                         @Model.Seller.About
                     </td>
                 </tr>*@
-        }
+                            }
 
-    </table>
-</div>
-<div class="col-md-12 col-12">
+                        </table>
+                    </div>
+                    <div class="col-md-12 col-12">
 
-    <table style=" border: 1px solid #bcbaba; overflow:scroll;display:block;width:100%">
-        <tr style="text-align: left;
+                        <table style=" border: 1px solid #bcbaba; overflow:scroll;display:block;width:100%">
+                            <tr style="text-align: left;
     height: 50px;
     font-size: 25px;
     font-weight: bold;
     background-color: #e7e7e7;">
-            <td style="padding: 15px;">@Localization.Get("Hakkında", "About", lang)</td>
-        </tr>
+                                <td style="padding: 15px;">@Localization.Get("Hakkında", "About", lang)</td>
+                            </tr>
 
-        <tr>
+                            <tr>
 
-            <td style="padding-left: 15px;
+                                <td style="padding-left: 15px;
     padding-right: 15px;
     padding-top: 40px;
     padding-bottom: 15px;">
-                
-                @Html.Raw(Model.Seller.About)
+
+                                    @Html.Raw(Model.Seller.About)
 
 
 
-            </td>
-        </tr>
-    </table>
+                                </td>
+                            </tr>
+                        </table>
 
-</div>
-</div>
+                    </div>
+                </div>
 
-</div>
-<div class="product product-list urulerim bannerlar">
+            </div>
+            <div class="product product-list urulerim bannerlar">
 
-    <h3>@Localization.Get("Satıcının Diğer İlanları", "Seller's Other Ads", lang)</h3>
-    @if (Model.Ads != null)
-    {
-        foreach (var ad in Model.Ads)
-        {
-            ad.UserName = Model?.Seller?.UserName;
-            await Html.RenderPartialAsync("~/Views/Partials/HomePageItem_5Column.cshtml", ad);
-        }
-    }
+                <h3>@Localization.Get("Satıcının Diğer İlanları", "Seller's Other Ads", lang)</h3>
+                @if (Model.Ads != null)
+                {
+                    foreach (var ad in Model.Ads)
+                    {
+                        ad.UserName = Model?.Seller?.UserName;
+                        await Html.RenderPartialAsync("~/Views/Partials/HomePageItem_5Column.cshtml", ad);
+                    }
+                }
+            </div>
+        </div>
+    </div>
 </div>
-</div>
-</div>
-</div>
-
