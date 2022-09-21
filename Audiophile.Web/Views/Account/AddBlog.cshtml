@@ -501,6 +501,18 @@
                     }).show();
                 });
                 this.on("addedfile", function (file) {
+                    
+                       var type = file.type;
+                       var pattern = /^image\/(jpg|gif|png|jpeg|bmp)/;
+                       var result = pattern.test(type);
+                        if (result == false) {
+                           var errMsg = '@Localization.Get("Geçersiz resim formatı : ", " Invalid image file : ", lang)' + type;
+                           notify("error", errMsg);
+                           $(file.previewElement).remove();
+                           removeFromSelectedPhotos(id);
+                           myDropzone.removeFile(file);
+                            return;
+                    }                    
                     @* console.log(file);*@
                     $(file.previewElement).find('input').val(file.name);
                     filesAdded++;
