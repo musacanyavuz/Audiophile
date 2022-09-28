@@ -1331,16 +1331,7 @@ namespace Audiophile.Web.Controllers
 
                 #endregion
                 var user = userService.Get(GetLoginID());
-                if (user.District == null || user.City == null)
-                {
-                    return Json(new
-                    {
-                        isSuccess = false,
-                        message = new Localization().Get("Lütfen Üyelik Bilgileriniz içindeki \"Şehir\" bilgisini güncelleyiniz ! <br />" +
-                                                         "Lütfen Üyelik Bilgileriniz içindeki \"İlçe\" bilgisini güncelleyiniz!", "Please update your \"City\" in your \"Personal Information\" page" +
-                                                                                                                                  "Please update your \"District\" in your \"Personal Information\" page", lang)
-                    });
-                }
+                
                 var userAddress = userService.GetUserAddresses(GetLoginID())?.SingleOrDefault(x => x.IsDefault);
 
 

@@ -340,25 +340,18 @@ namespace Audiophile.Web.Controllers
 
         [Route("EN")]
         [Route("English")]
-        public IActionResult English(string otherUrl)
+        public IActionResult English()
         {
             HttpContext.Session.SetString("lang", Enums.Languages.en.ToString());
-            if (!string.IsNullOrEmpty(otherUrl))
-            {
-                return Redirect(otherUrl);
-            }
+            
             return RedirectToAction("Index");
         }
 
         [Route("TR")]
         [Route("Turkce")]
-        public IActionResult Turkce(string otherUrl)
+        public IActionResult Turkce()
         {
             HttpContext.Session.SetString("lang", Enums.Languages.tr.ToString());
-            if (!string.IsNullOrEmpty(otherUrl))
-            {
-                return Redirect(otherUrl);
-            }
             return RedirectToAction("Index");
         }
 

@@ -143,12 +143,12 @@
                                         <label class="field-label">@Localization.Get("Firma Türü", "Company Type", lang):*</label>
                                         <select name="Type" class="dropdown-4 select-urun urun-ozellik-select w-dropdown textfield" required>
 
-                                            <option value="@Iyzipay.Model.SubMerchantType.PRIVATE_COMPANY" @(Model?.Type= =SubMerchantType.PRIVATE_COMPANY ? "selected=\" selected\"":"")>
+                                            <!option value="@Iyzipay.Model.SubMerchantType.PRIVATE_COMPANY" @(Model?.Type==SubMerchantType.PRIVATE_COMPANY ? "selected=\" selected\"":"")>
                                                 @Localization.Get("Şahıs Şirketi", "Private Company", lang)
-                                            </option>
-                                            <option value="@Iyzipay.Model.SubMerchantType.LIMITED_OR_JOINT_STOCK_COMPANY" @(Model?.Type= =SubMerchantType.LIMITED_OR_JOINT_STOCK_COMPANY ? "selected=\" selected\"":"")>
+                                            </!option>
+                                            <!option value="@Iyzipay.Model.SubMerchantType.LIMITED_OR_JOINT_STOCK_COMPANY" @(Model?.Type==SubMerchantType.LIMITED_OR_JOINT_STOCK_COMPANY ? "selected=\" selected\"":"")>
                                                 @Localization.Get("Ltd. veya Anonim", "Limited or Joint Stock Comp.", lang)
-                                            </option>
+                                            </!option>
 
                                         </select>
                                     </div>

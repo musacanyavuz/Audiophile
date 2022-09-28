@@ -4,6 +4,7 @@
     var lang = Constants.GetLang(Context.Session.GetString("lang"));
     ViewBag.Title = Localization.Get("Üyelik Bilgilerim", "Personal Information", lang);
     Layout = "_Layout";
+    
 }
 @section style{
 <style>
@@ -108,7 +109,7 @@
                                 <select class="form-control w-dropdown textfield" name="CountryID" id="country">
                                     @foreach (var country in Model.Countries)
                                     {
-                                        <option value="@country.ID" @(Model.User.CountryID= =country.ID?"selected =\"selected\"":"")>@country.Name</option>
+                                        <!option value="@country.ID" @(Model.User.CountryID==country.ID ? "selected =\"selected\"" :"")>@country.Name</!option>
                                     }
                                 </select>
                             </div>
@@ -117,7 +118,7 @@
                                 <select class="form-control w-dropdown textfield" name="CityID" id="city">
                                     @foreach (var city in Model.Cities.Where(x => x.CountryID == Model.Countries.First().ID))
                                     {
-                                        <option value="@city.ID" @(Model.User.CityID= =city.ID ? "selected" : "" )>@city.Name</option>
+                                        <!option @(Model.User.CityID == city.ID ? "selected" : "") value="@city.ID">@city.Name</!option>
                                     }
                                 </select>
                             </div>
@@ -318,12 +319,12 @@
                                         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                                             <label class="field-label">@Localization.Get("Firma Türü", "Company Type", lang):*</label>
                                             <select name="Type" class="dropdown-4 select-urun urun-ozellik-select w-dropdown textfield" required>
-                                                <option value="@Iyzipay.Model.SubMerchantType.PRIVATE_COMPANY" @((Model.UserSecurePaymentDetail?.Type= =Iyzipay.Model.SubMerchantType.PRIVATE_COMPANY) ?"selected":"")>
+                                                <!option value="@Iyzipay.Model.SubMerchantType.PRIVATE_COMPANY" @((Model.UserSecurePaymentDetail?.Type==Iyzipay.Model.SubMerchantType.PRIVATE_COMPANY) ?"selected":"")>
                                                     @Localization.Get("Şahıs Şirketi", "Private Company", lang)
-                                                </option>
-                                                <option value="@Iyzipay.Model.SubMerchantType.LIMITED_OR_JOINT_STOCK_COMPANY" @((Model.UserSecurePaymentDetail?.Type= =Iyzipay.Model.SubMerchantType.LIMITED_OR_JOINT_STOCK_COMPANY) ?"selected":"")>
+                                                </!option>
+                                                <!option value="@Iyzipay.Model.SubMerchantType.LIMITED_OR_JOINT_STOCK_COMPANY" @((Model.UserSecurePaymentDetail?.Type==Iyzipay.Model.SubMerchantType.LIMITED_OR_JOINT_STOCK_COMPANY) ?"selected":"")>
                                                     @Localization.Get("Ltd. veya Anonim", "Limited or Joint Stock Comp.", lang)
-                                                </option>
+                                                </!option>
                                             </select>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
@@ -409,7 +410,7 @@
         const tcValidation = (tc)=> tc.length !== 11 || isNaN(tc) !== false;
         const ibanValidation= (iban)=>iban.length !== 26 || iban.slice(0, 2) !== "TR" || isNaN(iban.slice(2, 26) !== false);
 
-        if (@Model.User.CityID!= null)
+        if (@Model.User.CityID != null)
         {
         $('#city').val(@Model.User.CityID);
         // $('#district').val(@Model.User.DistrictID);
