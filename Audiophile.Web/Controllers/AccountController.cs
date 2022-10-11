@@ -517,6 +517,7 @@ namespace Audiophile.Web.Controllers
         public IActionResult PersonalInformation()
         {
             using (var publicService = new PublicService())
+            using (var textService = new TextService())
             using (var service = new UserService())
             {
                 var me = service.Get(GetLoginID());
@@ -529,7 +530,9 @@ namespace Audiophile.Web.Controllers
                     Cities = publicService.GetCities(),
                     Countries = publicService.GetCountries(),
                     Districts = publicService.GetDistricts(),
-                    UserSecurePaymentDetail = service.GetSecurePaymentDetail(GetLoginID())
+                    UserSecurePaymentDetail = service.GetSecurePaymentDetail(GetLoginID()),
+                    PersonalWebSite  = textService.GetText(Enums.Texts.PersonalWebSite, GetLang()),
+
                 };
                 return View(model);
             }

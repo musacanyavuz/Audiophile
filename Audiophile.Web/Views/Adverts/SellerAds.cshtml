@@ -148,15 +148,15 @@
                                         <a href="mailto:@Model.Seller.Email">@Model.Seller.Email</a>
                                     </td>
                                 </tr>
-                                    @if (!string.IsNullOrEmpty(Model.Seller.WebSite))
-                                    {
-                                        <tr>
-                                            <td>@Localization.Get("Web Sitesi", "Personel Website", lang)</td>
-                                            <td>
-                                                <a rel="nofollow" href="@Model.Seller.WebSite" target="_blank">@Model.Seller.WebSite</a>
-                                            </td>
-                                        </tr>
-                                    }
+                                @if (!string.IsNullOrEmpty(Model.Seller.WebSite))
+                                {
+                                    <tr>
+                                        <td>@Model.PersonalWebSite</td>
+                                        <td>
+                                            <a rel="nofollow" href="@Model.Seller.WebSite" target="_blank">@Model.Seller.WebSite</a>
+                                        </td>
+                                    </tr>
+                                }
             @*<tr>
                     <td>@Localization.Get("Hakkında", "About", lang)</td>
                     <td>
@@ -186,6 +186,13 @@
                                     <td>@Localization.Get("Mail Adresi", "E-Mail", lang)</td>
                                     <td>@Localization.Get("Giriş Yapmalısınız.", "You must sign in.", lang)</td>
                                 </tr>
+                                @if (!string.IsNullOrEmpty(Model.Seller.WebSite))
+                                {
+                                    <tr>
+                                        <td>@Model.PersonalWebSite</td>
+                                        <td>@Localization.Get("Giriş Yapmalısınız.", "You must sign in.", lang)</td>
+                                    </tr>
+                                }
             @*<tr>
                     <td>@Localization.Get("Hakkında", "About", lang)</td>
                     <td>

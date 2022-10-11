@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using InstallmentPrice = Audiophile.Web.ViewModels.InstallmentPrice;
 
 namespace Audiophile.Web.Controllers
@@ -1894,6 +1895,7 @@ namespace Audiophile.Web.Controllers
             var lang = GetLang();
             using (var adService = new AdvertService())
             using (var userService = new UserService())
+            using (var textService = new TextService())
             {
                 var user = userService.Get(id);
                 if (user == null)
@@ -1911,7 +1913,8 @@ namespace Audiophile.Web.Controllers
                 var model = new SellerViewModel
                 {
                     Ads = list,
-                    Seller = user
+                    Seller = user,
+                    PersonalWebSite  = textService.GetText(Enums.Texts.PersonalWebSite, lang),
                 };
                 return View(model);
             }
