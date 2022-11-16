@@ -38,7 +38,7 @@ namespace Audiophile.Web
             services.AddTransient<TextService>();
             services.AddTransient<Localization>();
 
-            services.AddMemoryCache();
+           
             services.AddSession();
             services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
 
@@ -74,7 +74,8 @@ namespace Audiophile.Web
 
 
             services.AddMvc().AddSessionStateTempDataProvider();
-         
+            services.AddMemoryCache();
+
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

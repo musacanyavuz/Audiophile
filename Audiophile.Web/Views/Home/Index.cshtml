@@ -2,8 +2,9 @@
 @{
     var lang = Constants.GetLang(Context.Session.GetString("lang"));
     ViewData["Title"] = Model.SeoValues.Title;// Localization.Get("Satılık Hoparlör, Amfi, Sıfır, İkinci El Ses Sistemleri ", "Electronic Musical Instruments Trading Site", lang);
-    ViewBag.SeoDescription = "Audiophile Sahibinden Satılık Hi-Fi Müzik Seti, Müzik Sistemi, Amfi, Hoparlör, Müzik Tesisatı Yeni, İkinci El Müzik Tesisatı, Ev Sineması, Kolon, CD Player";
-    Layout = "_Layout";
+  //  ViewBag.SeoDescription = Model.SeoValues.Title;// "Audiophile Sahibinden Satılık Hi-Fi Müzik Seti, Müzik Sistemi, Amfi, Hoparlör, Müzik Tesisatı Yeni, İkinci El Müzik Tesisatı, Ev Sineması, Kolon, CD Player";
+   // ViewBag.SeoKeywords = Model.SeoValues.Keywords;
+     Layout = "_Layout";
 }
 
 @section MetaTag{
@@ -27,7 +28,7 @@
         }
 
         .splitbanner {
-            width: 100%;
+            width: 100%;            
         }
 
         .link-block {
@@ -105,7 +106,7 @@
                 }
             </div>
             <div class="w-clearfix">
-                <div class="kategoriler"> @TextService.GetText((int)Enums.Texts.Advertorial, lang).ToUpper() </div>
+                <div class="kategoriler"> @TextService.GetText((int)Enums.Texts.Advertorial, lang)?.ToUpper() </div>
                 <a href="@Constants.GetURL((int) Enums.Routing.Blog_HaberlerKampanyalar, lang)" class="link-block w-clearfix w-inline-block">
                     <img alt="@Localization.Get("Haber, Kampanyalar", "News, Campaings", lang)" src="/Upload/Categories/news.png" onerror="this.src = '/Content/img/images/favicon.jpg';" width="19" height="19" title="@Localization.Get("Haber, Kampanyalar", "News, Campaings", lang)" />
 

@@ -22,7 +22,10 @@
     </div>
 
     
-    @using(Html.BeginForm("SaveEdit", "AdvertCategories", FormMethod.Post, new { @class = "m-form m-form--fit m-form--label-align-right m-form--group-seperator-dashed" }))
+    @using(Html.BeginForm("SaveEdit", "AdvertCategories",
+        FormMethod.Post,
+        new { @class = "m-form m-form--fit m-form--label-align-right m-form--group-seperator-dashed", enctype = "multipart/form-data" }
+       ))
     {
         <input type="hidden" name="ID" value="@Model.CategoryTr.ID"/>
         <div class="m-portlet__body">

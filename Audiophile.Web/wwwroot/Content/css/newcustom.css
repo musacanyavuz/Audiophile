@@ -801,7 +801,9 @@
         width: 15vh;
     }
 }
-
+.top-menu-img-filter {
+    filter: brightness(0) invert(1);
+}
 .top-menu .nav-link {
     padding-top: 1rem
 }

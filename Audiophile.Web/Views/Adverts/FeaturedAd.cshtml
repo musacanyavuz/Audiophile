@@ -202,7 +202,7 @@
                                     <label class="field-label goruntu">@Localization.Get("Acil Etiketi İstiyorum", "Add an Urgent Tag", lang)</label>
                                     <div class="div-block-46">
                                         <div class="div-block-40 et et-acil">
-                                            <div>@Localization.Get("Acil", "Urgent", lang)</div>
+                                            <div>@Localization.Get("Güncellendi", "Updated", lang)</div>
                                         </div>
                                     </div>
                                     <select id="urgent" @(!Model.AdvertDopings.Any(x => x.DopingType.Group == Enums.DopingGroup.KirmiziEtiket) ? "" : "disabled") onchange="calc('urgent')" class="form-control width-100-100">

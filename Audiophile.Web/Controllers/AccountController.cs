@@ -523,7 +523,10 @@ namespace Audiophile.Web.Controllers
                 var me = service.Get(GetLoginID());
                 if (me == null)
                     return Redirect("/");
-
+                if (me.MobilePhone.StartsWith("+"))
+                {
+                //    me.MobilePhoneDialCode = 
+                }
                 var model = new PersonalInformationViewModel
                 {
                     User = me,
@@ -534,6 +537,11 @@ namespace Audiophile.Web.Controllers
                     PersonalWebSite  = textService.GetText(Enums.Texts.PersonalWebSite, GetLang()),
 
                 };
+                //if(model.User.CountryID != 1)
+                //{
+                //    model.Cities = new List<City>();
+                //    model.Districts = new List<District>();
+                //}
                 return View(model);
             }
         }
@@ -580,14 +588,16 @@ namespace Audiophile.Web.Controllers
                 u.UserName = user.UserName;
                 u.Name = user.Name;
                 u.Email = user.Email;
-                u.MobilePhone = user.MobilePhone;
+                if (user.MobilePhone != null && user.MobilePhoneDialCode > 0)
+                u.MobilePhone =(!user.MobilePhone.StartsWith("+") )?  $"+{user.MobilePhoneDialCode}{user.MobilePhone}" : user.MobilePhone;
                 u.GenderID = user.GenderID;
                 u.WebSite = user.WebSite;
                 u.CountryID = user.CountryID;
                 u.CityID = user.CityID;
                 u.DistrictID = user.DistrictID;
-                u.LanguageID = user.LanguageID;
-                u.WorkPhone = user.WorkPhone;
+                u.LanguageID = user.LanguageID;    
+                if(user.WorkPhone != null && user.WorkPhoneDialCode > 0)
+                u.WorkPhone = (!user.WorkPhone.StartsWith("+")) ? $"+{user.WorkPhoneDialCode}{user.WorkPhone}" :user.WorkPhone ;                
                 u.BirthDate = user.BirthDate;
                 u.InMailing = user.InMailing;
                 u.TC = string.IsNullOrEmpty(user.TC) ? u.TC : user.TC;
@@ -882,7 +892,12 @@ namespace Audiophile.Web.Controllers
                     details.Name = userSecurePaymentDetail.Name;
                     details.Surname = userSecurePaymentDetail.Surname;
                     details.TC = userSecurePaymentDetail.TC;
-                    details.MobilePhone = userSecurePaymentDetail.MobilePhone;
+                    if (userSecurePaymentDetail.MobilePhone != null && userSecurePaymentDetail.MobilePhoneDialCode > 0)
+                    {
+                        details.MobilePhone = (!userSecurePaymentDetail.MobilePhone.StartsWith("+")) ? $"+{userSecurePaymentDetail.MobilePhoneDialCode}{userSecurePaymentDetail.MobilePhone}" : userSecurePaymentDetail.MobilePhone;
+                       // details.MobilePhone = userSecurePaymentDetail.MobilePhone;
+                    }
+                     
                     details.IBAN = userSecurePaymentDetail.IBAN.Replace(" ", "");
                     details.Email = userSecurePaymentDetail.Email;
                     details.InvoiceAddress = userSecurePaymentDetail.InvoiceAddress;

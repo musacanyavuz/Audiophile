@@ -106,7 +106,9 @@
             Blog = 416,
             Support = 417,
             PersonalWebSite = 450,
-            
+            MetaKeyWordsDefaultValue = 500,// Ana sayfada için meta keywordler.
+            MetaDescriptionDefaultValue = 501, // Ana sayfa için meta description
+
 
         }
 

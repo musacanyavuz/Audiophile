@@ -11,16 +11,17 @@ using Audiophile.Web.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Audiophile.Web.Controllers
 {
     public class BaseController : Controller
     {
         public bool Production = true;
-
+        
         public BaseController()
         {
-
+            
         }
         public int GetLang(bool setTranslate = true)
         {
@@ -148,7 +149,17 @@ namespace Audiophile.Web.Controllers
 
                 }
             }
-            base.OnActionExecuting(filterContext);
+            using (var adCatSer = new AdvertCategoryService()) {
+
+                List<AdvertCategory> mainCatList= mainCatList = adCatSer.GetMasterCategories(GetLang());
+                    if (mainCatList != null)                       
+                        ViewData["topmenu"] = mainCatList;
+                    
+                
+                
+
+            }
+                base.OnActionExecuting(filterContext);
         }
 
         //dil değiştirildiğinde aynı sayfa içerisinde kalıp routingin de dil değiştirmesi için

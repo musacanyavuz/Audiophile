@@ -17,6 +17,8 @@ namespace Audiophile.Common.Extensions
         }
         public static string RemoveHtmlTags(this string input)
         {
+            if (input == null)
+                return input;
             input = Regex.Replace(input, "<br>", " ");
             return Regex.Replace(input, "<.*?>", String.Empty);
         }

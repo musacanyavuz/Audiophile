@@ -18,6 +18,7 @@ namespace Audiophile.Models
         public string Surname { get; set; }
         public string IBAN { get; set; }
         public string MobilePhone { get; set; }
+        [NotMapped] public int MobilePhoneDialCode { get; set; }
         public string Email { get; set; }
         public string SenderAddress { get; set; }
         public string InvoiceAddress { get; set; }

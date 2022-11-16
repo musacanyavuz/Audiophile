@@ -49,30 +49,41 @@
                     @Localization.Get("Satılıklar", "Categories", lang)
                 </a>
                 <div class="dropdown-menu">
+
+                    @foreach (var category in ViewData["topmenu"] as List<AdvertCategory>)
+                    {
+                        <a class="dropdown-item" href="/@(Localization.Get("Kategori/", "Category/", lang) + category.Slug)">
+
+                            @*<img alt="@Html.Raw(category.Description)" src="@category.IconSource" onerror="this.src = '/Content/img/images/favicon.jpg';" width="19" height="19" />*@
+                            <img src="@category.IconSource"  class="top-menu-img-filter" onerror="this.src = '/Content/img/images/favicon.jpg';" alt="@Html.Raw(category.Description)" /> @Html.Raw(category.Name)
+                        </a>
+                    }
+
+                    @*
                     <a class="dropdown-item" href='@Localization.Get("/Kategori/amplifikatorler", "/Category/amplifiers", lang)'>
                         <img src="/Upload/Categories/amplifer-w.png" alt="@Localization.Get("Amplifikatörler", "Amplifiers", lang)"> @Localization.Get("Amplifikatörler", "Amplifiers", lang)
                     </a>
                     <a class="dropdown-item" href='@Localization.Get("/Kategori/Hoparlorler", "/Category/Speakers", lang)'>
-                        <img src="/Upload/Categories/speakers-w.png" alt="@Localization.Get("Hoparlörler", "Speakers", lang)" /> @Localization.Get("Hoparlörler", "Speakers", lang)
-                    </a>
-                    <a class="dropdown-item" href='@Localization.Get("/Kategori/Kablolar", "/Category/Cables", lang)'>
-                        <img src="/Upload/Categories/cables-w.png" alt="@Localization.Get("Kablolar", "Cables", lang)" /> @Localization.Get("Kablolar", "Cables", lang)
-                    </a>
-                    <a class="dropdown-item" href='@Localization.Get("/Kategori/Dijital", "/Category/Digital", lang)'>
-                        <img src="/Upload/Categories/digital-w.png" alt="@Localization.Get("Dijital Aletler", "Digital Equipment", lang)" /> @Localization.Get("Dijital Aletler", "Digital Equipment", lang)
-                    </a>
-                    <a class="dropdown-item" href='@Localization.Get("/Kategori/Analog", "/Category/Analog", lang)'>
-                        <img src="/Upload/Categories/analog-w.png" alt="@Localization.Get("Analog Aletler", "Analog Equipment", lang)" /> @Localization.Get("Analog Aletler", "Analog Equipment", lang)
-                    </a>
-                    <a class="dropdown-item" href='@Localization.Get("/Kategori/Aksesuarlar", "/Category/Accessories", lang)'>
-                        <img src="/Upload/Categories/accessories-w.png" alt="@Localization.Get("Aksesuar, DIY", "Accessories", lang)" /> @Localization.Get("Aksesuar, DIY", "Accessories", lang)
-                    </a>
-                    <a class="dropdown-item" href='@Localization.Get("/Kategori/Profesyonel", "/Category/Professional", lang)'>
-                        <img src="/Upload/Categories/wanted-w.png" alt="@Localization.Get("Profesyonel Sistemler", "Professional", lang)" /> @Localization.Get("Profesyonel Sistemler", "Professional", lang)
-                    </a>
-                    <a class="dropdown-item" href='@Localization.Get("/Kategori/Digerleri", "/Category/Others", lang)'>
-                        <img src="/Upload/Categories/others-w.png" alt="@Localization.Get("Diğerleri", "Others", lang)" /> @Localization.Get("Diğerleri", "Others", lang)
-                    </a>
+            <img src="/Upload/Categories/speakers-w.png" alt="@Localization.Get("Hoparlörler", "Speakers", lang)" /> @Localization.Get("Hoparlörler", "Speakers", lang)
+        </a>
+        <a class="dropdown-item" href='@Localization.Get("/Kategori/Kablolar", "/Category/Cables", lang)'>
+            <img src="/Upload/Categories/cables-w.png" alt="@Localization.Get("Kablolar", "Cables", lang)" /> @Localization.Get("Kablolar", "Cables", lang)
+        </a>
+        <a class="dropdown-item" href='@Localization.Get("/Kategori/Dijital", "/Category/Digital", lang)'>
+            <img src="/Upload/Categories/digital-w.png" alt="@Localization.Get("Dijital Aletler", "Digital Equipment", lang)" /> @Localization.Get("Dijital Aletler", "Digital Equipment", lang)
+        </a>
+        <a class="dropdown-item" href='@Localization.Get("/Kategori/Analog", "/Category/Analog", lang)'>
+            <img src="/Upload/Categories/analog-w.png" alt="@Localization.Get("Analog Aletler", "Analog Equipment", lang)" /> @Localization.Get("Analog Aletler", "Analog Equipment", lang)
+        </a>
+        <a class="dropdown-item" href='@Localization.Get("/Kategori/Aksesuarlar", "/Category/Accessories", lang)'>
+            <img src="/Upload/Categories/accessories-w.png" alt="@Localization.Get("Aksesuar, DIY", "Accessories", lang)" /> @Localization.Get("Aksesuar, DIY", "Accessories", lang)
+        </a>
+        <a class="dropdown-item" href='@Localization.Get("/Kategori/Profesyonel", "/Category/Professional", lang)'>
+            <img src="/Upload/Categories/wanted-w.png" alt="@Localization.Get("Profesyonel Sistemler", "Professional", lang)" /> @Localization.Get("Profesyonel Sistemler", "Professional", lang)
+        </a>
+        <a class="dropdown-item" href='@Localization.Get("/Kategori/Digerleri", "/Category/Others", lang)'>
+            <img src="/Upload/Categories/others-w.png" alt="@Localization.Get("Diğerleri", "Others", lang)" /> @Localization.Get("Diğerleri", "Others", lang)
+        </a>*@
                 </div>
             </li>
             <li class="nav-item dropdown">

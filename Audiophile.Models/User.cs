@@ -41,6 +41,8 @@ namespace Audiophile.Models
         public int CountryID { get; set; }
         
         [NotMapped] public IFormFile ProfilePictureFile { get; set; }
+        [NotMapped] public int MobilePhoneDialCode { get; set; }
+        [NotMapped] public int  WorkPhoneDialCode { get; set; }
         public IEnumerable<Advert> Adverts { get; set; }
         public List<UserAddress> Addresses { get; set; }
 

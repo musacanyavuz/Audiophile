@@ -133,7 +133,7 @@ namespace Audiophile.Services
                           "from AdvertCategories " +
                           "where ParentCategoryID is null or ParentCategoryID=0 " +
                           "and AdvertCategories.IsActive=true " +
-                          "order by \"Order\" ";
+                          "order by `Order` ";
                 DynamicParameters pars = new DynamicParameters();
                 pars.Add("@lang",lang);
                 var x = cnn.Query<AdvertCategory>(sql, pars).ToList(); 

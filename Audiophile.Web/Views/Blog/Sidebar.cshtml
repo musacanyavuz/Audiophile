@@ -5,7 +5,7 @@
 
 <div class="side-bar m-b-50 f-r width-100-20" >
     <div class="w-clearfix">
-        <div class="kategoriler"> @TextService.GetText((int)Enums.Texts.Advertorial, lang).ToUpper()</div>
+        <div class="kategoriler"> @TextService.GetText((int)Enums.Texts.Advertorial, lang)?.ToUpper()</div>
         <a href="@Constants.GetURL((int)Enums.Routing.Blog_HaberlerKampanyalar,lang)" class="link-block w-clearfix w-inline-block sidemenu-link">
             <div class="div-block-2 w-clearfix">
                 <img alt="Haber, Kampanyalar" src="/Upload/Categories/news.png" onerror="this.src = '/Content/img/images/favicon.jpg';" width="19" height="19" class="icon ic2">

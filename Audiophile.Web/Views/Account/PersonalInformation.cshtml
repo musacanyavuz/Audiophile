@@ -84,10 +84,12 @@
                             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                                 <label class="field-label">@Localization.Get("Cep Telefonu", "Mobile Phone", lang)*:</label>
                                 <input class="textfield w-input" data-val="true" maxlength="100" name="MobilePhone" placeholder="+90 5** *** ** **" type="text" id="phone" value="@Model.User.MobilePhone" required>
+                                <input type="hidden" value="@Model.User.MobilePhoneDialCode" name="MobilePhoneDialCode"  />
                             </div>
                             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                                 <label class="field-label">@Localization.Get("İş Telefonu", "Work Phone", lang):</label>
                                 <input class="textfield w-input" data-val="true" maxlength="100" name="WorkPhone" value="@Model.User.WorkPhone" id="workPhone" type="text">
+                                <input type="hidden" value="@Model.User.WorkPhoneDialCode" name="WorkPhoneDialCode" id="WorkPhoneDialCode" />
                             </div>
                         </div>
 
@@ -234,6 +236,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                                             <label class="field-label">@Localization.Get("Cep Telefonu", "Mobile Phone", lang):*</label>
                                             <input class="textfield w-input" maxlength="20" name="MobilePhone" id="phoneIndividual" type="text" value="@(Model.UserSecurePaymentDetail?.MobilePhone)" required>
+                                            <input type="hidden" value="@Model.UserSecurePaymentDetail?.MobilePhoneDialCode" name="MobilePhoneDialCode" />
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                                             <label class="field-label">@Localization.Get("E-Posta Adresiniz", "E-Mail Address", lang):*</label>
@@ -307,6 +310,7 @@
                                         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                                             <label class="field-label">@Localization.Get("Cep Telefonu", "Mobile Phone", lang):*</label>
                                             <input class="textfield w-input" maxlength="20" name="MobilePhone" id="phone2" type="text" value="@(Model.UserSecurePaymentDetail?.MobilePhone)" required>
+                                            <input type="hidden" value="@Model.User.MobilePhoneDialCode" name="MobilePhoneDialCode"  />
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                                             <label class="field-label">@Localization.Get("E-Posta Adresiniz", "E-Mail Address", lang):*</label>
@@ -398,12 +402,18 @@
     <script>
 
         function telInput(selector) {
-            const input = document.querySelector(selector);
+            
+            const initCountry = 'tr';
+            const input = document.querySelector(selector);            
             const instance = window.intlTelInput(input, {
                 dropdownContainer: document.body,
-                initialCountry: "tr",
+                separateDialCode:true,
+                initialCountry: initCountry,
                 preferredCountries: ['tr', 'us'],
                 utilsScript: "/Content/plugins/intl/utils.js"
+            });
+            input.addEventListener('countrychange', function (e) {               
+                $(this).parent().next().val(instance.getSelectedCountryData().dialCode);
             });
             return instance;
         }
@@ -424,7 +434,8 @@
         $(function () {            
             var lang = @Model.User.LanguageID;
             $("#LanguageID").val(lang);
-        loadDistricts(parseInt($('#city').val()));
+            $("#country").change();
+       //loadDistricts(parseInt($('#city').val()));
 
         $('#district').val(@Model.User.DistrictID);
     });
@@ -461,8 +472,8 @@
                 return;
             }
         });
-        $('#country').change(function() {
-            var country = parseInt($(this).val());
+        $('#country').change(function () { 
+            var country = parseInt($(this).val());           
             loadCities(country);
         });
 
@@ -515,14 +526,15 @@
                 reader.readAsDataURL(input.files[0]);
             }
         });
-
-
-    var iti = telInput("#phone");
-    var iti2 = telInput("#workPhone");
+                
+    var iti = telInput("#phone");        
+    var iti2 = telInput("#workPhone");        
     var iti3 = telInput("#phone2");
     var iti4 = telInput("#phoneIndividual");
     var iti5= telInput("#compPhone");
 
+   // document.querySelector("#phone").addEventListener('countrychange', function (e) { document.getElementById("MobilePhoneDialCode").value = iti.getSelectedCountryData().dialCode; });
+    //document.querySelector("#workPhone").addEventListener('countrychange', function (e) { document.getElementById("WorkPhoneDialCode").value = iti2.getSelectedCountryData().dialCode; });
     </script>
     <script src="/Content/plugins/tinymce/tinymce.min.js"></script>
     <script>

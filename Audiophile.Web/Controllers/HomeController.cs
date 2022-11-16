@@ -53,14 +53,17 @@ namespace Audiophile.Web.Controllers
                     Items = MergeAdsBlogs(adverts, posts, lang, true),
                     SeoValues = new SeoKeys
                     {
-                        Title = textService.GetText(Enums.Texts.AnasayfaKapakBaslik, lang).RemoveHtmlTags(),
-                        Description = textService.GetText(Enums.Texts.AnasayfaKapakBaslik, lang),
+                        Title = textService.GetText(Enums.Texts.AnasayfaTitle, lang).RemoveHtmlTags(),
+                        Description = textService.GetText(Enums.Texts.AnasayfaKapakBaslik, lang).RemoveHtmlTags(),
                         Keywords = textService.GetText(Enums.Texts.AnasayfaKapakBaslik, lang),
                         Separator = textService.GetText(Enums.Texts.AnasayfaKapakBaslik, lang)
                     }
                    
                 };
-                
+                ViewBag.SeoKeywords = textService.GetText(Enums.Texts.MetaKeyWordsDefaultValue, lang).RemoveHtmlTags();
+                ViewBag.SeoDescription = textService.GetText(Enums.Texts.MetaDescriptionDefaultValue, lang).RemoveHtmlTags();
+
+
 
                 return View(model);
             }
