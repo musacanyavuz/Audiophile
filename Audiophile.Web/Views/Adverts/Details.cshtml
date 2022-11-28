@@ -840,7 +840,7 @@
         <meta itemprop="availabilityStarts" content="@Model.Advert?.CreatedDate">
 
         <meta itemprop="priceValidUntil" content="@Model.Advert?.CreatedDate.AddYears(1).ToString("o", CultureInfo.InvariantCulture))">
-        <meta itemprop="priceCurrency" content="TL">
+        <meta itemprop="priceCurrency" content="@(Constants.GetMoneySchema(Model.Advert.MoneyTypeID))">
         <meta itemprop="price" content="@Model.Advert?.Price">
         <meta itemprop="sku" content="Kalem">
         <meta itemprop="eligibleRegion" content="@Model.CargoArea?.Name">

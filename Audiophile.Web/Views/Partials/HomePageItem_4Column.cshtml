@@ -46,7 +46,7 @@
                 <meta itemprop="brand" content="@Html.Raw(Model.Brand)" />
                 <meta itemprop="model" content="@Html.Raw(Model.Model)" />
                 <div class="new-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
-                    <span itemprop="priceCurrency"> @Model.PriceCurrency</span>
+                    <span itemprop="priceCurrency" content="@(Constants.GetMoneySchema(Model.MoneyType))"> @Model.PriceCurrency</span>
                     <span itemprop="price">@Model.Price</span>
                     <link itemprop="availability" href="http://schema.org/InStock" />
                     <meta itemprop="priceValidUntil" content="@Model.CreatedDate.AddYears(1).ToString("yyyy-MM-dd")">

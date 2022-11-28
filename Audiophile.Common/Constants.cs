@@ -61,6 +61,22 @@ namespace Audiophile.Common
                      return "";
             }
         }
+        public static string GetMoneySchema(int code)
+        {
+            switch (code)
+            {
+                case 1:
+                    return "TRY";
+                case 2:
+                    return "USD";
+                case 3:
+                    return "EUR";
+                case 4:
+                    return "GBP";
+                default:
+                    return "";
+            }
+        }
 
         public static string GetBlogCategoryTitle(int id, int lang)
         {
