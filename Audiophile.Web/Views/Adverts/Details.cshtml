@@ -827,10 +827,11 @@
     <meta itemprop="mpn" content="@Model.Advert.ID" />
     <meta itemprop="name" content="@Model.Advert.Title" />
     <meta itemprop="brand" content="@Html.Raw(Model.Advert?.Title?.Length > 20 ? Model.Advert.Title.Substring(0,20).ToString() : Model.Advert.Title) " />
+    <meta itemprop="gtin" content="{    }" />
     <meta itemprop="sku" content="Kalem">
     <meta itemprop="category" content="@Model.Advert.CategoryNameTr">
     <meta itemprop="description" content="@Html.Raw(Model.Advert.Title?.Replace("@","[at]"))" />
-    <meta itemprop="image" content="@("https://www.audiophile.org/"+Model.Advert.Thumbnail)" />
+    <meta itemprop="image" content="@("https://www.audiophile.org"+Model.Advert.Thumbnail)" />
     <meta itemprop="itemCondition" content="@Model.Advert.ProductDefects" />
     <div itemprop="offers" itemscope itemtype="http://schema.org/Offer" hidden>
         @if (!string.IsNullOrEmpty(Model.Advert?.UserName))

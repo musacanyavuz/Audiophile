@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 using Audiophile.Common;
 using Audiophile.Common.Extensions;
 using Audiophile.Models;
@@ -11,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SimpleMvcSitemap;
-using WilderMinds.RssSyndication;
+using WilderMinds.RssSyndication; 
 using Item = WilderMinds.RssSyndication.Item;
 
 namespace Audiophile.Web.Controllers
@@ -154,16 +155,28 @@ namespace Audiophile.Web.Controllers
 
                 foreach (var item in model)
                 {
+                   var coll = new System.Collections.Specialized.NameValueCollection();
+                   coll.Add("logo", urlBase+ item.ImageSource); 
+                    Enclosure img = new Enclosure
+                    {
+                        Values = coll
+                    }; 
+                    var _enc = new List<Enclosure>();
+                    _enc.Add(img);
+                    
+                 
                     feed.Items.Add(new Item
                     {
+
                         Title = item.Title,
                         Body = item.Description,
                         Link = new Uri(urlBase + item.Url),
                         Permalink = new Uri(urlBase + item.Url).AbsoluteUri,
                         PublishDate = item.LastUpdateDate?.ToUniversalTime() ?? item.CreatedDate.ToUniversalTime(),
                         Categories = !string.IsNullOrEmpty(item.CategoryName) ?
-                            new List<string> { item.CategoryName } : new List<string> { "Audiphile" }
-                    });
+                            new List<string> { item.CategoryName } : new List<string> { "Audiphile" },
+                        Enclosures = _enc
+                    }) ; 
                 }
                 var srOpt = new SerializeOption { Encoding= Encoding.UTF8 };
                 var rss = feed.Serialize(srOpt);
@@ -196,9 +209,9 @@ namespace Audiophile.Web.Controllers
                 
                 foreach (var item in model)
                 {
-
-                    feed.Items.Add(new Item
+                    var _item = new Item
                     {
+
                         Title = item.Title,
                         Body = item.Description,
                         Link = new Uri(urlBase + item.Url),
@@ -206,7 +219,10 @@ namespace Audiophile.Web.Controllers
                         PublishDate = item.LastUpdateDate?.ToUniversalTime() ?? item.CreatedDate.ToUniversalTime(),
                         Categories = !string.IsNullOrEmpty(item.CategoryName) ?
                             new List<string> { item.CategoryName } : new List<string> { "Audiphile" }
-                    });
+                    };
+                   
+
+                    feed.Items.Add(_item);
                 }
                 var srOpt = new SerializeOption { Encoding = Encoding.UTF8 };
                 var rss = feed.Serialize(srOpt);

@@ -324,6 +324,7 @@
     <Folder Include="wwwroot\Content\plugins\canvas-to-blob\" />
     <Folder Include="wwwroot\Upload\Blog\Old" />
     <Folder Include="wwwroot\Upload\Dopings" />
+    <Folder Include="wwwroot\Upload\Sales\" />
     <Folder Include="wwwroot\Upload\Sales\Old" />
     <Folder Include="wwwroot\Upload\Users" />
   </ItemGroup>
