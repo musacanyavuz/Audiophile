@@ -39,7 +39,10 @@ namespace Audiophile.Web
             services.AddTransient<Localization>();
 
            
-            services.AddSession();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(180);//set time   
+            });
             services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -49,10 +52,10 @@ namespace Audiophile.Web
                     {
                         Name = "AudiophileCookie",
                         HttpOnly = false, 
-                        Expiration = TimeSpan.FromDays(10),
+                        Expiration = TimeSpan.FromDays(30),
                         SecurePolicy = CookieSecurePolicy.Always 
                     };
-                    options.ExpireTimeSpan = TimeSpan.FromDays(5);
+                    options.ExpireTimeSpan = TimeSpan.FromDays(30);
                     options.SlidingExpiration = true; // the cookie would be re-issued on any request half way through the ExpireTimeSpan
                     options.LoginPath = new PathString("/GirisYap");
                 });
