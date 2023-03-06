@@ -41,7 +41,7 @@ namespace Audiophile.Web
            
             services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(180);//set time   
+                options.IdleTimeout = TimeSpan.FromDays(30);//set time   
             });
             services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
 
