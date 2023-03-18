@@ -925,7 +925,13 @@ namespace Audiophile.Services
             try
             {
                 GetConnection().Insert(advertDoping);
-                return advertDoping.ID > 0;
+                var result = advertDoping.ID > 0;
+                if (result  && advertDoping.TypeID==25)
+                {
+                   var actDop= ActivateDopingsAdvertDate(advertDoping.AdvertID);
+                   
+                }
+                return result;
             }
             catch (Exception e)
             {
@@ -940,7 +946,13 @@ namespace Audiophile.Services
                 return false;
             }
         }
+        public int ActivateDopingsAdvertDate(int advertId)
+        {
+            var sql = $"UPDATE Adverts set CreatedDate=CURRENT_DATE()" + 
+                      $" where ID=@advertId ";
 
+            return GetConnection().Execute(sql, new { advertId });
+        }
         public AdvertDoping GetAdvertDoping(int id)
         {
             return GetConnection().Get(new AdvertDoping { ID = id });
@@ -1060,7 +1072,9 @@ namespace Audiophile.Services
                           " GetText((AdvertCategories.NameID), (2)) AS CategoryNameEn " +
                           "FROM Adverts, AdvertCategories, AdvertCategories ParentCategory\n\n  " +
                           "WHERE " +
-                          "Adverts.IsActive = true\n\n  " +
+                          "Adverts.IsActive = true\n\n  " + 
+                          "AND Adverts.IsApproved = true\n\n  " +
+                          "AND   LastUpdateDate > DATE_ADD(CURRENT_DATE() , INTERVAL -30 DAY) " +
                           "AND Adverts.CategoryID = AdvertCategories.ID\n\n  " +
                           "AND (AdvertCategories.ParentCategoryID = ParentCategory.ID)\n\n  " +
                           "AND (( SELECT Users.IsActive  FROM Users WHERE (Users.ID = Adverts.UserID)) = true)\n\n " +
@@ -1108,6 +1122,8 @@ namespace Audiophile.Services
                           "FROM Adverts, AdvertCategories, AdvertCategories ParentCategory\n\n  " +
                           "WHERE " +
                           "Adverts.IsActive = true\n\n  " +
+                          "AND Adverts.IsApproved = true\n\n  " +
+                          "AND   LastUpdateDate > DATE_ADD(CURRENT_DATE() , INTERVAL -30 DAY) " +
                           "AND Adverts.CategoryID = AdvertCategories.ID\n\n  " +
                           "AND (AdvertCategories.ParentCategoryID = ParentCategory.ID)\n\n  " +
                           "AND (( SELECT Users.IsActive  FROM Users WHERE (Users.ID = Adverts.UserID)) = true)\n\n " +

@@ -95,6 +95,10 @@
                                 <input class="textfield w-input" data-val="true" maxlength="100" name="WorkPhone" id="workPhone" type="text">
                             </div>
                         </div>
+
+
+
+
                         <div class="row margin_bottom">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                 <label class="field-label">@Localization.Get("Hakkınızda", "About You", lang):</label>
@@ -105,8 +109,19 @@
                                 <textarea class="textfield w-input" cols="1" id="content" name="About" rows="10"></textarea>
                             </div>
                         </div>
+
+
+
                         <div class="row margin_bottom">
-                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                <label class="field-label">@Localization.Get("Dil", "Language", lang)*:</label>
+                                <select class="form-control w-dropdown textfield" name="LanguageID">
+                                    <option value="1">Türkçe</option>
+                                    <option value="2">English</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                                 <label class="field-label">@Localization.Get("Ülke", "Country", lang)*:</label>
                                 <select class="form-control w-dropdown textfield" name="CountryID" id="country">
                                     @foreach (var country in Model.Countries)
@@ -114,8 +129,11 @@
                                         <option value="@country.ID">@country.Name</option>
                                     }
                                 </select>
-                            </div>
-                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            </div> 
+                        </div>
+
+                        <div class="row margin_bottom"> 
+                            <div id="cityDiv"  class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                                 <label class="field-label">@Localization.Get("Şehir", "City", lang)*:</label>
                                 <select class="form-control w-dropdown textfield" name="CityID" id="city">
                                     @foreach (var city in Model.Cities.Where(x => x.CountryID == Model.Countries.First().ID))
@@ -124,11 +142,12 @@
                                     }
                                 </select>
                             </div>
-                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
+                            <div id="districtDiv" class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                                 <label class="field-label">@Localization.Get("İlçe", "District", lang)*:</label>
                                 <select class="form-control w-dropdown textfield" name="DistrictID" id="district"></select>
-                            </div>
+                            </div>  
                         </div>
+                       
 
 
                         @*<div class="row margin_bottom">
@@ -146,21 +165,7 @@
 
 
 
-                        <div class="row margin_bottom">
-                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-
-                            </div>
-                            <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">
-                                <label class="field-label">@Localization.Get("Dil", "Language", lang)*:</label>
-                                <select class="form-control w-dropdown textfield" name="LanguageID">
-                                    <option value="1">Türkçe</option>
-                                    <option value="2">English</option>
-                                </select>
-                            </div>
-                            <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
-
-                            </div>
-                        </div>
+                     
 
                         <div class="row margin_bottom">
                             @*<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
@@ -348,6 +353,18 @@
 
             return false;
         }
+        function cityDistrictVisibility(val){ 
+            $("#districtDiv").css("display", val);
+            $("#cityDiv").css("display", val); 
+        }
+
+        $(document).ready(function () {
+            $("#country").on("change", function () {
+                var result = "block";
+                if (this.value != 1) result = "none";
+                cityDistrictVisibility(result);
+            });
+        });
 
         function usernameIsUsable(username) {
 

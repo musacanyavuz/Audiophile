@@ -99,8 +99,8 @@ namespace Audiophile.Web.Controllers
            
             var authProperties = new AuthenticationProperties
             {
-                ExpiresUtc = DateTime.UtcNow.AddDays(30),
-                IsPersistent = rememberMe,
+                ExpiresUtc = DateTime.UtcNow.AddDays(7),
+                IsPersistent = true,
             };
             await HttpContext.SignInAsync(
                 scheme: CookieAuthenticationDefaults.AuthenticationScheme,
