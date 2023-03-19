@@ -39,7 +39,7 @@ namespace Audiophile.Web.Controllers
             {
                 
                 var adverts = service.GetHomePageAdverts(lang, GetLoginID());
-                adverts?.Reverse();
+                //adverts?.Reverse();
                 var banners = bannerService.GetBanners();
                 var homepageSplitBanners = banners.Where(x => x.TypeID == Enums.BannerType.Banner).OrderBy(b => b.ID).ToList();
                 //var homepageBottomAd = banners.SingleOrDefault(x => x.TypeID == Enums.BannerType.Slider);
@@ -128,8 +128,9 @@ namespace Audiophile.Web.Controllers
                 return result.OrderByDescending(x => x.LastUpdateDate).Take(57).ToList();
             }
 
-            //return result.OrderByDescending(x=>x.CreatedDate).ToList();
-            return result.OrderByDescending(x => x.LastUpdateDate).ToList();
+            ////return result.OrderByDescending(x=>x.CreatedDate).ToList();
+            // return result.OrderByDescending(x => x.LastUpdateDate).ToList();
+            return result.ToList();
         }
         [Route("rss")]
         [Route("rss.xml")]
