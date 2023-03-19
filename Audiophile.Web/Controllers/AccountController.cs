@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -20,6 +21,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -1881,8 +1883,18 @@ namespace Audiophile.Web.Controllers
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> AddLogoBanner(int dopingId, string title, string url, bool paymentType, string fullname,
-            string number, string month, string year, string cvc, string file64, IFormFile gifFile, int fileType)
+            string number, string month, string year, string cvc, string file64, IFormFile gifFile, int fileType, 
+            IFormFile ImageSourceFile )
         {
+
+            using (var memoryStream = new MemoryStream())
+            { 
+                ImageSourceFile.CopyTo(memoryStream);
+                var arr = memoryStream.ToArray();
+                file64 = Convert.ToBase64String(arr); 
+                memoryStream.Dispose(); 
+            }
+             
             var t = new Localization(); ;
             var lang = GetLang(false);
             var route = Constants.GetURL((int)Enums.Routing.BannerEkle, lang);

@@ -61,7 +61,7 @@ namespace Audiophile.Services
                           "AND (Adverts.ApprovalStatus = 2) \n\n " +
                           "AND Adverts.CategoryID = AdvertCategories.ID\n\n  " +
                           "AND Adverts.UserID = Users.ID\n\n  " +
-                          "AND (AdvertCategories.ParentCategoryID = ParentCategory.ID)\n\n  AND (( SELECT Users.IsActive  FROM Users WHERE (Users.ID = Adverts.UserID)) = true)\n\n  AND (\n            (select count(*)\n             from AdvertDopings\n             where AdvertID = Adverts.ID\n               and StartDate < now()\n               and EndDate > now()\n               and IsActive = true\n               and TypeID in (1, 2)) > 0\n      OR\n                Adverts.UseSecurePayment = true\n            )\n  ORDER BY Adverts.LastUpdateDate DESC,Adverts.CreatedDate DESC;";
+                          "AND (AdvertCategories.ParentCategoryID = ParentCategory.ID)\n\n  AND (( SELECT Users.IsActive  FROM Users WHERE (Users.ID = Adverts.UserID)) = true)\n\n  AND (\n            (select count(*)\n             from AdvertDopings\n             where AdvertID = Adverts.ID\n               and StartDate < now()\n               and EndDate > now()\n               and IsActive = true\n               and TypeID in (1, 2)) > 0\n      OR\n                Adverts.UseSecurePayment = true\n            )\n  ORDER BY Adverts.CreatedDate DESC ,Adverts.LastUpdateDate DESC;";
 
                  cnn = GetConnection();              
                 var list = cnn.Query<Advert>(sql, new { userId }).ToList();
@@ -948,7 +948,7 @@ namespace Audiophile.Services
         }
         public int ActivateDopingsAdvertDate(int advertId)
         {
-            var sql = $"UPDATE Adverts set CreatedDate=CURRENT_DATE()" + 
+            var sql = $"UPDATE Adverts set CreatedDate=CURRENT_DATE(),LastUpdateDate=CURRENT_DATE()" + 
                       $" where ID=@advertId ";
 
             return GetConnection().Execute(sql, new { advertId });
