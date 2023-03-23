@@ -44,7 +44,13 @@ namespace Audiophile.Web
                 //options.IdleTimeout = TimeSpan.FromDays(30);//set time   
             });
             services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.Name = "SessionCookie";
+                options.ExpireTimeSpan = TimeSpan.FromDays(7);
+                options.SlidingExpiration = true;
 
+            });
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
@@ -64,7 +70,7 @@ namespace Audiophile.Web
                 options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("tr-TR");
                 options.SupportedCultures = new List<CultureInfo> { new CultureInfo("tr-TR") };
             });
-
+          
             services.Configure<FormOptions>(options =>
             {
                 options.MultipartBodyLengthLimit = 60000000;

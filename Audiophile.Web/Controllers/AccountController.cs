@@ -101,6 +101,7 @@ namespace Audiophile.Web.Controllers
            
             var authProperties = new AuthenticationProperties
             {
+                
                 ExpiresUtc = DateTime.UtcNow.AddDays(7),
                 IsPersistent = true,
             };
