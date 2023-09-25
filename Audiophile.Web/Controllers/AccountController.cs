@@ -418,7 +418,7 @@ namespace Audiophile.Web.Controllers
                 mailHtml = mailHtml
                     .Replace("@adSoyad", $"{user.Name}")
                     .Replace("@link", link);
-                var title = $"GittiBu.com | {tran.Get("Hesabınızı Aktifleştirin", "Account Activation", lang)}";
+                var title = $"Audiophile.org | {tran.Get("Hesabınızı Aktifleştirin", "Account Activation", lang)}";
                 return mailing.Send(mailHtml, user.Email, user.Name, title);
             }
         }
