@@ -377,6 +377,7 @@ namespace Audiophile.Web.Controllers
                     TempData.Put("UiMessage", new UiMessage { Class = "danger", Message = t.Get(Messages.InsertError_tr, Messages.InsertError_en, lang) });
                     return RedirectToAction("Register");
                 }
+
                 if (user.ProfilePictureFile != null && user.ProfilePictureFile.Length > 0)
                 {
                     var fileName = user.UserName + "_" + user.ID;
